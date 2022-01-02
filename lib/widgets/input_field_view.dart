@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movies_booking/resources/dimen.dart';
+import 'package:movies_booking/widgets/normal_text_view.dart';
 
 class InputFieldView extends StatelessWidget {
   final String labelText;
@@ -14,13 +15,7 @@ class InputFieldView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          labelText,
-          style: TextStyle(
-              color: Colors.blueGrey,
-              fontSize: TEXT_REGULAR,
-              fontWeight: FontWeight.w400),
-        ),
+        NormalTextView(labelText,textColor: Colors.black26,),
         TextField(
           obscureText: obscureText,
           style: TextStyle(fontWeight: FontWeight.w500),

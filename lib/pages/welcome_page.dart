@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:movies_booking/pages/registration_page.dart';
 import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
+import 'package:movies_booking/resources/strings.dart';
 import 'package:movies_booking/widgets/welcome_view.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -23,9 +24,10 @@ class WelcomePage extends StatelessWidget {
               SizedBox(
                 height: MediaQuery.of(context).size.height / 7,
               ),
-              WelcomeView("Hello!Welcome to Gallery App"),
+              WelcomeView(WELCOME_DESCRIPTION_TEXT),
               Spacer(),
              GetStartedButton(),
+              SizedBox(height: MARGIN_XXLARGE,)
             ],
           ),
         ),
@@ -35,10 +37,11 @@ class WelcomePage extends StatelessWidget {
 }
 
 class MovieIllustrationView extends StatelessWidget {
+  //'assets/images/movie_illustration.jpg'
   @override
   Widget build(BuildContext context) {
     return Image.asset(
-      'assets/images/movie_illustration.jpg',
+      'assets/movie_illustration.png',
       width: WELCOME_ILLUSTRATION_WIDTH,
       height: WELCOME_ILLUSTRATION_HEIGHT,
     );
@@ -65,10 +68,11 @@ class GetStartedButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(MARGIN_SMALL),
         ),
         child: Text(
-          "Get Started",
+          WELCOME_GET_STARTED_BUTTON_TEXT,
           style: TextStyle(
             color: Colors.white,
             fontSize: TEXT_REGULAR_1X,
+            fontWeight: FontWeight.w400
           ),
         ),
       ),

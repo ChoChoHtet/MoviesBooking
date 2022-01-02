@@ -14,21 +14,10 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: Icon(
-          Icons.menu,
-          color: Colors.black87,
-        ),
         backgroundColor: Colors.white,
         elevation: 0,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: MARGIN_MEDIUM),
-            child: Icon(
-              Icons.search,
-              color: Colors.black87,
-            ),
-          )
-        ],
+        leading: MenuButtonView(),
+        actions: [SearchButtonView()],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -36,26 +25,20 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  CircleAvatarView(
-                    "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
-                  ),
-                  LargeTitleText("Hi LiLy!"),
-                ],
-              ),
+              UserProfileView(),
               SizedBox(height: MARGIN_SMALL_2),
-              HorizontalMovieView("Now Showing",(){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomePage()));
-              }),
+              HorizontalMovieView(
+                  "Now Showing", () => _navigateToMoviesDetailScreen(context)),
               SizedBox(height: MARGIN_XLARGE),
-              HorizontalMovieView("Coming Soon",() => _navigateToMoviesDetailScreen(context)),
+              HorizontalMovieView(
+                  "Coming Soon", () => _navigateToMoviesDetailScreen(context)),
             ],
           ),
         ),
       ),
     );
   }
+
   void _navigateToMoviesDetailScreen(BuildContext context) {
     Navigator.push(
       context,
@@ -67,11 +50,57 @@ class HomePage extends StatelessWidget {
   }
 }
 
+class UserProfileView extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        CircleAvatarView(
+          "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
+        ),
+        LargeTitleText("Hi LiLy!"),
+      ],
+    );
+  }
+}
+
+class SearchButtonView extends StatelessWidget {
+  const SearchButtonView({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: MARGIN_MEDIUM),
+      child: Icon(
+        Icons.search,
+        color: Colors.black87,
+      ),
+    );
+  }
+}
+
+class MenuButtonView extends StatelessWidget {
+  const MenuButtonView({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Icon(
+      Icons.menu,
+      color: Colors.black87,
+    );
+  }
+}
+
 class HorizontalMovieView extends StatelessWidget {
   final String title;
   final Function onTapPoster;
 
-  const HorizontalMovieView(this.title,this.onTapPoster);
+  const HorizontalMovieView(this.title, this.onTapPoster);
 
   @override
   Widget build(BuildContext context) {
@@ -83,11 +112,12 @@ class HorizontalMovieView extends StatelessWidget {
           height: MARGIN_SMALL_2,
         ),
         Container(
-          height: 250,
+          height: MOVIES_POSTER_ITEM_HEIGHT,
           child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: 5,
-              itemBuilder: (BuildContext context, int index) => MoviesView(onTapPoster)),
+              itemBuilder: (BuildContext context, int index) =>
+                  MoviesView(onTapPoster)),
         ),
       ],
     );

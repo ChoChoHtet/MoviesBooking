@@ -8,16 +8,19 @@ import 'package:movies_booking/resources/colors.dart';
 void main() {
   runApp(MyApp());
 }
+
 class MyApp extends StatelessWidget {
+  final ThemeData theme = ThemeData();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(backgroundColor: WELCOME_SCREEN_BACKGROUND_COLOR),
+      debugShowCheckedModeBanner: false,
+      theme: theme.copyWith(
+        colorScheme: theme.colorScheme.copyWith(
+            primary: WELCOME_SCREEN_BACKGROUND_COLOR, secondary: Colors.grey),
+      ),
       home: WelcomePage(),
     );
   }
 }
-
-
-

@@ -8,27 +8,27 @@ class MoviesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 150,
+      width: MOVIES_POSTER_ITEM_WIDTH,
       margin: EdgeInsets.only(right: MARGIN_MEDIUM),
       child: Column(
         children: [
           GestureDetector(
             onTap: (){
               print("poster tap");
-              //onTapPoster ;
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                  builder: (context) => MovieDetailPage(),
-              ),
-              );
+              onTapPoster() ;
+              // Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //     builder: (context) => MovieDetailPage(),
+              // ),
+              // );
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(MARGIN_SMALL),
               child: Image.network(
                 "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
                 fit: BoxFit.cover,
-                height: 200,
+                height: MOVIES_IMAGE_HEIGHT,
               ),
             ),
           ),
@@ -37,6 +37,7 @@ class MoviesView extends StatelessWidget {
           ),
           Text(
             "Detective Pikachu",
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.black87,
               fontSize: TEXT_REGULAR,

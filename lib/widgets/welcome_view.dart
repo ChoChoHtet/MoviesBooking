@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
+import 'package:movies_booking/resources/strings.dart';
+import 'package:movies_booking/widgets/normal_text_view.dart';
 
 class WelcomeView extends StatelessWidget {
   final String descriptionText;
@@ -19,21 +21,15 @@ class WelcomeView extends StatelessWidget {
       crossAxisAlignment: isStartAlign ? CrossAxisAlignment.start : CrossAxisAlignment.center,
       children: [
         Text(
-          "Welcome!",
+          WELCOME_TEXT,
           style: TextStyle(
             color: welcomeColor,
-            fontWeight: FontWeight.w500,
-            fontSize: TEXT_HEADING_1X,
+            fontWeight: FontWeight.w400,
+            fontSize: TEXT_HEADING_2X,
           ),
         ),
         SizedBox(height: MARGIN_SMALL),
-        Text(
-          descriptionText,
-          style: TextStyle(
-            color: descriptionColor,
-            fontSize: TEXT_REGULAR,
-          ),
-        ),
+        NormalTextView(descriptionText,textColor: descriptionColor,)
       ],
     );
   }
