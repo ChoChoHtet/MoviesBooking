@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
 import 'package:movies_booking/resources/strings.dart';
+import 'package:movies_booking/widgets/back_button_view.dart';
 import 'package:movies_booking/widgets/circle_avatar_view.dart';
 import 'package:movies_booking/widgets/elevated_button_view.dart';
 import 'package:movies_booking/widgets/large_title_text.dart';
+import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
 
 class MovieDetailPage extends StatelessWidget {
@@ -18,35 +21,65 @@ class MovieDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          Positioned(
-            left: 0,
-            right: 0,
-            height: MOVIES_DETAIL_POSTER_HEIGHT,
-            child: MoviesPosterView(),
+        body: Stack(
+      children: [
+        Positioned.fill(
+          child: CustomScrollView(
+            slivers: [
+              MoviesSliverAppBar(() => Navigator.pop(context)),
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    MoviesInfoView(genreList: genreList, castList: castList),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Positioned(
-            top: 30,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
-              child: BackButtonView(() {
-                Navigator.pop(context);
-              }),
+        ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.all(MARGIN_MEDIUM),
+            child: ElevatedButtonView(
+              MOVIES_DETAIL_GET_YOUR_TICKET_BUTTON_TEXT,
+              () {},
             ),
           ),
-          Positioned(
-            top: MOVIES_DETAIL_POSTER_HEIGHT / 2 - 50,
-            left: MediaQuery.of(context).size.width / 2.2,
-            child: VideoPlayView(),
+        ),
+      ],
+    ));
+  }
+}
+
+class MoviesSliverAppBar extends StatelessWidget {
+  final Function onTapBack;
+  const MoviesSliverAppBar(this.onTapBack);
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverAppBar(
+      expandedHeight: 280,
+      backgroundColor: WELCOME_SCREEN_BACKGROUND_COLOR,
+      automaticallyImplyLeading: false,
+      flexibleSpace: Stack(
+        children: [
+          FlexibleSpaceBar(
+            collapseMode: CollapseMode.parallax,
+            background: MoviesPosterView(onTapBack),
           ),
-          Positioned(
-              top: MOVIES_DETAIL_INFO_HEIGHT,
-              child: MoviesInfoView(genreList: genreList, castList: castList)),
           Align(
             alignment: Alignment.bottomCenter,
-            child: GetTicketButtonView(),
-          ),
+            child: Container(
+                height: 30,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
+                  ),
+                )),
+          )
         ],
       ),
     );
@@ -81,19 +114,10 @@ class MoviesInfoView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height / 2,
-      width: MediaQuery.of(context).size.width,
-      padding: EdgeInsets.symmetric(
-          vertical: MARGIN_XLARGE, horizontal: MARGIN_MEDIUM),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(40),
-          topRight: Radius.circular(40),
-        ),
-      ),
-      child: ListView(
-        //crossAxisAlignment: CrossAxisAlignment.start,
+      color: Colors.white,
+      padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           LargeTitleText("Detective Pikachu"),
           SizedBox(
@@ -109,25 +133,22 @@ class MoviesInfoView extends StatelessWidget {
           SizedBox(
             height: MARGIN_MEDIUM,
           ),
-         //MoviesPlotView(),
+          //MoviesPlotView(),
           TitleText(MOVIES_DETAIL_PLOT_SUMMARY),
           SizedBox(
             height: MARGIN_SMALL_2,
           ),
-          Expanded(
-            child: Text(
-              "Ace detective Harry Goodman goes mysteriously missing, prompting his 21-year-old son, Tim, to find out what happened. Aiding in the investigation is Harry's former Pokémon partner, wise-cracking, adorable super-sleuth Detective Pikachu. Finding that they are uniquely equipped to work together, as Tim is the only human who can talk with Pikachu, they join forces to unravel the tangled mystery.",
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: TEXT_REGULAR,
-              ),
+          Text(
+            "Return or Fall During the Return, the hostility of the counter-party beats upon the soul of the hero. Freytag lays out two rules for this stage: the number of characters be limited as much as possible, and the number of scenes through which the hero falls should be fewer than in the rising movement.",
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: TEXT_REGULAR,
             ),
           ),
           SizedBox(
             height: MARGIN_MEDIUM,
           ),
           MoviesCastView(castList: castList)
-
         ],
       ),
     );
@@ -147,19 +168,20 @@ class MoviesCastView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-      TitleText(MOVIES_DETAIL_CAST),
-      SizedBox(
-        height: MARGIN_MEDIUM,
-      ),
-      Row(
-        children: castList.map((url) => CircleAvatarView(url)).toList(),
-      ),
-    ],);
+        TitleText(MOVIES_DETAIL_CAST),
+        SizedBox(
+          height: MARGIN_MEDIUM,
+        ),
+        Row(
+          children: castList.map((url) => CircleAvatarView(url)).toList(),
+        ),
+        SizedBox(height: 80,)
+      ],
+    );
   }
 }
 
 class MoviesPlotView extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -168,13 +190,11 @@ class MoviesPlotView extends StatelessWidget {
         SizedBox(
           height: MARGIN_SMALL_2,
         ),
-        Expanded(
-          child: Text(
-            "Ace detective Harry Goodman goes mysteriously missing, prompting his 21-year-old son, Tim, to find out what happened. Aiding in the investigation is Harry's former Pokémon partner, wise-cracking, adorable super-sleuth Detective Pikachu. Finding that they are uniquely equipped to work together, as Tim is the only human who can talk with Pikachu, they join forces to unravel the tangled mystery.",
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: TEXT_REGULAR,
-            ),
+        Text(
+          "Return or Fall During the Return, the hostility of the counter-party beats upon the soul of the hero. Freytag lays out two rules for this stage: the number of characters be limited as much as possible, and the number of scenes through which the hero falls should be fewer than in the rising movement.",
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: TEXT_REGULAR,
           ),
         ),
       ],
@@ -193,34 +213,33 @@ class VideoPlayView extends StatelessWidget {
   }
 }
 
-class BackButtonView extends StatelessWidget {
-  final Function onTapBack;
 
-  const BackButtonView(this.onTapBack);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTapBack,
-      child: Icon(
-        Icons.arrow_back_ios_outlined,
-        color: Colors.white,
-        size: 30,
-      ),
-    );
-  }
-}
 
 class MoviesPosterView extends StatelessWidget {
-  const MoviesPosterView({
-    Key key,
-  }) : super(key: key);
-
+  final Function onTapBack;
+  const MoviesPosterView(this.onTapBack);
   @override
   Widget build(BuildContext context) {
-    return Image.network(
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGFrQd3ez_nmjQhnH7F3vyJUbDogMKNqoU6nCd-7rJ3ZzgprZo",
-      fit: BoxFit.cover,
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Image.network(
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGFrQd3ez_nmjQhnH7F3vyJUbDogMKNqoU6nCd-7rJ3ZzgprZo",
+            fit: BoxFit.cover,
+          ),
+        ),
+        Align(
+          alignment: Alignment.topLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(top: MARGIN_XLARGE,left: MARGIN_MEDIUM),
+            child: BackButtonView(() => onTapBack(),color: Colors.white,),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: VideoPlayView(),
+        ),
+      ],
     );
   }
 }
