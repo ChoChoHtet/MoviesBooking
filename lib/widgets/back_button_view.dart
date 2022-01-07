@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movies_booking/resources/dimen.dart';
 
 class BackButtonView extends StatelessWidget {
   final Function onTapBack;
@@ -13,7 +14,7 @@ class BackButtonView extends StatelessWidget {
       child: Icon(
         Icons.arrow_back_ios_outlined,
         color: color,
-        size: 30,
+        size: LEADING_ICON_SIZE,
       ),
     );
   }

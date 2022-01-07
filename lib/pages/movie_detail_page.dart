@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:movies_booking/pages/item_order_page.dart';
 import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
 import 'package:movies_booking/resources/strings.dart';
@@ -43,7 +44,9 @@ class MovieDetailPage extends StatelessWidget {
             padding: const EdgeInsets.all(MARGIN_MEDIUM),
             child: ElevatedButtonView(
               MOVIES_DETAIL_GET_YOUR_TICKET_BUTTON_TEXT,
-              () {},
+              () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> ItemOrderPage()));
+              },
             ),
           ),
         ),

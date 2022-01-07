@@ -14,10 +14,7 @@ class ElevatedButtonView extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => HomePage()));
-        },
+        onPressed: onPressConfirm,
         style: ButtonStyle(
             padding: MaterialStateProperty.all(
               EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_1),

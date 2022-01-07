@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:movies_booking/pages/add_card_info_page.dart';
+import 'package:movies_booking/pages/movie_ticket_page.dart';
+import 'package:movies_booking/pages/payment_page.dart';
 import 'package:movies_booking/resources/dimen.dart';
+import 'package:movies_booking/viewItems/combo_set_view.dart';
 import 'package:movies_booking/widgets/back_button_view.dart';
 import 'package:movies_booking/widgets/elevated_button_view.dart';
 import 'package:movies_booking/widgets/input_field_view.dart';
@@ -9,6 +13,8 @@ import 'package:movies_booking/widgets/title_and_description_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
 
 class ItemOrderPage extends StatelessWidget {
+  final List<String> snackList = ["1", "2", "3"];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,9 +30,14 @@ class ItemOrderPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ComboSetSection(),
-                ComboSetSection(),
-                ComboSetSection(),
+                Container(
+                  height: 270,
+                  child: ListView.builder(
+                    itemCount: 5,
+                    itemBuilder: (BuildContext context, int index) =>
+                        ComboSetView(),
+                  ),
+                ),
                 PromoCodeSection(),
                 SizedBox(
                   height: MARGIN_MEDIUM,
@@ -42,7 +53,10 @@ class ItemOrderPage extends StatelessWidget {
                 SizedBox(
                   height: MARGIN_LARGE,
                 ),
-                ElevatedButtonView("Pay \$40",(){} ),
+                ElevatedButtonView(
+                  "Pay \$40",
+                  () => _navigateToPaymentScreen(context),
+                ),
                 SizedBox(
                   height: MARGIN_LARGE,
                 ),
@@ -50,6 +64,15 @@ class ItemOrderPage extends StatelessWidget {
             ),
           ),
         ));
+  }
+
+  void _navigateToPaymentScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PaymentPage(),
+      ),
+    );
   }
 }
 
@@ -74,7 +97,9 @@ class PaymentMethodSection extends StatelessWidget {
             height: 28,
           ),
         ),
-        SizedBox(height: MARGIN_SMALL,),
+        SizedBox(
+          height: MARGIN_SMALL,
+        ),
         PaymentOptionView(
           "Internet banking (ATM Card)",
           "Visa, master and JCB",
@@ -84,7 +109,9 @@ class PaymentMethodSection extends StatelessWidget {
             height: 28,
           ),
         ),
-        SizedBox(height: MARGIN_SMALL,),
+        SizedBox(
+          height: MARGIN_SMALL,
+        ),
         PaymentOptionView(
           "E-Wallet",
           "Paypal",

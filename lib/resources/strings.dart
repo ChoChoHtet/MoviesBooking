@@ -18,3 +18,13 @@ const MOVIES_DETAIL_GET_YOUR_TICKET_BUTTON_TEXT="Get your ticket";
 
 //payment page
 const PAYMENT_AMOUNT="Payment amount";
+//Ticket page
+const TICKET_AWESOME="AWESOME";
+const YOUR_TICKET="This is your ticket.";
+const TICKET_BOOKING_NO="Booking no";
+const TICKET_SHOW_TIME_AND_DATE="Show time - Date";
+const TICKET_THEATER="Theater";
+const TICKET_SCREEN="Screen";
+const TICKET_ROW="row";
+const TICKET_SEATS="Seat(s)";
+const TICKET_PRICE="Price";
