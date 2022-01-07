@@ -15,3 +15,6 @@ const HOME_SCREEN_COMING_SOON= "Coming Soon";
 const MOVIES_DETAIL_PLOT_SUMMARY="Plot Summary";
 const MOVIES_DETAIL_CAST="Cast";
 const MOVIES_DETAIL_GET_YOUR_TICKET_BUTTON_TEXT="Get your ticket";
+
+//payment page
+const PAYMENT_AMOUNT="Payment amount";
