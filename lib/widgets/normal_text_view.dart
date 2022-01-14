@@ -15,6 +15,7 @@ class NormalTextView extends StatelessWidget {
         color: textColor,
         fontWeight: FontWeight.w400,
         fontSize: TEXT_REGULAR,
+        //overflow: TextOverflow.ellipsis
       ),
     );
   }

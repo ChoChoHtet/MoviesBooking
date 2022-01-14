@@ -16,8 +16,16 @@ const MOVIES_DETAIL_PLOT_SUMMARY="Plot Summary";
 const MOVIES_DETAIL_CAST="Cast";
 const MOVIES_DETAIL_GET_YOUR_TICKET_BUTTON_TEXT="Get your ticket";
 
+const HAVE_ANY_PROMO_CODE="Don't have any promo Code?";
+const GET_IT_NOW= "Get it now";
+const ENTER_PROMO_CODE="Enter Promo Code";
 //payment page
 const PAYMENT_AMOUNT="Payment amount";
+const PAYMENT_OPTION_CREDIT_CARD=  "Credit Card";
+const PAYMENT_OPTION_E_WALLET="E-Wallet";
+const PAYMENT_METHOD_VISA="Visa, master and JCB";
+const PAYMENT_PAYPAL= "Paypal";
+const PAYMENT_OPTION_ATM_CARD="Internet banking (ATM Card)";
 //Ticket page
 const TICKET_AWESOME="AWESOME";
 const YOUR_TICKET="This is your ticket.";

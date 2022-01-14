@@ -1,8 +1,11 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:movies_booking/pages/add_card_info_page.dart';
 import 'package:movies_booking/pages/movie_ticket_page.dart';
 import 'package:movies_booking/pages/payment_page.dart';
 import 'package:movies_booking/resources/dimen.dart';
+import 'package:movies_booking/resources/strings.dart';
 import 'package:movies_booking/viewItems/combo_set_view.dart';
 import 'package:movies_booking/widgets/back_button_view.dart';
 import 'package:movies_booking/widgets/elevated_button_view.dart';
@@ -22,7 +25,7 @@ class ItemOrderPage extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: BackButtonView(() {}),
+          leading: BackButtonView(() => Navigator.pop(context)),
         ),
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
@@ -31,8 +34,10 @@ class ItemOrderPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: 270,
+                  height: MediaQuery.of(context).size.height *0.6,
                   child: ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
                     itemCount: 5,
                     itemBuilder: (BuildContext context, int index) =>
                         ComboSetView(),
@@ -89,8 +94,8 @@ class PaymentMethodSection extends StatelessWidget {
         LargeTitleText("Payment Method"),
         SizedBox(height: MARGIN_LARGE),
         PaymentOptionView(
-          "Credit Card",
-          "Visa, master and JCB",
+          PAYMENT_OPTION_CREDIT_CARD,
+          PAYMENT_METHOD_VISA,
           Image.asset(
             "assets/ic_credit_card.png",
             width: 28,
@@ -101,8 +106,8 @@ class PaymentMethodSection extends StatelessWidget {
           height: MARGIN_SMALL,
         ),
         PaymentOptionView(
-          "Internet banking (ATM Card)",
-          "Visa, master and JCB",
+          PAYMENT_OPTION_ATM_CARD,
+          PAYMENT_METHOD_VISA,
           Image.asset(
             "assets/ic_atm_card.png",
             width: 28,
@@ -113,8 +118,8 @@ class PaymentMethodSection extends StatelessWidget {
           height: MARGIN_SMALL,
         ),
         PaymentOptionView(
-          "E-Wallet",
-          "Paypal",
+          PAYMENT_OPTION_E_WALLET,
+          PAYMENT_PAYPAL,
           Image.asset(
             "assets/ic_wallet.png",
             width: 28,
@@ -165,7 +170,7 @@ class PromoCodeSection extends StatelessWidget {
       children: [
         TextField(
           decoration: InputDecoration(
-              hintText: "Enter Promo Code",
+              hintText: ENTER_PROMO_CODE,
               hintStyle: TextStyle(
                 fontStyle: FontStyle.italic,
               )),
@@ -176,14 +181,14 @@ class PromoCodeSection extends StatelessWidget {
         Row(
           children: [
             NormalTextView(
-              "Don't have any promo Code?",
+              HAVE_ANY_PROMO_CODE,
               textColor: Colors.black26,
             ),
             SizedBox(
               width: MARGIN_CARD_SMALL,
             ),
             NormalTextView(
-              "Get it now",
+              GET_IT_NOW,
               textColor: Colors.black,
             ),
           ],

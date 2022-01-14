@@ -109,7 +109,7 @@ class PaymentCardOptionSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return CarouselSlider(
       options: CarouselOptions(
-          aspectRatio: 16 / 8,
+          aspectRatio: 2,
           viewportFraction: 0.8,
           enlargeCenterPage: true,
           autoPlayCurve: Curves.fastOutSlowIn,

@@ -166,7 +166,7 @@ class LoginView extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MovieDetailPage(),
+        builder: (context) => HomePage(),
       ),
     );
     print("confirm clicked");

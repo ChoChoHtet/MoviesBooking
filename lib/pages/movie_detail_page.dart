@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:movies_booking/pages/item_order_page.dart';
+import 'package:movies_booking/pages/movie_choose_time_page.dart';
+import 'package:movies_booking/pages/movie_seats_page.dart';
 import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
 import 'package:movies_booking/resources/strings.dart';
@@ -45,7 +47,12 @@ class MovieDetailPage extends StatelessWidget {
             child: ElevatedButtonView(
               MOVIES_DETAIL_GET_YOUR_TICKET_BUTTON_TEXT,
               () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=> ItemOrderPage()));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MovieChooseTimePage(),
+                  ),
+                );
               },
             ),
           ),
@@ -57,6 +64,7 @@ class MovieDetailPage extends StatelessWidget {
 
 class MoviesSliverAppBar extends StatelessWidget {
   final Function onTapBack;
+
   const MoviesSliverAppBar(this.onTapBack);
 
   @override
@@ -142,7 +150,7 @@ class MoviesInfoView extends StatelessWidget {
             height: MARGIN_SMALL_2,
           ),
           Text(
-            "Return or Fall During the Return, the hostility of the counter-party beats upon the soul of the hero. Freytag lays out two rules for this stage: the number of characters be limited as much as possible, and the number of scenes through which the hero falls should be fewer than in the rising movement.",
+            "Return or Fall During the Return, the hostility of the counter-party beats upon the soul of the hero. Freytag lays out two rules for this stage: the number of characters be limited as much as possible, and the number of scenes through which the hero falls should be fewer than in the rising movement.Return or Fall During the Return, the hostility of the counter-party beats upon the soul of the hero. Freytag lays out two rules for this stage: the number of characters be limited as much as possible, and the number of scenes through which the hero falls should be fewer than in the rising movement.Return or Fall During the Return, the hostility of the counter-party beats upon the soul of the hero. Freytag lays out two rules for this stage: the number of characters be limited as much as possible, and the number of scenes through which the hero falls should be fewer than in the rising movemReturn or Fall During the Return, the hostility of the counter-party beats upon the soul of the hero. Freytag lays out two rules for this stage: the number of characters be limited as much as possible, and the number of scenes through which the hero falls should be fewer than in the rising movement.ent.",
             style: TextStyle(
               color: Colors.grey,
               fontSize: TEXT_REGULAR,
@@ -178,7 +186,9 @@ class MoviesCastView extends StatelessWidget {
         Row(
           children: castList.map((url) => CircleAvatarView(url)).toList(),
         ),
-        SizedBox(height: 80,)
+        SizedBox(
+          height: 80,
+        )
       ],
     );
   }
@@ -216,11 +226,11 @@ class VideoPlayView extends StatelessWidget {
   }
 }
 
-
-
 class MoviesPosterView extends StatelessWidget {
   final Function onTapBack;
+
   const MoviesPosterView(this.onTapBack);
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -234,8 +244,12 @@ class MoviesPosterView extends StatelessWidget {
         Align(
           alignment: Alignment.topLeft,
           child: Padding(
-            padding: const EdgeInsets.only(top: MARGIN_XLARGE,left: MARGIN_MEDIUM),
-            child: BackButtonView(() => onTapBack(),color: Colors.white,),
+            padding:
+                const EdgeInsets.only(top: MARGIN_XLARGE, left: MARGIN_MEDIUM),
+            child: BackButtonView(
+              () => onTapBack(),
+              color: Colors.white,
+            ),
           ),
         ),
         Align(
