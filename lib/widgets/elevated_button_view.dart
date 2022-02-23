@@ -6,7 +6,7 @@ import 'package:movies_booking/resources/dimen.dart';
 
 class ElevatedButtonView extends StatelessWidget {
   final String text;
-  final Function onPressConfirm;
+  final VoidCallback onPressConfirm;
   ElevatedButtonView(this.text,this.onPressConfirm);
 
   @override

@@ -63,7 +63,7 @@ class MovieDetailPage extends StatelessWidget {
 }
 
 class MoviesSliverAppBar extends StatelessWidget {
-  final Function onTapBack;
+  final VoidCallback onTapBack;
 
   const MoviesSliverAppBar(this.onTapBack);
 
@@ -98,9 +98,6 @@ class MoviesSliverAppBar extends StatelessWidget {
 }
 
 class GetTicketButtonView extends StatelessWidget {
-  const GetTicketButtonView({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -114,10 +111,9 @@ class GetTicketButtonView extends StatelessWidget {
 
 class MoviesInfoView extends StatelessWidget {
   const MoviesInfoView({
-    Key key,
-    @required this.genreList,
-    @required this.castList,
-  }) : super(key: key);
+    required this.genreList,
+    required this.castList,
+  }) ;
 
   final List<String> genreList;
   final List<String> castList;
@@ -168,9 +164,8 @@ class MoviesInfoView extends StatelessWidget {
 
 class MoviesCastView extends StatelessWidget {
   const MoviesCastView({
-    Key key,
-    @required this.castList,
-  }) : super(key: key);
+    required this.castList,
+  });
 
   final List<String> castList;
 
@@ -227,7 +222,7 @@ class VideoPlayView extends StatelessWidget {
 }
 
 class MoviesPosterView extends StatelessWidget {
-  final Function onTapBack;
+  final VoidCallback onTapBack;
 
   const MoviesPosterView(this.onTapBack);
 
@@ -246,8 +241,7 @@ class MoviesPosterView extends StatelessWidget {
           child: Padding(
             padding:
                 const EdgeInsets.only(top: MARGIN_XLARGE, left: MARGIN_MEDIUM),
-            child: BackButtonView(
-              () => onTapBack(),
+            child: BackButtonView(onTapBack,
               color: Colors.white,
             ),
           ),
@@ -288,10 +282,6 @@ class GeneralChipView extends StatelessWidget {
 }
 
 class MoviesTimeAndRatingView extends StatelessWidget {
-  const MoviesTimeAndRatingView({
-    Key key,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Row(

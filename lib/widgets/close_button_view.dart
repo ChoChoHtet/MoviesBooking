@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:movies_booking/resources/dimen.dart';
 
 class CloseButtonView extends StatelessWidget {
-  final Function onTapClose;
+  final VoidCallback onTapClose;
   const CloseButtonView(this.onTapClose);
   @override
   Widget build(BuildContext context) {

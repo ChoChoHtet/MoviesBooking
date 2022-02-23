@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movies_booking/pages/registration_page.dart';
 import 'package:movies_booking/pages/welcome_page.dart';
 import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
@@ -76,10 +77,10 @@ class HomePage extends StatelessWidget {
               UserProfileView(),
               SizedBox(height: MARGIN_SMALL_2),
               HorizontalMovieView(
-                  "Now Showing", () => _navigateToMoviesDetailScreen(context)),
+                  title: "Now Showing", onTapPoster: () => _navigateToMoviesDetailScreen(context)),
               SizedBox(height: MARGIN_XLARGE),
               HorizontalMovieView(
-                  "Coming Soon", () => _navigateToMoviesDetailScreen(context)),
+                  title: "Coming Soon", onTapPoster: () => _navigateToMoviesDetailScreen(context)),
             ],
           ),
         ),
@@ -94,15 +95,14 @@ class HomePage extends StatelessWidget {
         builder: (context) => MovieDetailPage(),
       ),
     );
-    print("confirm clicked");
+    print("movies clicked");
   }
 }
 
 class DrawerContentSection extends StatelessWidget {
   const DrawerContentSection({
-    Key key,
-    @required this.menuTitle,
-  }) : super(key: key);
+    required this.menuTitle,
+  }) ;
 
   final List<String> menuTitle;
 
@@ -129,10 +129,6 @@ class DrawerContentSection extends StatelessWidget {
 }
 
 class DrawerHeaderSection extends StatelessWidget {
-  const DrawerHeaderSection({
-    Key key,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -203,10 +199,6 @@ class UserProfileView extends StatelessWidget {
 }
 
 class SearchButtonView extends StatelessWidget {
-  const SearchButtonView({
-    Key key,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -238,9 +230,9 @@ class MenuButtonView extends StatelessWidget {
 
 class HorizontalMovieView extends StatelessWidget {
   final String title;
-  final Function onTapPoster;
+  final VoidCallback onTapPoster;
 
-  const HorizontalMovieView(this.title, this.onTapPoster);
+  const HorizontalMovieView({required this.title,required this.onTapPoster});
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,5 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
-import 'package:movies_booking/data.vos/movie_seat_vo.dart';
 import 'package:movies_booking/dummy/dummy_data.dart';
 import 'package:movies_booking/pages/item_order_page.dart';
 import 'package:movies_booking/resources/dimen.dart';
@@ -9,6 +8,8 @@ import 'package:movies_booking/widgets/back_button_view.dart';
 import 'package:movies_booking/widgets/elevated_button_view.dart';
 import 'package:movies_booking/widgets/large_title_text.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
+
+import '../data/vos/movie_seat_vo.dart';
 
 class MovieSeatPage extends StatelessWidget {
   final List<MovieSeatVO> _movieSeats = dummyMovieSeats;
@@ -73,9 +74,6 @@ class MovieSeatPage extends StatelessWidget {
 }
 
 class MovieSeatAndTicketSection extends StatelessWidget {
-  const MovieSeatAndTicketSection({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -117,9 +115,6 @@ class SeatAndTicketView extends StatelessWidget {
 }
 
 class MovieSeatGlossySection extends StatelessWidget {
-  const MovieSeatGlossySection({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -178,25 +173,22 @@ class MovieSeatGlossaryView extends StatelessWidget {
 }
 
 class MovieSeatSection extends StatelessWidget {
-  const MovieSeatSection({
-    Key key,
-    @required List<MovieSeatVO> movieSeats,
-  })  : _movieSeats = movieSeats,
-        super(key: key);
 
-  final List<MovieSeatVO> _movieSeats;
+  const MovieSeatSection({required this.movieSeats});
+
+  final List<MovieSeatVO> movieSeats;
 
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      itemCount: _movieSeats.length,
+      itemCount: movieSeats.length,
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           childAspectRatio: 1, crossAxisCount: 10),
       itemBuilder: (context, index) {
         return MovieSeatItemView(
-          _movieSeats[index],
+          movieSeats[index],
         );
       },
     );
@@ -204,9 +196,6 @@ class MovieSeatSection extends StatelessWidget {
 }
 
 class MovieNameTimeAndCinemaSection extends StatelessWidget {
-  const MovieNameTimeAndCinemaSection({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

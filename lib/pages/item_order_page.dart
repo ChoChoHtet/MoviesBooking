@@ -82,9 +82,6 @@ class ItemOrderPage extends StatelessWidget {
 }
 
 class PaymentMethodSection extends StatelessWidget {
-  const PaymentMethodSection({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -160,9 +157,6 @@ class PaymentOptionView extends StatelessWidget {
 }
 
 class PromoCodeSection extends StatelessWidget {
-  const PromoCodeSection({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -199,9 +193,6 @@ class PromoCodeSection extends StatelessWidget {
 }
 
 class ComboSetSection extends StatelessWidget {
-  const ComboSetSection({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

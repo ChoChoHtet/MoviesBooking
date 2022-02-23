@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:movies_booking/data.vos/movie_seat_vo.dart';
 import 'package:movies_booking/resources/dimen.dart';
+
+import '../data/vos/movie_seat_vo.dart';
 
 class MovieSeatItemView extends StatelessWidget {
   final MovieSeatVO movieSeatVO;

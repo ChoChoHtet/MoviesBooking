@@ -44,10 +44,6 @@ class MovieChooseTimePage extends StatelessWidget {
 }
 
 class ChooseItemGridSectionView extends StatelessWidget {
-  const ChooseItemGridSectionView({
-    Key key,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -66,9 +62,6 @@ class ChooseItemGridSectionView extends StatelessWidget {
 }
 
 class ChooseItemGridView extends StatelessWidget {
-  const ChooseItemGridView({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -109,9 +102,6 @@ class ChooseItemGridView extends StatelessWidget {
 }
 
 class MovieChooseDateView extends StatelessWidget {
-  const MovieChooseDateView({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

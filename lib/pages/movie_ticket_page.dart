@@ -46,9 +46,6 @@ class MovieTicketPage extends StatelessWidget {
 }
 
 class TicketSection extends StatelessWidget {
-  const TicketSection({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -78,9 +75,6 @@ class TicketSection extends StatelessWidget {
 }
 
 class GenerateBarCodeView extends StatelessWidget {
-  const GenerateBarCodeView({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -95,9 +89,7 @@ class GenerateBarCodeView extends StatelessWidget {
 }
 
 class TicketInfoSection extends StatelessWidget {
-  const TicketInfoSection({
-    Key key,
-  }) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -137,9 +129,6 @@ class TicketInfoSection extends StatelessWidget {
 }
 
 class DashLineView extends StatelessWidget {
-  const DashLineView({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

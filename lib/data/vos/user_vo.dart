@@ -1,0 +1,4 @@
+
+class UserVO{
+int? id;
+}

@@ -1,9 +1,11 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:movies_booking/pages/movie_detail_page.dart';
 import 'package:movies_booking/resources/dimen.dart';
 
 class MoviesView extends StatelessWidget {
-  final Function onTapPoster;
+  final VoidCallback onTapPoster;
   const MoviesView(this.onTapPoster);
   @override
   Widget build(BuildContext context) {
@@ -13,16 +15,7 @@ class MoviesView extends StatelessWidget {
       child: Column(
         children: [
           GestureDetector(
-            onTap: (){
-              print("poster tap");
-              onTapPoster() ;
-              // Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //     builder: (context) => MovieDetailPage(),
-              // ),
-              // );
-            },
+            onTap:onTapPoster,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(MARGIN_SMALL),
               child: Image.network(

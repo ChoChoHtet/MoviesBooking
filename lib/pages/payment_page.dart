@@ -43,7 +43,7 @@ class PaymentPage extends StatelessWidget {
             SizedBox(
               height: MARGIN_XLARGE,
             ),
-            AddNewCardSection(() => _navigateToAddNewCardScreen(context)),
+            AddNewCardSection(onTapAddNew: () => _navigateToAddNewCardScreen(context),),
             SizedBox(
               height: MARGIN_XXLARGE,
             ),
@@ -62,6 +62,7 @@ class PaymentPage extends StatelessWidget {
         builder: (context) => MovieTicketPage(),
       ),
     );
+    print("payment confirm clicked");
   }
 
   void _navigateToAddNewCardScreen(BuildContext context) {
@@ -75,10 +76,6 @@ class PaymentPage extends StatelessWidget {
 }
 
 class PaymentAmoutSection extends StatelessWidget {
-  const PaymentAmoutSection({
-    Key key,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -98,10 +95,8 @@ class PaymentAmoutSection extends StatelessWidget {
 }
 
 class PaymentCardOptionSection extends StatelessWidget {
-  const PaymentCardOptionSection({
-    Key key,
-    @required this.imgList,
-  }) : super(key: key);
+
+  const PaymentCardOptionSection({required this.imgList});
 
   final List<String> imgList;
 
@@ -124,9 +119,9 @@ class PaymentCardOptionSection extends StatelessWidget {
 }
 
 class AddNewCardSection extends StatelessWidget {
-  final Function onTapAddNew;
+  final VoidCallback onTapAddNew;
 
-  const AddNewCardSection(this.onTapAddNew);
+  const AddNewCardSection({ required this.onTapAddNew});
 
   @override
   Widget build(BuildContext context) {
@@ -153,9 +148,6 @@ class AddNewCardSection extends StatelessWidget {
 }
 
 class PaymentCardView extends StatelessWidget {
-  const PaymentCardView({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -211,9 +203,6 @@ class CardHolderNameAndExpireView extends StatelessWidget {
 }
 
 class CardTypeView extends StatelessWidget {
-  const CardTypeView({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -240,9 +229,6 @@ class CardTypeView extends StatelessWidget {
 }
 
 class CardNumberView extends StatelessWidget {
-  const CardNumberView({
-    Key key,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

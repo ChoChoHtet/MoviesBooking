@@ -1,5 +1,7 @@
-import 'package:movies_booking/data.vos/movie_seat_vo.dart';
+
 import 'package:movies_booking/resources/dimen.dart';
+
+import '../data/vos/movie_seat_vo.dart';
 
 List<MovieSeatVO> dummyMovieSeats=[
   MovieSeatVO("A", SEAT_TYPE_TEXT),
