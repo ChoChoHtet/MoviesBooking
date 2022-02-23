@@ -19,11 +19,15 @@ class AddCardInfoPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              InputFieldView("Card Number"),
+              InputFieldView("Card Number",textValue: (value){
+
+              }),
               SizedBox(
                 height: MARGIN_MEDIUM_2,
               ),
-              InputFieldView("Card holder"),
+              InputFieldView("Card holder",textValue: (value){
+
+              },),
               SizedBox(
                 height: MARGIN_MEDIUM_2,
               ),
@@ -31,13 +35,17 @@ class AddCardInfoPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Flexible(
-                    child: InputFieldView("Expiration Date"),
+                    child: InputFieldView("Expiration Date",textValue: (value){
+
+                    },),
                   ),
                   SizedBox(
                     width: MARGIN_MEDIUM_3,
                   ),
                   Flexible(
-                    child: InputFieldView("CVC"),
+                    child: InputFieldView("CVC",textValue: (value){
+
+                    }),
                   ),
                 ],
               ),

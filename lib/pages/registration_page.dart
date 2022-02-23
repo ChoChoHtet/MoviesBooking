@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:movies_booking/data/models/movie_booking_model.dart';
+import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
+import 'package:movies_booking/data/vos/user_vo.dart';
 import 'package:movies_booking/pages/home_page.dart';
 import 'package:movies_booking/pages/movie_detail_page.dart';
 import 'package:movies_booking/resources/colors.dart';
@@ -49,6 +53,42 @@ class RegistrationTabView extends StatefulWidget {
 
 class _RegistrationTabViewState extends State<RegistrationTabView>
     with TickerProviderStateMixin {
+  MovieBookingModel _movieBookingModel = MovieBookingModelImpl() ;
+
+  UserVO? user;
+  @override
+  void initState() {
+
+    super.initState();
+  }
+  void _registerUser(String name,String email,String phone,String password){
+    print("clicked register user-> $name,$email,$phone,$password");
+    _movieBookingModel.emailRegister(name, email, phone, password).then((userResponse) {
+      this.user = userResponse ;
+      // debugPrint("Register -> Successful");
+      // Fluttertoast.showToast(
+      //     msg: "Register Successful!",
+      //     toastLength: Toast.LENGTH_SHORT,
+      //     gravity: ToastGravity.CENTER,
+      //     timeInSecForIosWeb: 1,
+      //     backgroundColor: Colors.red,
+      //     textColor: Colors.white,
+      //     fontSize: 16.0
+      // );
+      _navigateToHomeScreen(context);
+    }).catchError((error){
+      debugPrint("Register Error -> $error");
+    });
+  }
+  void _navigateToHomeScreen(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomePage(),
+      ),
+    );
+    print("confirm clicked");
+  }
   @override
   Widget build(BuildContext context) {
     TabController _tabController = TabController(length: 2, vsync: this);
@@ -56,39 +96,6 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.max,
       children: [
-        // DefaultTabController(
-        //   length: widget.tabList.length,
-        //   child: TabBar(
-        //     onTap: (index) {
-        //       tabIndex = index;
-        //     },
-        //     labelColor: WELCOME_SCREEN_BACKGROUND_COLOR,
-        //     unselectedLabelColor: Colors.black87,
-        //     indicatorColor: WELCOME_SCREEN_BACKGROUND_COLOR,
-        //     indicatorWeight: 4,
-        //     tabs: widget.tabList
-        //         .map(
-        //           (desc) => Tab(
-        //             child: Text(
-        //               desc,
-        //               style: TextStyle(
-        //                 fontSize: TEXT_REGULAR,
-        //               ),
-        //             ),
-        //           ),
-        //         )
-        //         .toList(),
-        //   ),
-        // ),
-        // CustomScrollView(
-        //   slivers: [
-        //     SliverList(
-        //       delegate: SliverChildListDelegate(
-        //         <Widget>[],
-        //       ),
-        //     )
-        //   ],
-        // ),
         Container(
           child: TabBar(
             controller: _tabController,
@@ -117,7 +124,9 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
             controller: _tabController,
             children: [
               LoginView(),
-              SignInView(),
+              SignInView(onClickConfirm: (name, email, phone, password) {
+                _registerUser(name, email, phone, password);
+              }),
             ],
           ),
         )
@@ -127,6 +136,7 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
 }
 
 class LoginView extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -136,11 +146,17 @@ class LoginView extends StatelessWidget {
         InputFieldView(
          REGISTRATION_EMAIL,
           inputType: TextInputType.emailAddress,
+          textValue: (value){
+           // this.phone = phone ;
+          },
         ),
         SizedBox(height: MARGIN_LARGE),
         InputFieldView(
           REGISTRATION_PASSWORD,
           obscureText: true,
+            textValue: (value){
+              // this.phone = phone ;
+            }
         ),
         SizedBox(height: MARGIN_XLARGE),
         Align(
@@ -174,6 +190,12 @@ class LoginView extends StatelessWidget {
 }
 
 class SignInView extends StatelessWidget {
+  final Function(String name, String email,String phone, String password) onClickConfirm;
+   SignInView({required this.onClickConfirm});
+  String name = "";
+  String email = "";
+  String password = "";
+  String phone = "";
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -182,18 +204,29 @@ class SignInView extends StatelessWidget {
         InputFieldView(
           REGISTRATION_EMAIL,
           inputType: TextInputType.emailAddress,
+          textValue: (email){
+            this.email = email ;
+          },
         ),
         SizedBox(height: MARGIN_LARGE),
         InputFieldView(
          REGISTRATION_PASSWORD,
           obscureText: true,
+          textValue: (password){
+            this.password = password ;
+          },
         ),
         SizedBox(height: MARGIN_XLARGE),
-        InputFieldView(REGISTRATION_NAME),
+        InputFieldView(REGISTRATION_NAME,textValue:(userName){
+          this.name = userName ;
+        },),
         SizedBox(height: MARGIN_XLARGE),
         InputFieldView(
           REGISTRATION_PHONE_NUMBER,
           inputType: TextInputType.phone,
+          textValue: (phone){
+            this.phone = phone ;
+          },
         ),
         SizedBox(height: MARGIN_XLARGE),
         Align(
@@ -204,7 +237,7 @@ class SignInView extends StatelessWidget {
         SocialMediaView(),
         SizedBox(height: MARGIN_XLARGE),
         ElevatedButtonView(REGISTRATION_CONFIRM_BUTTON_TEXT,
-            () => _navigateToHomeScreen(context)),
+            () => onClickConfirm(this.name,this.email,this.phone,this.password)),
       ],
     );
   }

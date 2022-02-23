@@ -6,9 +6,10 @@ class InputFieldView extends StatelessWidget {
   final String labelText;
   final bool obscureText;
   final TextInputType inputType;
+  final Function(String) textValue;
 
   const InputFieldView(this.labelText,
-      {this.obscureText = false, this.inputType = TextInputType.text});
+      { required this.textValue,this.obscureText = false, this.inputType = TextInputType.text});
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +22,7 @@ class InputFieldView extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.w500),
           keyboardType: inputType,
           decoration: InputDecoration(),
+          onChanged: (value) => textValue(value) ,
         ),
       ],
     );
