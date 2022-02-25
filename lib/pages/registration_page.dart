@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:movies_booking/data/models/movie_booking_model.dart';
 import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
 import 'package:movies_booking/data/vos/user_vo.dart';
@@ -53,33 +52,38 @@ class RegistrationTabView extends StatefulWidget {
 
 class _RegistrationTabViewState extends State<RegistrationTabView>
     with TickerProviderStateMixin {
-  MovieBookingModel _movieBookingModel = MovieBookingModelImpl() ;
+  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
 
   UserVO? user;
   @override
   void initState() {
-
     super.initState();
   }
-  void _registerUser(String name,String email,String phone,String password){
+
+  void _registerUser(String name, String email, String phone, String password) {
     print("clicked register user-> $name,$email,$phone,$password");
-    _movieBookingModel.emailRegister(name, email, phone, password).then((userResponse) {
-      this.user = userResponse ;
-      // debugPrint("Register -> Successful");
-      // Fluttertoast.showToast(
-      //     msg: "Register Successful!",
-      //     toastLength: Toast.LENGTH_SHORT,
-      //     gravity: ToastGravity.CENTER,
-      //     timeInSecForIosWeb: 1,
-      //     backgroundColor: Colors.red,
-      //     textColor: Colors.white,
-      //     fontSize: 16.0
-      // );
+    _movieBookingModel
+        .emailRegister(name, email, phone, password)
+        .then((userResponse) {
+      this.user = userResponse;
+      print("Register success-> ${user?.name},${user?.email},token:${user?.token}");
       _navigateToHomeScreen(context);
-    }).catchError((error){
+    }).catchError((error) {
       debugPrint("Register Error -> $error");
     });
   }
+
+  void _emailLogin(String email, String password) {
+    print("clicked login-> $email,$password");
+    _movieBookingModel.emailLogin(email, password).then((userResponse) {
+      this.user = userResponse;
+      print("Login success -> ${user?.name},${user?.email},token:${user?.token}");
+      _navigateToHomeScreen(context);
+    }).catchError((error) {
+      debugPrint("Login Error -> $error");
+    });
+  }
+
   void _navigateToHomeScreen(BuildContext context) {
     Navigator.push(
       context,
@@ -89,6 +93,7 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
     );
     print("confirm clicked");
   }
+
   @override
   Widget build(BuildContext context) {
     TabController _tabController = TabController(length: 2, vsync: this);
@@ -123,7 +128,10 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
           child: TabBarView(
             controller: _tabController,
             children: [
-              LoginView(),
+              LoginView(
+                onClickConfirm: (email, password) =>
+                    _emailLogin(email, password),
+              ),
               SignInView(onClickConfirm: (name, email, phone, password) {
                 _registerUser(name, email, phone, password);
               }),
@@ -136,7 +144,10 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
 }
 
 class LoginView extends StatelessWidget {
-
+  final Function(String email, String password) onClickConfirm;
+  var _emailController = TextEditingController();
+  var _passwordController = TextEditingController();
+  LoginView({required this.onClickConfirm});
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -144,19 +155,15 @@ class LoginView extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: MARGIN_XLARGE),
       children: [
         InputFieldView(
-         REGISTRATION_EMAIL,
+          REGISTRATION_EMAIL,
           inputType: TextInputType.emailAddress,
-          textValue: (value){
-           // this.phone = phone ;
-          },
+          textController: _emailController,
         ),
         SizedBox(height: MARGIN_LARGE),
         InputFieldView(
           REGISTRATION_PASSWORD,
           obscureText: true,
-            textValue: (value){
-              // this.phone = phone ;
-            }
+          textController: _passwordController,
         ),
         SizedBox(height: MARGIN_XLARGE),
         Align(
@@ -172,7 +179,10 @@ class LoginView extends StatelessWidget {
         ),
         ElevatedButtonView(
           REGISTRATION_CONFIRM_BUTTON_TEXT,
-          () => _navigateToMoviesDetailScreen(context),
+          () => onClickConfirm(
+            _emailController.text,
+            _passwordController.text,
+          ),
         )
       ],
     );
@@ -190,12 +200,17 @@ class LoginView extends StatelessWidget {
 }
 
 class SignInView extends StatelessWidget {
-  final Function(String name, String email,String phone, String password) onClickConfirm;
-   SignInView({required this.onClickConfirm});
+  final Function(String name, String email, String phone, String password)
+      onClickConfirm;
+  SignInView({required this.onClickConfirm});
   String name = "";
   String email = "";
   String password = "";
   String phone = "";
+  var _emailController = TextEditingController();
+  var _phoneController = TextEditingController();
+  var _nameController = TextEditingController();
+  var _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -204,29 +219,24 @@ class SignInView extends StatelessWidget {
         InputFieldView(
           REGISTRATION_EMAIL,
           inputType: TextInputType.emailAddress,
-          textValue: (email){
-            this.email = email ;
-          },
+          textController: _emailController,
         ),
         SizedBox(height: MARGIN_LARGE),
         InputFieldView(
-         REGISTRATION_PASSWORD,
+          REGISTRATION_PASSWORD,
           obscureText: true,
-          textValue: (password){
-            this.password = password ;
-          },
+          textController: _passwordController,
         ),
         SizedBox(height: MARGIN_XLARGE),
-        InputFieldView(REGISTRATION_NAME,textValue:(userName){
-          this.name = userName ;
-        },),
+        InputFieldView(
+          REGISTRATION_NAME,
+          textController: _nameController,
+        ),
         SizedBox(height: MARGIN_XLARGE),
         InputFieldView(
           REGISTRATION_PHONE_NUMBER,
           inputType: TextInputType.phone,
-          textValue: (phone){
-            this.phone = phone ;
-          },
+          textController: _phoneController,
         ),
         SizedBox(height: MARGIN_XLARGE),
         Align(
@@ -236,8 +246,14 @@ class SignInView extends StatelessWidget {
         SizedBox(height: MARGIN_XLARGE),
         SocialMediaView(),
         SizedBox(height: MARGIN_XLARGE),
-        ElevatedButtonView(REGISTRATION_CONFIRM_BUTTON_TEXT,
-            () => onClickConfirm(this.name,this.email,this.phone,this.password)),
+        ElevatedButtonView(
+            REGISTRATION_CONFIRM_BUTTON_TEXT,
+            () => onClickConfirm(
+                  _nameController.text,
+                  _emailController.text,
+                  _phoneController.text,
+                  _passwordController.text,
+                )),
       ],
     );
   }
@@ -257,11 +273,13 @@ class SocialMediaView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        OutlineButtonView(REGISTRATION_FACEBOOK_BUTTON_TEXT, "assets/ic_facebook.png"),
+        OutlineButtonView(
+            REGISTRATION_FACEBOOK_BUTTON_TEXT, "assets/ic_facebook.png"),
         SizedBox(
           height: MARGIN_XLARGE,
         ),
-        OutlineButtonView(REGISTRATION_GOOGLE_BUTTON_TEXT, "assets/ic_google.png"),
+        OutlineButtonView(
+            REGISTRATION_GOOGLE_BUTTON_TEXT, "assets/ic_google.png"),
       ],
     );
   }
@@ -270,7 +288,10 @@ class SocialMediaView extends StatelessWidget {
 class ForgotPasswordView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return NormalTextView( REGISTRATION_FORGOT_PASSWORD,textColor: Colors.black26,);
+    return NormalTextView(
+      REGISTRATION_FORGOT_PASSWORD,
+      textColor: Colors.black26,
+    );
   }
 }
 
@@ -305,7 +326,10 @@ class OutlineButtonView extends StatelessWidget {
           SizedBox(
             width: MARGIN_MEDIUM_2,
           ),
-         NormalTextView(buttonText,textColor: Colors.black26,),
+          NormalTextView(
+            buttonText,
+            textColor: Colors.black26,
+          ),
         ],
       ),
     );

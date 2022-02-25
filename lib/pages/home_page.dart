@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
 import 'package:movies_booking/pages/registration_page.dart';
-import 'package:movies_booking/pages/welcome_page.dart';
+import 'package:movies_booking/persistence/hive_constants.dart';
 import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
 import 'package:movies_booking/viewItems/movies_view.dart';
@@ -9,9 +11,16 @@ import 'package:movies_booking/widgets/large_title_text.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
 
+import '../data/vos/movie_vo.dart';
+import '../data/vos/user_vo.dart';
 import 'movie_detail_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final List<String> menuTitle = [
     "Promotion Code",
     "Select a language",
@@ -19,6 +28,71 @@ class HomePage extends StatelessWidget {
     "Help",
     "Rate us"
   ];
+
+  MovieBookingModelImpl _movieBookingModel = MovieBookingModelImpl();
+  UserVO? user;
+  List<MovieVO>? nowShowingMovies;
+  List<MovieVO>? comingSoonMovies;
+
+  @override
+  void initState() {
+    _getUserInfo();
+    _getNowShowingMovies();
+    _getComingSoonMovie();
+    super.initState();
+  }
+
+  void _getNowShowingMovies() {
+    _movieBookingModel.getNowShowingMovie().then((nowShowing) {
+      setState(() {
+        this.nowShowingMovies = nowShowing;
+      });
+    }).catchError((error) {
+      debugPrint("Now Showing error: $error");
+    });
+  }
+
+  void _getComingSoonMovie() {
+    _movieBookingModel.getComingSoonMovie().then((comingSoon) {
+      setState(() {
+        this.comingSoonMovies = comingSoon;
+      });
+    }).catchError((error) {
+      debugPrint("Coming error: $error");
+    });
+  }
+
+  void _getUserInfo() {
+    _movieBookingModel.getUserInfo().then((userResponse) {
+      print("User Info -> ${user.toString()}");
+      setState(() {
+        this.user = userResponse;
+      });
+    }).catchError((error) {
+      debugPrint("Get User Info DB error: $error");
+    });
+  }
+
+  void _logout(BuildContext context) {
+    print("logout successful");
+    _movieBookingModel.logout().then((value) {
+      print("logout successful -> ${value.message}");
+      _navigateRegistrationPage(context);
+      Hive.box<UserVO>(BOX_NAMES_USER_VO).clear();
+    }).catchError((error) {
+      print("logout error -> $error");
+    });
+    //_navigateRegistrationPage(context);
+  }
+
+  void _navigateRegistrationPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => RegistrationPage(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,19 +120,17 @@ class HomePage extends StatelessWidget {
                 SizedBox(
                   height: 96,
                 ),
-                DrawerHeaderSection(),
+                DrawerHeaderSection(
+                  email: user?.email ?? "",
+                  name: user?.name ?? "",
+                ),
                 SizedBox(
                   height: MARGIN_XLARGE,
                 ),
                 DrawerContentSection(menuTitle: menuTitle),
                 Spacer(),
-                ListTile(
-                  leading: Icon(
-                    Icons.logout,
-                    size: 32,
-                    color: Colors.white,
-                  ),
-                  title: NormalTextView("Logout"),
+                LogoutView(
+                  onTapLogout: () => _logout(context),
                 ),
                 SizedBox(
                   height: MARGIN_XLARGE,
@@ -74,13 +146,21 @@ class HomePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              UserProfileView(),
+              UserProfileView(
+                username: user?.name ?? "",
+              ),
               SizedBox(height: MARGIN_SMALL_2),
               HorizontalMovieView(
-                  title: "Now Showing", onTapPoster: () => _navigateToMoviesDetailScreen(context)),
+                title: "Now Showing",
+                onTapPoster: (id) => _navigateToMoviesDetailScreen(context, id),
+                movieList: nowShowingMovies,
+              ),
               SizedBox(height: MARGIN_XLARGE),
               HorizontalMovieView(
-                  title: "Coming Soon", onTapPoster: () => _navigateToMoviesDetailScreen(context)),
+                title: "Coming Soon",
+                onTapPoster: (id) => _navigateToMoviesDetailScreen(context, id),
+                movieList: comingSoonMovies,
+              ),
             ],
           ),
         ),
@@ -88,21 +168,42 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void _navigateToMoviesDetailScreen(BuildContext context) {
+  void _navigateToMoviesDetailScreen(BuildContext context, int movieId) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MovieDetailPage(),
+        builder: (context) => MovieDetailPage(
+          movieId: movieId,
+        ),
       ),
     );
     print("movies clicked");
   }
 }
 
+class LogoutView extends StatelessWidget {
+  final VoidCallback onTapLogout;
+  LogoutView({required this.onTapLogout});
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTapLogout,
+      child: ListTile(
+        leading: Icon(
+          Icons.logout,
+          size: 32,
+          color: Colors.white,
+        ),
+        title: NormalTextView("Logout"),
+      ),
+    );
+  }
+}
+
 class DrawerContentSection extends StatelessWidget {
   const DrawerContentSection({
     required this.menuTitle,
-  }) ;
+  });
 
   final List<String> menuTitle;
 
@@ -129,6 +230,9 @@ class DrawerContentSection extends StatelessWidget {
 }
 
 class DrawerHeaderSection extends StatelessWidget {
+  final String email;
+  final String name;
+  DrawerHeaderSection({required this.email, required this.name});
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -153,18 +257,18 @@ class DrawerHeaderSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TitleText(
-              "Lily Johnson",
+              name,
               textColor: Colors.white,
             ),
             SizedBox(
               height: MARGIN_SMALL,
             ),
-            Row(
+            Wrap(
               children: [
                 Container(
-                  width: MediaQuery.of(context).size.width *0.4,
+                  width: MediaQuery.of(context).size.width * 0.4,
                   child: NormalTextView(
-                    "Lily Johnson@gmail.com",
+                    email,
                     textColor: Colors.white,
                   ),
                 ),
@@ -185,6 +289,8 @@ class DrawerHeaderSection extends StatelessWidget {
 }
 
 class UserProfileView extends StatelessWidget {
+  final String username;
+  UserProfileView({required this.username});
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -192,7 +298,7 @@ class UserProfileView extends StatelessWidget {
         CircleAvatarView(
           "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
         ),
-        LargeTitleText("Hi LiLy!"),
+        LargeTitleText(username),
       ],
     );
   }
@@ -230,9 +336,13 @@ class MenuButtonView extends StatelessWidget {
 
 class HorizontalMovieView extends StatelessWidget {
   final String title;
-  final VoidCallback onTapPoster;
+  final Function(int) onTapPoster;
+  final List<MovieVO>? movieList;
 
-  const HorizontalMovieView({required this.title,required this.onTapPoster});
+  const HorizontalMovieView(
+      {required this.title,
+      required this.onTapPoster,
+      required this.movieList});
 
   @override
   Widget build(BuildContext context) {
@@ -246,10 +356,15 @@ class HorizontalMovieView extends StatelessWidget {
         Container(
           height: MOVIES_POSTER_ITEM_HEIGHT,
           child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 5,
-              itemBuilder: (BuildContext context, int index) =>
-                  MoviesView(onTapPoster)),
+            scrollDirection: Axis.horizontal,
+            itemCount: movieList?.length ?? 0,
+            itemBuilder: (BuildContext context, int index) => GestureDetector(
+              onTap:() => onTapPoster(movieList?[index].id ?? 0),
+              child: MoviesView(
+                movies: movieList?[index],
+              ),
+            ),
+          ),
         ),
       ],
     );

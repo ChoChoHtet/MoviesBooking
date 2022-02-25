@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movies_booking/network/api_constants.dart';
 import 'package:movies_booking/resources/dimen.dart';
 
 class CircleAvatarView extends StatelessWidget {
@@ -13,7 +14,7 @@ class CircleAvatarView extends StatelessWidget {
           width: AVATAR_SIZE,
           child: CircleAvatar(
             backgroundImage: NetworkImage(
-              url,
+              "$MOVIE_IMAGE_URL$url",
             ),
           ),
         ),

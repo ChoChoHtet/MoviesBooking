@@ -6,23 +6,31 @@ class InputFieldView extends StatelessWidget {
   final String labelText;
   final bool obscureText;
   final TextInputType inputType;
-  final Function(String) textValue;
+  final TextEditingController textController;
 
-  const InputFieldView(this.labelText,
-      { required this.textValue,this.obscureText = false, this.inputType = TextInputType.text});
+  const InputFieldView(
+    this.labelText, {
+    required this.textController,
+    this.obscureText = false,
+    this.inputType = TextInputType.text,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        NormalTextView(labelText,textColor: Colors.black26,),
+        NormalTextView(
+          labelText,
+          textColor: Colors.black26,
+        ),
         TextField(
           obscureText: obscureText,
           style: TextStyle(fontWeight: FontWeight.w500),
           keyboardType: inputType,
-          decoration: InputDecoration(),
-          onChanged: (value) => textValue(value) ,
+          decoration: InputDecoration(
+          ),
+          controller: textController,
         ),
       ],
     );

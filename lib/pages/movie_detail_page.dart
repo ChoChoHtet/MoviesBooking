@@ -1,5 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:movies_booking/data/models/movie_booking_model.dart';
+import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
+import 'package:movies_booking/data/vos/credit_vo.dart';
+import 'package:movies_booking/network/api_constants.dart';
 import 'package:movies_booking/pages/item_order_page.dart';
 import 'package:movies_booking/pages/movie_choose_time_page.dart';
 import 'package:movies_booking/pages/movie_seats_page.dart';
@@ -13,13 +18,52 @@ import 'package:movies_booking/widgets/large_title_text.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
 
-class MovieDetailPage extends StatelessWidget {
-  final List<String> genreList = ["Mystery", "Adventure"];
-  final List<String> castList = [
-    "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
-    "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
-    "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
-  ];
+import '../data/vos/movie_vo.dart';
+
+class MovieDetailPage extends StatefulWidget {
+  final int? movieId;
+  MovieDetailPage({required this.movieId});
+  @override
+  State<MovieDetailPage> createState() => _MovieDetailPageState();
+}
+
+class _MovieDetailPageState extends State<MovieDetailPage> {
+  // final List<String> genreList = ["Mystery", "Adventure"];
+
+  // final List<String> castList = [
+  //   "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
+  //   "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
+  //   "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
+  // ];
+  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
+  MovieVO? movie;
+  List<CreditVO>? castList;
+  @override
+  void initState() {
+    _getMovieDetail();
+    _getMovieCredit();
+    super.initState();
+  }
+
+  void _getMovieCredit() {
+    _movieBookingModel.getMovieCredit(widget.movieId ?? 0).then((response) {
+      setState(() {
+        this.castList = response;
+      });
+    }).catchError((error) {
+      debugPrint("Movie Credit Error :$error");
+    });
+  }
+
+  void _getMovieDetail() {
+    _movieBookingModel.getMovieDetail(widget.movieId ?? 0).then((response) {
+      setState(() {
+        this.movie = response;
+      });
+    }).catchError((error) {
+      debugPrint("Movie Detail Error :$error");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +73,18 @@ class MovieDetailPage extends StatelessWidget {
         Positioned.fill(
           child: CustomScrollView(
             slivers: [
-              MoviesSliverAppBar(() => Navigator.pop(context)),
+              MoviesSliverAppBar(
+                posterPath: movie?.posterPath ?? "",
+                onTapBack: () => Navigator.pop(context),
+              ),
               SliverList(
                 delegate: SliverChildListDelegate(
                   [
-                    MoviesInfoView(genreList: genreList, castList: castList),
+                    MoviesInfoView(
+                      genreList: movie?.getGenreAsString() ?? [],
+                      castList: this.castList,
+                      movie: this.movie,
+                    ),
                   ],
                 ),
               ),
@@ -64,8 +115,9 @@ class MovieDetailPage extends StatelessWidget {
 
 class MoviesSliverAppBar extends StatelessWidget {
   final VoidCallback onTapBack;
+  final String posterPath;
 
-  const MoviesSliverAppBar(this.onTapBack);
+  const MoviesSliverAppBar({required this.onTapBack, required this.posterPath});
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +129,10 @@ class MoviesSliverAppBar extends StatelessWidget {
         children: [
           FlexibleSpaceBar(
             collapseMode: CollapseMode.parallax,
-            background: MoviesPosterView(onTapBack),
+            background: MoviesPosterView(
+              onTapBack: onTapBack,
+              posterPath: posterPath,
+            ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
@@ -98,7 +153,6 @@ class MoviesSliverAppBar extends StatelessWidget {
 }
 
 class GetTicketButtonView extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -110,13 +164,12 @@ class GetTicketButtonView extends StatelessWidget {
 }
 
 class MoviesInfoView extends StatelessWidget {
-  const MoviesInfoView({
-    required this.genreList,
-    required this.castList,
-  }) ;
+  const MoviesInfoView(
+      {required this.genreList, required this.castList, required this.movie});
 
   final List<String> genreList;
-  final List<String> castList;
+  final List<CreditVO>? castList;
+  final MovieVO? movie;
 
   @override
   Widget build(BuildContext context) {
@@ -125,18 +178,20 @@ class MoviesInfoView extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          LargeTitleText("Detective Pikachu"),
+          LargeTitleText(movie?.title ?? ""),
           SizedBox(
             height: MARGIN_MEDIUM,
           ),
-          MoviesTimeAndRatingView(),
+          MoviesTimeAndRatingView(voteAverage: movie?.voteAverage ?? 0.0,),
           SizedBox(
             height: MARGIN_MEDIUM,
           ),
-          Row(
-            children: genreList.map((genre) => GeneralChipView(genre)).toList(),
-          ),
+           Row(
+              mainAxisSize: MainAxisSize.min,
+              children: genreList.map((genre) => GeneralChipView(genre)).toList(),
+            ),
           SizedBox(
             height: MARGIN_MEDIUM,
           ),
@@ -146,7 +201,7 @@ class MoviesInfoView extends StatelessWidget {
             height: MARGIN_SMALL_2,
           ),
           Text(
-            "Return or Fall During the Return, the hostility of the counter-party beats upon the soul of the hero. Freytag lays out two rules for this stage: the number of characters be limited as much as possible, and the number of scenes through which the hero falls should be fewer than in the rising movement.Return or Fall During the Return, the hostility of the counter-party beats upon the soul of the hero. Freytag lays out two rules for this stage: the number of characters be limited as much as possible, and the number of scenes through which the hero falls should be fewer than in the rising movement.Return or Fall During the Return, the hostility of the counter-party beats upon the soul of the hero. Freytag lays out two rules for this stage: the number of characters be limited as much as possible, and the number of scenes through which the hero falls should be fewer than in the rising movemReturn or Fall During the Return, the hostility of the counter-party beats upon the soul of the hero. Freytag lays out two rules for this stage: the number of characters be limited as much as possible, and the number of scenes through which the hero falls should be fewer than in the rising movement.ent.",
+            movie?.overview ?? "",
             style: TextStyle(
               color: Colors.grey,
               fontSize: TEXT_REGULAR,
@@ -167,7 +222,7 @@ class MoviesCastView extends StatelessWidget {
     required this.castList,
   });
 
-  final List<String> castList;
+  final List<CreditVO>? castList;
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +234,10 @@ class MoviesCastView extends StatelessWidget {
           height: MARGIN_MEDIUM,
         ),
         Row(
-          children: castList.map((url) => CircleAvatarView(url)).toList(),
+          children: castList
+                  ?.map((cast) => CircleAvatarView(cast.profilePath ?? ""))
+                  .toList() ??
+              [],
         ),
         SizedBox(
           height: 80,
@@ -223,8 +281,8 @@ class VideoPlayView extends StatelessWidget {
 
 class MoviesPosterView extends StatelessWidget {
   final VoidCallback onTapBack;
-
-  const MoviesPosterView(this.onTapBack);
+  final String posterPath;
+  const MoviesPosterView({required this.posterPath, required this.onTapBack});
 
   @override
   Widget build(BuildContext context) {
@@ -232,7 +290,7 @@ class MoviesPosterView extends StatelessWidget {
       children: [
         Positioned.fill(
           child: Image.network(
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGFrQd3ez_nmjQhnH7F3vyJUbDogMKNqoU6nCd-7rJ3ZzgprZo",
+            "$MOVIE_IMAGE_URL$posterPath",
             fit: BoxFit.cover,
           ),
         ),
@@ -241,7 +299,8 @@ class MoviesPosterView extends StatelessWidget {
           child: Padding(
             padding:
                 const EdgeInsets.only(top: MARGIN_XLARGE, left: MARGIN_MEDIUM),
-            child: BackButtonView(onTapBack,
+            child: BackButtonView(
+              onTapBack,
               color: Colors.white,
             ),
           ),
@@ -282,6 +341,8 @@ class GeneralChipView extends StatelessWidget {
 }
 
 class MoviesTimeAndRatingView extends StatelessWidget {
+  final double voteAverage;
+  MoviesTimeAndRatingView({required this.voteAverage});
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -297,7 +358,7 @@ class MoviesTimeAndRatingView extends StatelessWidget {
           width: MARGIN_SMALL_2,
         ),
         RatingBar.builder(
-          initialRating: 3.5,
+          initialRating: voteAverage,
           itemSize: 30,
           itemBuilder: (context, _) => Icon(
             Icons.star,
@@ -309,7 +370,7 @@ class MoviesTimeAndRatingView extends StatelessWidget {
           width: MARGIN_SMALL_2,
         ),
         Text(
-          "IMDB 6.6",
+          "IMDB $voteAverage",
           style: TextStyle(
             color: Colors.grey,
             fontSize: TEXT_REGULAR_1X,

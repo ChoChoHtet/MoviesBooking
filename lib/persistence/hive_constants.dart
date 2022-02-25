@@ -1,0 +1,10 @@
+
+//hive type
+const HIVE_USER_ID=1;
+const HIVE_MOVIE_ID=2;
+const HIVE_CREDIT_ID=3;
+
+//box name
+const BOX_NAMES_USER_VO="BOX_NAMES_USER_VO";
+const BOX_NAMES_MOVIE_VO="BOX_NAMES_MOVIE_VO";
+const BOX_NAMES_CREDIT_VO="BOX_NAMES_CREDIT_VO";

@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:movies_booking/pages/add_card_info_page.dart';
-import 'package:movies_booking/pages/item_order_page.dart';
-import 'package:movies_booking/pages/home_page.dart';
-import 'package:movies_booking/pages/movie_choose_time_page.dart';
-import 'package:movies_booking/pages/movie_detail_page.dart';
-import 'package:movies_booking/pages/movie_seats_page.dart';
-import 'package:movies_booking/pages/movie_ticket_page.dart';
-import 'package:movies_booking/pages/payment_page.dart';
-import 'package:movies_booking/pages/registration_page.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:movies_booking/data/vos/credit_vo.dart';
+import 'package:movies_booking/data/vos/movie_vo.dart';
+import 'package:movies_booking/data/vos/user_vo.dart';
 import 'package:movies_booking/pages/welcome_page.dart';
+import 'package:movies_booking/persistence/hive_constants.dart';
 import 'package:movies_booking/resources/colors.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(UserVOAdapter());
+  Hive.registerAdapter(MovieVOAdapter());
+  Hive.registerAdapter(CreditVOAdapter());
+
+  await Hive.openBox<UserVO>(BOX_NAMES_USER_VO);
+  await Hive.openBox<MovieVO>(BOX_NAMES_MOVIE_VO);
+  await Hive.openBox<CreditVO>(BOX_NAMES_CREDIT_VO);
+
   runApp(MyApp());
+
 }
 
 class MyApp extends StatelessWidget {
