@@ -18,11 +18,18 @@ class CinemaSeatVO{
   @JsonKey(name: "price")
   int? price;
 
-  bool? isSelected;
+  bool? isSelected =false;
 
 
   CinemaSeatVO(this.id, this.type, this.seatName, this.symbol, this.price,
       this.isSelected);
+
+  bool isSeatTypeAvailable() => this.type == "available";
+  bool isSeatTypeText() => this.type == "text";
+
+  bool isSeatTypeSpace()=> this.type =="space";
+
+  bool isSeatTypeTaken()=> this.type == "taken";
 
 
   @override

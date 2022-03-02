@@ -98,18 +98,25 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
             child: ElevatedButtonView(
               MOVIES_DETAIL_GET_YOUR_TICKET_BUTTON_TEXT,
               () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MovieChooseTimePage(),
-                  ),
-                );
+                _navigateToChooseTimePage(context);
               },
             ),
           ),
         ),
       ],
     ));
+  }
+
+  void _navigateToChooseTimePage(BuildContext context) {
+     Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MovieChooseTimePage(
+          movieID: this.movie?.id ?? 0,
+          movieName: this.movie?.title ?? "",
+        ),
+      ),
+    );
   }
 }
 
@@ -184,14 +191,16 @@ class MoviesInfoView extends StatelessWidget {
           SizedBox(
             height: MARGIN_MEDIUM,
           ),
-          MoviesTimeAndRatingView(voteAverage: movie?.voteAverage ?? 0.0,),
+          MoviesTimeAndRatingView(
+            voteAverage: movie?.voteAverage ?? 0.0,
+          ),
           SizedBox(
             height: MARGIN_MEDIUM,
           ),
-           Wrap(
-             direction: Axis.horizontal,
-              children: genreList.map((genre) => GeneralChipView(genre)).toList(),
-            ),
+          Wrap(
+            direction: Axis.horizontal,
+            children: genreList.map((genre) => GeneralChipView(genre)).toList(),
+          ),
           SizedBox(
             height: MARGIN_MEDIUM,
           ),

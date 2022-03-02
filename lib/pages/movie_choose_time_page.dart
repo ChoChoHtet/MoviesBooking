@@ -15,6 +15,9 @@ import 'package:movies_booking/widgets/title_text.dart';
 import 'package:collection/collection.dart';
 
 class MovieChooseTimePage extends StatefulWidget {
+  final String movieName;
+  final int movieID;
+  MovieChooseTimePage({required this.movieID,required this.movieName});
   final List<DateVO> dateTime =
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((numOfDays) {
     return DateTime.now().add(Duration(days: numOfDays));
@@ -41,6 +44,7 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
   int timeSlotId = 0;
   String bookingDate = "";
   String startTime = "";
+  String cinemaName="";
 
   @override
   void initState() {
@@ -118,11 +122,10 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
                 available: widget.available,
                 onTapTime: (cinemaVO, index) {
                   setState(() {
-                    //this.timeSlotId = timeSlotId;
-                    // this.startTime = startTime;
                     TimeSlotVO? slot = cinemaVO?.timeSlots?[index];
                     this.timeSlotId = slot?.timeSlotId ?? 0;
                     this.startTime = slot?.startTime ?? "";
+                    this.cinemaName = cinemaVO?.cinema ?? "";
                     _setTimeSlotSelected(cinemaVO, slot);
                   });
                 },
@@ -134,7 +137,7 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
                 padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
                 child: ElevatedButtonView("Next", () {
                   _navigateMovieSeatPage(
-                      context, timeSlotId, bookingDate, startTime);
+                      context, timeSlotId, bookingDate, startTime,cinemaName);
 
                 }),
               ),
@@ -149,15 +152,18 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
   }
 
   void _navigateMovieSeatPage(
-      BuildContext context, int timeSlotId, String date, String startTime) {
+      BuildContext context, int timeSlotId, String date, String startTime,String cinemaName) {
     print("choose time -> id:$timeSlotId,date:$date");
     if(_validateTimeSlot()){
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => MovieSeatPage(
+            movieId: widget.movieID,
+            movieName: widget.movieName,
             timeSlotId: timeSlotId,
             bookingDate: date,
+            cinemaName:cinemaName ,
             startTime: startTime,
           ),
         ),

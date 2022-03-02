@@ -1,10 +1,14 @@
+
+
 import 'package:flutter/material.dart';
+import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
 
+import '../data/vos/cinema_seat_vo.dart';
 import '../data/vos/movie_seat_vo.dart';
 
 class MovieSeatItemView extends StatelessWidget {
-  final MovieSeatVO movieSeatVO;
+  final CinemaSeatVO? movieSeatVO;
 
   const MovieSeatItemView(this.movieSeatVO);
 
@@ -17,21 +21,33 @@ class MovieSeatItemView extends StatelessWidget {
           topLeft: Radius.circular(MARGIN_SMALL),
           topRight: Radius.circular(MARGIN_SMALL),
         ),
-        color: _getColor(movieSeatVO),
+        color: _getColor(movieSeatVO ),
       ),
       child: Center(
-        child: Text(movieSeatVO.title),
+        child: Text(_setSeatText(movieSeatVO),style: TextStyle(
+          color: movieSeatVO?.isSelected == true ? Colors.white : null,
+        ),),
       ),
     );
   }
-
-  Color _getColor(MovieSeatVO movieSeatVO) {
-    if (movieSeatVO.isMovieSeatAvailable()) {
-      return Colors.black26;
-    } else if (movieSeatVO.isMovieSeatTaken()) {
-      return Colors.blueGrey;
-    } else {
-      return Colors.white;
+  String _setSeatText(CinemaSeatVO? movieSeatVO){
+    if(movieSeatVO?.isSeatTypeText() == true){
+      return movieSeatVO?.symbol ?? "" ;
+    }else if(movieSeatVO?.isSeatTypeAvailable() == true && movieSeatVO?.isSelected == true ){
+      List<String> name = movieSeatVO?.seatName?.split("-") ?? [];
+      return name.isNotEmpty && name.length ==2 ? name.last : movieSeatVO?.symbol ?? "" ;
     }
+    return "" ;
+  }
+
+  Color _getColor(CinemaSeatVO? movieSeatVO) {
+    if (movieSeatVO?.isSeatTypeAvailable() == true) {
+      if(movieSeatVO?.isSelected == true){
+        return DATE_NONE_SELECT_COLOR;
+      }
+      return Colors.black26;
+    } else if (movieSeatVO?.isSeatTypeTaken() == true) {
+      return Colors.blueGrey;
+    } else return Colors.white;
   }
 }
