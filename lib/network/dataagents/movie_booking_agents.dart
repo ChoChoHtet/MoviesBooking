@@ -2,6 +2,8 @@ import 'package:movies_booking/data/vos/cinema_seat_vo.dart';
 import 'package:movies_booking/data/vos/cinema_vo.dart';
 import 'package:movies_booking/data/vos/credit_vo.dart';
 import 'package:movies_booking/data/vos/movie_vo.dart';
+import 'package:movies_booking/data/vos/payment_vo.dart';
+import 'package:movies_booking/data/vos/snack_vo.dart';
 import 'package:movies_booking/network/response/common_response.dart';
 import 'package:movies_booking/network/response/get_credit_response.dart';
 import 'package:movies_booking/network/response/get_movie_response.dart';
@@ -25,6 +27,11 @@ abstract class MovieBookingAgent {
   Future<List<CreditVO>?> getMovieCredit(int movieId);
 
   Future<List<CinemaVO>?> getCinemaTimeSlots(String date, String token);
+
   Future<List<List<CinemaSeatVO>>?> getCinemaSeatPlans(
       String token, int timeSlotId, String bookingDate);
+
+  Future<List<SnackVO>?> getSnacks(String token);
+
+  Future<List<PaymentVO>?> getPaymentMethod(String token);
 }

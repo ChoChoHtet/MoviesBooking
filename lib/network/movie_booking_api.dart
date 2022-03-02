@@ -5,6 +5,8 @@ import 'package:movies_booking/network/response/get_cinema_response.dart';
 import 'package:movies_booking/network/response/get_cinema_seat_response.dart';
 import 'package:movies_booking/network/response/get_credit_response.dart';
 import 'package:movies_booking/network/response/get_movie_response.dart';
+import 'package:movies_booking/network/response/get_payment_response.dart';
+import 'package:movies_booking/network/response/get_snack_response.dart';
 import 'package:movies_booking/network/response/get_user_response.dart';
 import 'package:retrofit/http.dart';
 
@@ -46,4 +48,14 @@ abstract class MovieBookingAPI {
       @Header(PARAMS_AUTHORIZATION) String token,
       @Query(PARAMS_CINEMA_TIME_SLOT_ID) String timeSlotId,
       @Query(PARAMS_BOOKING_DATE) String bookingDate);
+
+  //snacks
+  @GET(SNACKS_END_POINT)
+  Future<GetSnackResponse> getSnacks(
+      @Header(PARAMS_AUTHORIZATION) String token);
+
+  //payment method
+  @GET(PAYMENT_METHOD_END_POINT)
+  Future<GetPaymentResponse> getPaymentMethods(
+      @Header(PARAMS_AUTHORIZATION) String token);
 }

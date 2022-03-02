@@ -1,9 +1,14 @@
-
-
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:movies_booking/data/models/movie_booking_model.dart';
+import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
+import 'package:movies_booking/data/vos/payment_vo.dart';
+import 'package:movies_booking/data/vos/snack_vo.dart';
 import 'package:movies_booking/pages/add_card_info_page.dart';
 import 'package:movies_booking/pages/movie_ticket_page.dart';
 import 'package:movies_booking/pages/payment_page.dart';
+import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
 import 'package:movies_booking/resources/strings.dart';
 import 'package:movies_booking/viewItems/combo_set_view.dart';
@@ -15,8 +20,70 @@ import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_and_description_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
 
-class ItemOrderPage extends StatelessWidget {
-  final List<String> snackList = ["1", "2", "3"];
+class ItemOrderPage extends StatefulWidget {
+  final int movieId;
+  final int cinemaId;
+  final int timeSlotId;
+  final String bookingDate;
+  final int totalPrice;
+  final String seatNumbers;
+
+  ItemOrderPage({
+    required this.movieId,
+    required this.cinemaId,
+    required this.timeSlotId,
+    required this.bookingDate,
+    required this.totalPrice,
+    required this.seatNumbers
+});
+
+  @override
+  State<ItemOrderPage> createState() => _ItemOrderPageState();
+}
+
+class _ItemOrderPageState extends State<ItemOrderPage> {
+  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
+  // final List<String> snackList = ["1", "2", "3"];
+
+  List<SnackVO>? snacksList;
+  List<PaymentVO>? paymentList;
+  int totalPrice = 0;
+  @override
+  void initState() {
+    _getSnacks();
+    _getPaymentMethods();
+    super.initState();
+  }
+
+  void _getPaymentMethods() {
+    _movieBookingModel.getPaymentMethod().then((paymentResponse) {
+      setState(() {
+        this.paymentList = paymentResponse;
+      });
+    }).catchError((error) {
+      debugPrint("Payment Error: $error");
+    });
+  }
+
+  void _getSnacks() {
+    _movieBookingModel.getSnacks().then((snackResponse) {
+      setState(() {
+        this.snacksList = snackResponse;
+      });
+    }).catchError((error) {
+      debugPrint("Snack Error: $error");
+    });
+  }
+  void _setPaymentSelected(PaymentVO? payment){
+    paymentList?.forEach((element) {
+      if(element.id == payment?.id){
+        element.isSelected = true ;
+      }else{
+        element.isSelected = false ;
+      }
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +101,27 @@ class ItemOrderPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: MediaQuery.of(context).size.height *0.6,
+                  // height: MediaQuery.of(context).size.height * 0.6,
                   child: ListView.builder(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: 5,
+                    itemCount: this.snacksList?.length ?? 0,
                     itemBuilder: (BuildContext context, int index) =>
-                        ComboSetView(),
+                        ComboSetView(
+                      snackVO: this.snacksList?[index],
+                      onTapCount: (quantity, action) {
+                        print("quantity: $quantity,action: $action");
+                        setState(() {
+                          SnackVO? snack = this.snacksList?[index];
+                          snack?.quantity = quantity;
+                          if (ACTION_INCREASE == action) {
+                            this.totalPrice += snack?.price ?? 0 * quantity;
+                          } else {
+                            this.totalPrice -= snack?.price ?? 0 * quantity;
+                          }
+                        });
+                      },
+                    ),
                   ),
                 ),
                 PromoCodeSection(),
@@ -48,18 +129,25 @@ class ItemOrderPage extends StatelessWidget {
                   height: MARGIN_MEDIUM,
                 ),
                 TitleText(
-                  "Sub Total : 40\$",
+                  "Sub Total : $totalPrice\$",
                   textColor: Colors.green,
                 ),
                 SizedBox(
                   height: MARGIN_LARGE,
                 ),
-                PaymentMethodSection(),
+                PaymentMethodSection(
+                  paymentList: this.paymentList,
+                  onTapPayment: (payment){
+                    setState(() {
+                      _setPaymentSelected(payment);
+                    });
+                  },
+                ),
                 SizedBox(
                   height: MARGIN_LARGE,
                 ),
                 ElevatedButtonView(
-                  "Pay \$40",
+                  "Pay \$${totalPrice + widget.totalPrice}",
                   () => _navigateToPaymentScreen(context),
                 ),
                 SizedBox(
@@ -82,47 +170,71 @@ class ItemOrderPage extends StatelessWidget {
 }
 
 class PaymentMethodSection extends StatelessWidget {
-
+  final List<PaymentVO>? paymentList;
+  final Function(PaymentVO?) onTapPayment;
+  PaymentMethodSection({required this.paymentList, required this.onTapPayment});
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         LargeTitleText("Payment Method"),
         SizedBox(height: MARGIN_LARGE),
-        PaymentOptionView(
-          PAYMENT_OPTION_CREDIT_CARD,
-          PAYMENT_METHOD_VISA,
-          Image.asset(
-            "assets/ic_credit_card.png",
-            width: 28,
-            height: 28,
-          ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          itemCount: paymentList?.length ?? 0,
+          itemBuilder: (context, index) {
+            return InkWell(
+              onTap: () => onTapPayment(paymentList?[index]),
+              child: PaymentOptionView(
+                title: paymentList?[index].name ?? "",
+                description: paymentList?[index].name ?? "",
+                isSelected: paymentList?[index].isSelected ?? false,
+                paymentIcon: Image.asset(
+                  "assets/ic_credit_card.png",
+                  width: 28,
+                  height: 28,
+                ),
+              ),
+            );
+          },
         ),
-        SizedBox(
-          height: MARGIN_SMALL,
-        ),
-        PaymentOptionView(
-          PAYMENT_OPTION_ATM_CARD,
-          PAYMENT_METHOD_VISA,
-          Image.asset(
-            "assets/ic_atm_card.png",
-            width: 28,
-            height: 28,
-          ),
-        ),
-        SizedBox(
-          height: MARGIN_SMALL,
-        ),
-        PaymentOptionView(
-          PAYMENT_OPTION_E_WALLET,
-          PAYMENT_PAYPAL,
-          Image.asset(
-            "assets/ic_wallet.png",
-            width: 28,
-            height: 28,
-          ),
-        ),
+
+        // PaymentOptionView(
+        //   title: paymentList?[0].name ?? "",
+        //   description: paymentList?[0].description ?? "",
+        //   paymentIcon: Image.asset(
+        //     "assets/ic_credit_card.png",
+        //     width: 28,
+        //     height: 28,
+        //   ),
+        // ),
+        // SizedBox(
+        //   height: MARGIN_SMALL,
+        // ),
+        // PaymentOptionView(
+        //   title: paymentList?[1].name ?? "",
+        //   description: paymentList?[0].description ?? "",
+        //   paymentIcon: Image.asset(
+        //     "assets/ic_atm_card.png",
+        //     width: 28,
+        //     height: 28,
+        //   ),
+        // ),
+        // SizedBox(
+        //   height: MARGIN_SMALL,
+        // ),
+        // PaymentOptionView(
+        //   title: paymentList?[2].name ?? "",
+        //   description: paymentList?[2].description ?? "",
+        //   paymentIcon: Image.asset(
+        //     "assets/ic_wallet.png",
+        //     width: 28,
+        //     height: 28,
+        //   ),
+        // ),
       ],
     );
   }
@@ -131,33 +243,47 @@ class PaymentMethodSection extends StatelessWidget {
 class PaymentOptionView extends StatelessWidget {
   final String title;
   final String description;
+  final bool isSelected;
   final Image paymentIcon;
 
-  const PaymentOptionView(this.title, this.description, this.paymentIcon);
+  const PaymentOptionView(
+      {required this.title,
+      required this.description,
+      required this.paymentIcon,
+      required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Center(
-            child: paymentIcon,
+    return Column(
+      children: [
+        Container(
+          height: 50,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Center(
+                child: paymentIcon,
+              ),
+              SizedBox(
+                width: MARGIN_LARGE,
+              ),
+              TitleAndDescriptionView(
+                title,
+                description,
+                textColor:
+                    isSelected == true ? DATE_NONE_SELECT_COLOR : Colors.black26,
+              ),
+            ],
           ),
-          SizedBox(
-            width: MARGIN_LARGE,
-          ),
-          TitleAndDescriptionView(title, description),
-        ],
-      ),
+        ),
+        SizedBox(height: MARGIN_SMALL,),
+      ],
     );
   }
 }
 
 class PromoCodeSection extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -192,8 +318,7 @@ class PromoCodeSection extends StatelessWidget {
   }
 }
 
-class ComboSetSection extends StatelessWidget {
-
+/*class ComboSetSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -274,4 +399,4 @@ class NumberPickerView extends StatelessWidget {
       ),
     );
   }
-}
+}*/

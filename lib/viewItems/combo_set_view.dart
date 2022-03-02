@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:movies_booking/resources/dimen.dart';
+import 'package:movies_booking/resources/strings.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_and_description_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
 
+import '../data/vos/snack_vo.dart';
+
 class ComboSetView extends StatelessWidget {
-
-
+  final SnackVO? snackVO;
+  final Function(int quantity,String action) onTapCount;
+  ComboSetView({required this.snackVO,required this.onTapCount});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,35 +21,51 @@ class ComboSetView extends StatelessWidget {
           Container(
             width: MediaQuery.of(context).size.width / 2,
             child: TitleAndDescriptionView(
-              "Combo Set M",
-              "Combo size  220z Coke (X1) and medium popcorn(X1)",
+              snackVO?.name ?? "",
+              snackVO?.description ?? "",
             ),
           ),
           Spacer(),
-          ComboPricerAndNumbersView(),
+          ComboPricerAndNumbersView(snackVO: snackVO,onTapCount: (quantity,action){
+           // print("Snack : $quantity");
+            onTapCount(quantity,action);
+          },),
         ],
       ),
     );
   }
 }
+
 class ComboPricerAndNumbersView extends StatelessWidget {
+  final SnackVO? snackVO;
+  final Function(int quantity,String action) onTapCount;
+  ComboPricerAndNumbersView({required this.snackVO, required this.onTapCount});
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TitleText("15\$"),
+        TitleText("${snackVO?.price ?? 0}\$"),
         SizedBox(
           height: 4,
         ),
-        NumberPickerView()
+        NumberPickerView(
+          snackVO: snackVO,
+          onTapCount: onTapCount,
+        )
       ],
     );
   }
 }
 
 class NumberPickerView extends StatelessWidget {
+  final Function(int quantity,String action) onTapCount;
+  final SnackVO? snackVO;
+  NumberPickerView(
+      {required this.snackVO,
+      required this.onTapCount});
   @override
   Widget build(BuildContext context) {
+    int count = snackVO?.quantity ?? 0 ;
     return Container(
       height: 40,
       decoration: BoxDecoration(
@@ -53,12 +73,17 @@ class NumberPickerView extends StatelessWidget {
           border: Border.all(color: Colors.black26)),
       child: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(
-                left: MARGIN_SMALL_2, right: MARGIN_CARD_SMALL),
-            child: Icon(
-              Icons.remove,
-              size: 18,
+          InkWell(
+            onTap: () {
+              onTapCount(--count,ACTION_DECREASE);
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: MARGIN_SMALL_2, right: MARGIN_CARD_SMALL),
+              child: Icon(
+                Icons.remove,
+                size: 18,
+              ),
             ),
           ),
           VerticalDivider(
@@ -67,19 +92,22 @@ class NumberPickerView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: MARGIN_SMALL),
             child: NormalTextView(
-              "0",
+              "${snackVO?.quantity ?? 0}",
               textColor: Colors.black26,
             ),
           ),
           VerticalDivider(
             thickness: 1,
           ),
-          Padding(
-            padding: const EdgeInsets.only(
-                left: MARGIN_CARD_SMALL, right: MARGIN_SMALL_2),
-            child: Icon(
-              Icons.add,
-              size: 18,
+          InkWell(
+            onTap: () => onTapCount(++count,ACTION_INCREASE),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: MARGIN_CARD_SMALL, right: MARGIN_SMALL_2),
+              child: Icon(
+                Icons.add,
+                size: 18,
+              ),
             ),
           ),
         ],

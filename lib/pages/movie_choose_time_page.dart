@@ -45,6 +45,7 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
   String bookingDate = "";
   String startTime = "";
   String cinemaName="";
+  int cinemaId = 0 ;
 
   @override
   void initState() {
@@ -72,6 +73,7 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
   }
 
   void _setTimeSlotSelected(CinemaVO? cinemaVO, TimeSlotVO? slot) {
+
     this.cinemaTimeList?.forEachIndexed((index, element) {
       if (element.cinemaId == cinemaVO?.cinemaId) {
         this.cinemaTimeList?[index].isSelected = true;
@@ -126,6 +128,7 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
                     this.timeSlotId = slot?.timeSlotId ?? 0;
                     this.startTime = slot?.startTime ?? "";
                     this.cinemaName = cinemaVO?.cinema ?? "";
+                    this.cinemaId = cinemaVO?.cinemaId ?? 0;
                     _setTimeSlotSelected(cinemaVO, slot);
                   });
                 },
@@ -137,7 +140,7 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
                 padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
                 child: ElevatedButtonView("Next", () {
                   _navigateMovieSeatPage(
-                      context, timeSlotId, bookingDate, startTime,cinemaName);
+                      context, timeSlotId, bookingDate, startTime,cinemaName,cinemaId);
 
                 }),
               ),
@@ -152,8 +155,14 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
   }
 
   void _navigateMovieSeatPage(
-      BuildContext context, int timeSlotId, String date, String startTime,String cinemaName) {
-    print("choose time -> id:$timeSlotId,date:$date");
+      BuildContext context,
+      int slotId,
+      String bookingDate,
+      String startTime,
+      String cinemaName,
+      int cinemaID
+      ) {
+    print("choose time -> id:$timeSlotId,date:$bookingDate");
     if(_validateTimeSlot()){
       Navigator.push(
         context,
@@ -161,10 +170,11 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
           builder: (context) => MovieSeatPage(
             movieId: widget.movieID,
             movieName: widget.movieName,
-            timeSlotId: timeSlotId,
-            bookingDate: date,
+            timeSlotId: slotId,
+            bookingDate: bookingDate,
             cinemaName:cinemaName ,
             startTime: startTime,
+            cinemaId: cinemaID
           ),
         ),
       );

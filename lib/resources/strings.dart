@@ -36,3 +36,6 @@ const TICKET_SCREEN="Screen";
 const TICKET_ROW="row";
 const TICKET_SEATS="Seat(s)";
 const TICKET_PRICE="Price";
+
+const ACTION_DECREASE ="decrease";
+const ACTION_INCREASE="increase";

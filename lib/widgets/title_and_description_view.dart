@@ -6,8 +6,9 @@ import 'package:movies_booking/widgets/title_text.dart';
 class TitleAndDescriptionView extends StatelessWidget {
   final String title;
   final String description;
+  final Color textColor;
 
-  const TitleAndDescriptionView(this.title, this.description);
+  const TitleAndDescriptionView(this.title, this.description,{this.textColor = Colors.black26});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +16,7 @@ class TitleAndDescriptionView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TitleText(
-          title,
+          title,textColor: textColor,
         ),
         SizedBox(
           height: MARGIN_SMALL,
@@ -23,7 +24,7 @@ class TitleAndDescriptionView extends StatelessWidget {
         Expanded(
           child: NormalTextView(
             description,
-            textColor: Colors.black26,
+            textColor: textColor,
           ),
         )
       ],

@@ -3,6 +3,8 @@ import 'package:movies_booking/data/vos/cinema_seat_vo.dart';
 import 'package:movies_booking/data/vos/cinema_vo.dart';
 import 'package:movies_booking/data/vos/credit_vo.dart';
 import 'package:movies_booking/data/vos/movie_vo.dart';
+import 'package:movies_booking/data/vos/payment_vo.dart';
+import 'package:movies_booking/data/vos/snack_vo.dart';
 import 'package:movies_booking/network/api_constants.dart';
 import 'package:movies_booking/network/dataagents/movie_booking_agents.dart';
 import 'package:movies_booking/network/movie_api.dart';
@@ -92,4 +94,21 @@ class RetrofitMovieDataAgentImpl extends MovieBookingAgent {
        .map((seats) => seats.data)
        .first ;
   }
+
+  @override
+  Future<List<PaymentVO>?> getPaymentMethod(String token) {
+    return movieBookingAPI.getPaymentMethods(token)
+        .asStream()
+        .map((payments) => payments.data)
+        .first ;
+  }
+
+  @override
+  Future<List<SnackVO>?> getSnacks(String token) {
+    return movieBookingAPI.getSnacks(token)
+        .asStream()
+        .map((snacks) => snacks.data)
+        .first ;
+  }
+
 }

@@ -22,6 +22,7 @@ class MovieSeatPage extends StatefulWidget {
   final String bookingDate;
   final String cinemaName;
   final String startTime;
+  final int cinemaId;
 
   MovieSeatPage(
       {required this.movieId,
@@ -29,7 +30,8 @@ class MovieSeatPage extends StatefulWidget {
       required this.timeSlotId,
       required this.bookingDate,
       required this.cinemaName,
-      required this.startTime});
+      required this.startTime,
+      required this.cinemaId});
 
   @override
   State<MovieSeatPage> createState() => _MovieSeatPageState();
@@ -41,8 +43,8 @@ class _MovieSeatPageState extends State<MovieSeatPage> {
   List<CinemaSeatVO>? cinemaSeats;
   int seatCount = 0;
   int totalPrice = 0;
-  String seatRows= "";
-  List<String> seatRowList = [] ;
+  String seatRows = "";
+  List<String> seatRowList = [];
 
   @override
   void initState() {
@@ -68,7 +70,7 @@ class _MovieSeatPageState extends State<MovieSeatPage> {
       totalPrice -= seatVO?.price ?? 0;
       seatRowList.remove(seatVO?.seatName ?? "");
     }
-    seatRows = seatRowList.join(",") ;
+    seatRows = seatRowList.join(",");
     print("select seat: count: $seatCount,price: $totalPrice,row: $seatRows");
   }
 
@@ -142,7 +144,16 @@ class _MovieSeatPageState extends State<MovieSeatPage> {
 
   void _navigateToItemOrderScreen(BuildContext context) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ItemOrderPage()));
+        context,
+        MaterialPageRoute(
+            builder: (context) => ItemOrderPage(
+                  movieId: widget.movieId,
+                  cinemaId: widget.cinemaId,
+                  timeSlotId: widget.timeSlotId,
+                  bookingDate: widget.bookingDate,
+                  totalPrice: this.totalPrice,
+                  seatNumbers: this.seatRows,
+                )));
   }
 }
 

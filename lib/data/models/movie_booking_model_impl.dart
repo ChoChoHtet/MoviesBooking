@@ -4,6 +4,8 @@ import 'package:movies_booking/data/vos/cinema_seat_vo.dart';
 import 'package:movies_booking/data/vos/cinema_vo.dart';
 import 'package:movies_booking/data/vos/credit_vo.dart';
 import 'package:movies_booking/data/vos/movie_vo.dart';
+import 'package:movies_booking/data/vos/payment_vo.dart';
+import 'package:movies_booking/data/vos/snack_vo.dart';
 import 'package:movies_booking/data/vos/user_vo.dart';
 import 'package:movies_booking/network/dataagents/movie_booking_agents.dart';
 import 'package:movies_booking/network/dataagents/retrofit_movie_data_agent_impl.dart';
@@ -143,5 +145,17 @@ class MovieBookingModelImpl extends MovieBookingModel {
       print("seat plan api response: ${seatList.toString()}");
       return Future.value(seatList);
     });
+  }
+
+  @override
+  Future<List<PaymentVO>?> getPaymentMethod() {
+    var token = userDao.getUserInfo()?.getToken() ?? "";
+    return _dataAgent.getPaymentMethod(token);
+  }
+
+  @override
+  Future<List<SnackVO>?> getSnacks() {
+    var token = userDao.getUserInfo()?.getToken() ?? "";
+    return _dataAgent.getSnacks(token);
   }
 }
