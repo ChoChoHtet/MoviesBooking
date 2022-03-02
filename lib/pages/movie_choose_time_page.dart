@@ -26,15 +26,11 @@ class MovieChooseTimePage extends StatefulWidget {
         DateTime.now() == dateTime ? true : false);
   }).toList();
 
-  final CinemaVO available = CinemaVO(
-    1,
-    "Available In",
-    [
-      TimeSlotVO(1, "2D"),
-      TimeSlotVO(2, "3D"),
-      TimeSlotVO(3, "IMAX"),
-    ],
-  );
+  final CinemaVO available = CinemaVO(1, "Available In", [
+    TimeSlotVO(1, "2D", false),
+    TimeSlotVO(2, "3D", false),
+    TimeSlotVO(3, "IMAX", false),
+  ]);
   @override
   State<MovieChooseTimePage> createState() => _MovieChooseTimePageState();
 }
@@ -42,7 +38,7 @@ class MovieChooseTimePage extends StatefulWidget {
 class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
   MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
   List<CinemaVO>? cinemaTimeList;
-  int timeSlotId =0;
+  int timeSlotId = 0;
   String bookingDate = "";
   String startTime = "";
 
@@ -71,6 +67,29 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
     });
   }
 
+  void _setTimeSlotSelected(CinemaVO? cinemaVO, TimeSlotVO? slot) {
+    this.cinemaTimeList?.forEachIndexed((index, element) {
+      if (element.cinemaId == cinemaVO?.cinemaId) {
+        this.cinemaTimeList?[index].isSelected = true;
+      } else {
+        this.cinemaTimeList?[index].isSelected = false;
+      }
+    });
+    cinemaVO?.timeSlots?.forEachIndexed((index1, element) {
+      if (element.timeSlotId == slot?.timeSlotId) {
+        cinemaVO.timeSlots?[index1].isSelected = true;
+      } else {
+        cinemaVO.timeSlots?[index1].isSelected = false;
+      }
+    });
+  }
+
+  bool _validateTimeSlot() {
+    List<CinemaVO>? list = cinemaTimeList?.where((element) => element.isSelected == true).toList();
+    print("cinemaVO: ${list.toString()}");
+    return  list !=null && list.isNotEmpty ;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,12 +115,17 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
               ),
               ChooseItemGridSectionView(
                 cinemaList: this.cinemaTimeList,
-                available: widget.available,onTapTime: (timeSlotId,startTime) {
+                available: widget.available,
+                onTapTime: (cinemaVO, index) {
                   setState(() {
-                    this.timeSlotId = timeSlotId ;
-                    this.startTime = startTime ;
+                    //this.timeSlotId = timeSlotId;
+                    // this.startTime = startTime;
+                    TimeSlotVO? slot = cinemaVO?.timeSlots?[index];
+                    this.timeSlotId = slot?.timeSlotId ?? 0;
+                    this.startTime = slot?.startTime ?? "";
+                    _setTimeSlotSelected(cinemaVO, slot);
                   });
-              },
+                },
               ),
               SizedBox(
                 height: MARGIN_LARGE,
@@ -109,7 +133,9 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
                 child: ElevatedButtonView("Next", () {
-                  _navigateMovieSeatPage(context,timeSlotId,bookingDate,startTime);
+                  _navigateMovieSeatPage(
+                      context, timeSlotId, bookingDate, startTime);
+
                 }),
               ),
               SizedBox(
@@ -123,27 +149,32 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
   }
 
   void _navigateMovieSeatPage(
-      BuildContext context, int timeSlotId, String date,String startTime) {
+      BuildContext context, int timeSlotId, String date, String startTime) {
     print("choose time -> id:$timeSlotId,date:$date");
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MovieSeatPage(
-          timeSlotId: timeSlotId,
-          bookingDate: date,
-          startTime: startTime,
+    if(_validateTimeSlot()){
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MovieSeatPage(
+            timeSlotId: timeSlotId,
+            bookingDate: date,
+            startTime: startTime,
+          ),
         ),
-      ),
-    );
+      );
+    }
+
   }
 }
 
 class ChooseItemGridSectionView extends StatelessWidget {
   final List<CinemaVO>? cinemaList;
-  final Function(int timeSlotId, String startTime) onTapTime;
+  final Function(CinemaVO? cinemaVO, int index) onTapTime;
   final CinemaVO? available;
   ChooseItemGridSectionView(
-      {required this.cinemaList, required this.available,required this.onTapTime});
+      {required this.cinemaList,
+      required this.available,
+      required this.onTapTime});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -154,7 +185,10 @@ class ChooseItemGridSectionView extends StatelessWidget {
             //ChooseItemGridView(cinemaVO: available),
             Column(
                 children: cinemaList
-                        ?.map((cinema) => ChooseItemGridView(cinemaVO: cinema,onTapTime: onTapTime,))
+                        ?.map((cinema) => ChooseItemGridView(
+                              cinemaVO: cinema,
+                              onTapTime: onTapTime,
+                            ))
                         .toList() ??
                     [])
           ],
@@ -164,8 +198,15 @@ class ChooseItemGridSectionView extends StatelessWidget {
 
 class ChooseItemGridView extends StatelessWidget {
   final CinemaVO? cinemaVO;
-  final Function(int timeSlotId, String startTime) onTapTime;
+  final Function(CinemaVO? cinemaVO, int index) onTapTime;
   ChooseItemGridView({required this.cinemaVO, required this.onTapTime});
+  bool _getTimeSlotSelected(CinemaVO? cinema, int index) {
+    if (cinema?.isSelected ?? false) {
+      return cinema?.timeSlots?[index].isSelected ?? false;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -183,24 +224,15 @@ class ChooseItemGridView extends StatelessWidget {
                 crossAxisCount: 3, childAspectRatio: 2.6),
             itemBuilder: (context, index) {
               return InkWell(
-                onTap: () => onTapTime(
-                  cinemaVO?.timeSlots?[index].timeSlotId ?? 0,
-                  cinemaVO?.timeSlots?[index].startTime ?? "",
-                ),
-                child: Container(
-                  margin: EdgeInsets.only(
-                      left: MARGIN_SMALL,
-                      right: MARGIN_SMALL,
-                      top: MARGIN_SMALL),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      border: Border.all(color: Colors.grey, width: 1)),
-                  child: Center(
-                    child: NormalTextView(
-                      "${cinemaVO?.timeSlots?[index].startTime ?? ""},${cinemaVO?.timeSlots?[index].timeSlotId ?? ""}",
-                      textColor: Colors.grey,
-                    ),
-                  ),
+                onTap: () {
+                  // TimeSlotVO? slot = cinemaVO?.timeSlots?[index];
+                  // _setTimeSlotSelected(cinemaVO, slot);
+                  onTapTime(cinemaVO, index);
+                },
+                child: CustomRadioView(
+                  startTime: cinemaVO?.timeSlots?[index].startTime ?? "",
+                  id: cinemaVO?.timeSlots?[index].timeSlotId ?? 0,
+                  isSelected: _getTimeSlotSelected(cinemaVO, index),
                 ),
               );
             }),
@@ -208,6 +240,33 @@ class ChooseItemGridView extends StatelessWidget {
           height: MARGIN_MEDIUM,
         ),
       ],
+    );
+  }
+}
+
+class CustomRadioView extends StatelessWidget {
+  final int id;
+  final String startTime;
+  final bool isSelected;
+  CustomRadioView(
+      {required this.id, required this.startTime, required this.isSelected});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(
+          left: MARGIN_SMALL, right: MARGIN_SMALL, top: MARGIN_SMALL),
+      decoration: BoxDecoration(
+          color: this.isSelected ? DATE_NONE_SELECT_COLOR : null,
+          borderRadius: BorderRadius.circular(5),
+          border: this.isSelected
+              ? null
+              : Border.all(color: Colors.grey, width: 1)),
+      child: Center(
+        child: NormalTextView(
+          "$startTime,$id",
+          textColor: this.isSelected ? Colors.white : Colors.grey,
+        ),
+      ),
     );
   }
 }

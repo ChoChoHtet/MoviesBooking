@@ -10,12 +10,14 @@ class TimeSlotVO{
   @JsonKey(name: "start_time")
   String? startTime;
 
-  TimeSlotVO(this.timeSlotId, this.startTime);
+  bool? isSelected ;
+
+  TimeSlotVO(this.timeSlotId, this.startTime,this.isSelected);
 
 
   @override
   String toString() {
-    return 'TimeSlotVO{timeSlotId: $timeSlotId, startTime: $startTime}';
+    return 'TimeSlotVO{timeSlotId: $timeSlotId, startTime: $startTime, isSelected: $isSelected}';
   }
 
   factory TimeSlotVO.fromJson(Map<String,dynamic>json) => _$TimeSlotVOFromJson(json);

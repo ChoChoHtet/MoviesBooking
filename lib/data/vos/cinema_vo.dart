@@ -14,6 +14,8 @@ class CinemaVO{
   @JsonKey(name: "timeslots")
   List<TimeSlotVO>? timeSlots ;
 
+  bool? isSelected = false ;
+
 
 
   CinemaVO(this.cinemaId, this.cinema, this.timeSlots);
