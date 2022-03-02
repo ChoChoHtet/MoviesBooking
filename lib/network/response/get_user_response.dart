@@ -21,6 +21,12 @@ class GetUserResponse {
 
   GetUserResponse(this.code, this.message, this.data, this.token);
 
+
+  @override
+  String toString() {
+    return 'GetUserResponse{code: $code, message: $message, data: $data, token: $token}';
+  }
+
   factory GetUserResponse.fromJson(Map<String,dynamic>json) => _$GetUserResponseFromJson(json);
   Map<String,dynamic> toJson() => _$GetUserResponseToJson(this);
 

@@ -72,7 +72,7 @@ MovieVO _$MovieVOFromJson(Map<String, dynamic> json) => MovieVO(
       json['id'] as int?,
       json['title'] as String?,
       json['overview'] as String?,
-      json['backdrop_path'] as String?,
+      json['poster_path'] as String?,
       (json['vote_average'] as num?)?.toDouble(),
       json['imdb_id'] as String?,
       (json['genres'] as List<dynamic>?)
@@ -86,7 +86,7 @@ Map<String, dynamic> _$MovieVOToJson(MovieVO instance) => <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
       'overview': instance.overview,
-      'backdrop_path': instance.posterPath,
+      'poster_path': instance.posterPath,
       'vote_average': instance.voteAverage,
       'imdb_id': instance.imdbId,
       'genres': instance.genres,

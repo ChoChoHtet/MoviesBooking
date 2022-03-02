@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:movies_booking/data/vos/cinema_seat_vo.dart';
+import 'package:movies_booking/data/vos/cinema_vo.dart';
 import 'package:movies_booking/data/vos/credit_vo.dart';
 import 'package:movies_booking/data/vos/movie_vo.dart';
 import 'package:movies_booking/network/api_constants.dart';
@@ -72,5 +74,22 @@ class RetrofitMovieDataAgentImpl extends MovieBookingAgent {
   Future<MovieVO?> getMovieDetail(int movieId) {
     return movieAPI.getMoviesDetail(
         API_KEY, LANGUAGE_EN_US, movieId.toString());
+  }
+
+  @override
+  Future<List<CinemaVO>?> getCinemaTimeSlots(String date,String token) {
+    return movieBookingAPI
+        .getCinemaTimeSlots(date,token)
+        .asStream()
+        .map((cinema) => cinema.data)
+        .first;
+  }
+
+  @override
+  Future<List<List<CinemaSeatVO>>?> getCinemaSeatPlans(String token, int timeSlotId, String bookingDate) {
+   return movieBookingAPI.getCinemaSeatPlans(token, timeSlotId.toString(), bookingDate)
+       .asStream()
+       .map((seats) => seats.data)
+       .first ;
   }
 }

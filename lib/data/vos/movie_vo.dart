@@ -19,7 +19,7 @@ class MovieVO{
   @HiveField(2)
   String? overview;
 
-  @JsonKey(name: "backdrop_path")
+  @JsonKey(name: "poster_path")
   @HiveField(3)
   String? posterPath;
 

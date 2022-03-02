@@ -1,5 +1,8 @@
 import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
+import 'package:movies_booking/data/models/movie_booking_model.dart';
+import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
+import 'package:movies_booking/data/vos/cinema_seat_vo.dart';
 import 'package:movies_booking/dummy/dummy_data.dart';
 import 'package:movies_booking/pages/item_order_page.dart';
 import 'package:movies_booking/resources/dimen.dart';
@@ -11,78 +14,103 @@ import 'package:movies_booking/widgets/normal_text_view.dart';
 
 import '../data/vos/movie_seat_vo.dart';
 
-class MovieSeatPage extends StatelessWidget {
+class MovieSeatPage extends StatefulWidget {
+  final int timeSlotId;
+  final String bookingDate;
+  final String startTime;
+
+  MovieSeatPage(
+      {required this.timeSlotId,
+      required this.bookingDate,
+      required this.startTime});
+
+  @override
+  State<MovieSeatPage> createState() => _MovieSeatPageState();
+}
+
+class _MovieSeatPageState extends State<MovieSeatPage> {
+  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
   final List<MovieSeatVO> _movieSeats = dummyMovieSeats;
- 
+  List<CinemaSeatVO>? cinemaSeats;
+
+  @override
+  void initState() {
+    _movieBookingModel
+        .getCinemaSeats(widget.timeSlotId, widget.bookingDate)
+        .then((seatResponse) {});
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: BackButtonView(() => Navigator.pop(context)),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            MovieNameTimeAndCinemaSection(),
-            SizedBox(
-              height: MARGIN_LARGE,
-            ),
-            MovieSeatSection(movieSeats: _movieSeats),
-            SizedBox(
-              height: MARGIN_LARGE,
-            ),
-            MovieSeatGlossySection(),
-            SizedBox(
-              height: MARGIN_LARGE,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
-              child: DottedLine(
-                lineLength: double.infinity,
-                dashColor: Colors.black26,
-                dashLength: 8,
-                direction: Axis.horizontal,
-                lineThickness: 2,
-                dashGapLength: MARGIN_SMALL,
-                dashGapColor: Colors.transparent,
-              ),
-            ),
-            MovieSeatAndTicketSection(),
-            SizedBox(
-              height: MARGIN_MEDIUM,
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
-              child: ElevatedButtonView("Buy Ticket for \$20.00", ()=> _navigateToItemOrderScreen(
-                  context)),
-            ),
-            SizedBox(
-              height: MARGIN_LARGE,
-            ),
-          ],
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: BackButtonView(() => Navigator.pop(context)),
         ),
-      )
-    );
-   
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              MovieNameTimeAndCinemaSection(),
+              SizedBox(
+                height: MARGIN_LARGE,
+              ),
+              MovieSeatSection(movieSeats: _movieSeats),
+              SizedBox(
+                height: MARGIN_LARGE,
+              ),
+              MovieSeatGlossySection(),
+              SizedBox(
+                height: MARGIN_LARGE,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
+                child: DottedLine(
+                  lineLength: double.infinity,
+                  dashColor: Colors.black26,
+                  dashLength: 8,
+                  direction: Axis.horizontal,
+                  lineThickness: 2,
+                  dashGapLength: MARGIN_SMALL,
+                  dashGapColor: Colors.transparent,
+                ),
+              ),
+              MovieSeatAndTicketSection(),
+              SizedBox(
+                height: MARGIN_MEDIUM,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
+                child: ElevatedButtonView("Buy Ticket for \$20.00",
+                    () => _navigateToItemOrderScreen(context)),
+              ),
+              SizedBox(
+                height: MARGIN_LARGE,
+              ),
+            ],
+          ),
+        ));
   }
-  void _navigateToItemOrderScreen(BuildContext context){
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>ItemOrderPage()));
+
+  void _navigateToItemOrderScreen(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ItemOrderPage()));
   }
 }
 
 class MovieSeatAndTicketSection extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(MARGIN_MEDIUM),
       child: Column(
         children: [
-          SeatAndTicketView("Ticket","2"),
-          SizedBox(height: MARGIN_SMALL_2,),
+          SeatAndTicketView("Ticket", "2"),
+          SizedBox(
+            height: MARGIN_SMALL_2,
+          ),
           SeatAndTicketView("Seats", "D Row/5,6"),
         ],
       ),
@@ -115,25 +143,14 @@ class SeatAndTicketView extends StatelessWidget {
 }
 
 class MovieSeatGlossySection extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
       children: [
-        Expanded(
-          flex: 1,
-          child:
-              MovieSeatGlossaryView(SEAT_TYPE_AVAILABLE_TEXT, Colors.black26),
-        ),
-        Expanded(
-          flex: 1,
-          child: MovieSeatGlossaryView(SEAT_TYPE_RESERVED, Colors.blueGrey),
-        ),
-        Expanded(
-          flex: 1,
-          child: MovieSeatGlossaryView(
-              SEAT_TYPE_SELECTION, Colors.deepPurpleAccent),
-        ),
+        MovieSeatGlossaryView(SEAT_TYPE_AVAILABLE_TEXT, Colors.black26),
+        MovieSeatGlossaryView(SEAT_TYPE_RESERVED, Colors.blueGrey),
+        MovieSeatGlossaryView(SEAT_TYPE_SELECTION, Colors.deepPurpleAccent),
       ],
     );
   }
@@ -150,6 +167,7 @@ class MovieSeatGlossaryView extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: MARGIN_SMALL),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             height: 30,
@@ -173,7 +191,6 @@ class MovieSeatGlossaryView extends StatelessWidget {
 }
 
 class MovieSeatSection extends StatelessWidget {
-
   const MovieSeatSection({required this.movieSeats});
 
   final List<MovieSeatVO> movieSeats;
@@ -196,7 +213,6 @@ class MovieSeatSection extends StatelessWidget {
 }
 
 class MovieNameTimeAndCinemaSection extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Center(

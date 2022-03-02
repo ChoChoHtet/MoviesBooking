@@ -188,8 +188,8 @@ class MoviesInfoView extends StatelessWidget {
           SizedBox(
             height: MARGIN_MEDIUM,
           ),
-           Row(
-              mainAxisSize: MainAxisSize.min,
+           Wrap(
+             direction: Axis.horizontal,
               children: genreList.map((genre) => GeneralChipView(genre)).toList(),
             ),
           SizedBox(
@@ -233,11 +233,14 @@ class MoviesCastView extends StatelessWidget {
         SizedBox(
           height: MARGIN_MEDIUM,
         ),
-        Row(
-          children: castList
-                  ?.map((cast) => CircleAvatarView(cast.profilePath ?? ""))
-                  .toList() ??
-              [],
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: castList
+                    ?.map((cast) => CircleAvatarView(cast.profilePath ?? ""))
+                    .toList() ??
+                [],
+          ),
         ),
         SizedBox(
           height: 80,
@@ -322,6 +325,7 @@ class GeneralChipView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Chip(
           padding: EdgeInsets.all(MARGIN_SMALL_2),

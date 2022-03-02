@@ -1,3 +1,5 @@
+import 'package:movies_booking/data/vos/cinema_seat_vo.dart';
+import 'package:movies_booking/data/vos/cinema_vo.dart';
 import 'package:movies_booking/data/vos/credit_vo.dart';
 import 'package:movies_booking/data/vos/user_vo.dart';
 
@@ -9,6 +11,7 @@ abstract class MovieBookingModel{
   Future<UserVO?> emailLogin(String email,String password);
   Future<CommonResponse> logout();
   Future<UserVO?> getUserInfo();
+  Future<List<CinemaVO>?> getCinemaTimeSlots(String date);
 
   Future<List<MovieVO>?> getNowShowingMovie();
 
@@ -17,4 +20,6 @@ abstract class MovieBookingModel{
   Future<MovieVO?> getMovieDetail(int movieId);
 
   Future<List<CreditVO>?> getMovieCredit(int movieId);
+
+  Future<List<CinemaSeatVO>?> getCinemaSeats(int timeSlotId,String bookingDate);
 }

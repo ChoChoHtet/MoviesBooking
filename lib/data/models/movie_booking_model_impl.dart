@@ -1,6 +1,7 @@
-
-
+import 'package:flutter/material.dart';
 import 'package:movies_booking/data/models/movie_booking_model.dart';
+import 'package:movies_booking/data/vos/cinema_seat_vo.dart';
+import 'package:movies_booking/data/vos/cinema_vo.dart';
 import 'package:movies_booking/data/vos/credit_vo.dart';
 import 'package:movies_booking/data/vos/movie_vo.dart';
 import 'package:movies_booking/data/vos/user_vo.dart';
@@ -51,13 +52,17 @@ class MovieBookingModelImpl extends MovieBookingModel {
   Future<UserVO?> emailLogin(String email, String password) {
     return _dataAgent.emailLogin(email, password).then((userResponse) async {
       var userVo = userResponse.data;
-      print("email login success");
+      print("email login success: ${userResponse.toString()}");
       if (userVo != null) {
         userVo.token = userResponse.token;
         print("login token: ${userVo.token},res ${userResponse.token}");
         userDao.saveUserInfo(userVo);
       }
-      return Future.value(userResponse.data);
+      if (userResponse.code == 200) {
+        return Future.value(userResponse.data);
+      } else {
+        return Future.error(userResponse.message ?? "Something went wrong");
+      }
     });
   }
 
@@ -114,6 +119,29 @@ class MovieBookingModelImpl extends MovieBookingModel {
           [];
       movieDao.saveAllMovies(movieList);
       return Future.value(nowShowing);
+    });
+  }
+
+  @override
+  Future<List<CinemaVO>?> getCinemaTimeSlots(String date) {
+    var token = userDao.getUserInfo()?.getToken() ?? "";
+    return _dataAgent.getCinemaTimeSlots(date, token);
+  }
+
+  @override
+  Future<List<CinemaSeatVO>?> getCinemaSeats(
+      int timeSlotId, String bookingDate) {
+    var token = userDao.getUserInfo()?.getToken() ?? "";
+    return _dataAgent
+        .getCinemaSeatPlans(token, timeSlotId, bookingDate)
+        .then((seatResponse) {
+      List<CinemaSeatVO>? seatList =
+          seatResponse?.expand((element) => element).map((seat) {
+        seat.isSelected = false;
+        return seat;
+      }).toList();
+      print("seat plan api response: ${seatList.toString()}");
+      return Future.value(seatList);
     });
   }
 }
