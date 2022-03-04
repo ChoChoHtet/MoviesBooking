@@ -1,5 +1,7 @@
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:movies_booking/data/vos/checkout_vo.dart';
+import 'package:movies_booking/network/api_constants.dart';
 import 'package:movies_booking/resources/dimen.dart';
 import 'package:movies_booking/resources/strings.dart';
 import 'package:movies_booking/widgets/close_button_view.dart';
@@ -8,6 +10,14 @@ import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
 
 class MovieTicketPage extends StatelessWidget {
+  final CheckoutVO? checkoutVO;
+  final String cinemaName;
+  final String moviePoster;
+  MovieTicketPage(
+      {required this.checkoutVO,
+      required this.cinemaName,
+      required this.moviePoster});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +44,11 @@ class MovieTicketPage extends StatelessWidget {
             SizedBox(
               height: MARGIN_LARGE,
             ),
-            TicketSection(),
+            TicketSection(
+              checkoutVO: checkoutVO,
+              cinemaName: this.cinemaName,
+              moviePoster: this.moviePoster,
+            ),
             SizedBox(
               height: MARGIN_LARGE,
             ),
@@ -46,7 +60,13 @@ class MovieTicketPage extends StatelessWidget {
 }
 
 class TicketSection extends StatelessWidget {
-
+  final CheckoutVO? checkoutVO;
+  final String cinemaName;
+  final String moviePoster;
+  TicketSection(
+      {required this.checkoutVO,
+      required this.cinemaName,
+      required this.moviePoster});
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -59,14 +79,19 @@ class TicketSection extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: MARGIN_LARGE),
         child: Column(
           children: [
-            MovieTicketPosterView(),
+            MovieTicketPosterView(
+              moviePoster: moviePoster,
+            ),
             DashLineView(),
-            TicketInfoSection(),
+            TicketInfoSection(
+              checkoutVO: checkoutVO,
+              cinemaName: this.cinemaName,
+            ),
             DashLineView(),
             SizedBox(
               height: MARGIN_LARGE,
             ),
-            GenerateBarCodeView(),
+            GenerateBarCodeView(qrCode: checkoutVO?.qrCode ?? "",),
           ],
         ),
       ),
@@ -75,13 +100,14 @@ class TicketSection extends StatelessWidget {
 }
 
 class GenerateBarCodeView extends StatelessWidget {
-
+  final String qrCode;
+  GenerateBarCodeView({required this.qrCode});
   @override
   Widget build(BuildContext context) {
     return BarcodeWidget(
       width: TICKET_BARCODE_HEIGHT,
       height: TICKET_BARCODE_WIDTH,
-      data: 'https://pub.dev/packages/barcode_widget',
+      data: qrCode,
       barcode: Barcode.code128(),
       drawText: false,
     );
@@ -89,23 +115,25 @@ class GenerateBarCodeView extends StatelessWidget {
 }
 
 class TicketInfoSection extends StatelessWidget {
-
-
+  final CheckoutVO? checkoutVO;
+  final String cinemaName;
+  TicketInfoSection({required this.checkoutVO, required this.cinemaName});
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(MARGIN_MEDIUM),
       child: Column(
         children: [
-          TicketItemView(TICKET_BOOKING_NO, "GC1547219308"),
+          TicketItemView(TICKET_BOOKING_NO, checkoutVO?.bookingNo ?? ""),
           SizedBox(
             height: MARGIN_MEDIUM,
           ),
-          TicketItemView(TICKET_SHOW_TIME_AND_DATE, "7:00 PM - 10 May"),
+          TicketItemView(TICKET_SHOW_TIME_AND_DATE,
+              "${checkoutVO?.timeSlot?.startTime ?? ""}-${checkoutVO?.bookingDate ?? ""}"),
           SizedBox(
             height: MARGIN_MEDIUM,
           ),
-          TicketItemView(TICKET_THEATER, "Galaxy Cinema-Golden City"),
+          TicketItemView(TICKET_THEATER, cinemaName),
           SizedBox(
             height: MARGIN_MEDIUM,
           ),
@@ -113,15 +141,15 @@ class TicketInfoSection extends StatelessWidget {
           SizedBox(
             height: MARGIN_MEDIUM,
           ),
-          TicketItemView(TICKET_ROW, "D"),
+          TicketItemView(TICKET_ROW, checkoutVO?.row ?? ""),
           SizedBox(
             height: MARGIN_MEDIUM,
           ),
-          TicketItemView(TICKET_SEATS, "5,6"),
+          TicketItemView(TICKET_SEATS, checkoutVO?.seat ?? ""),
           SizedBox(
             height: MARGIN_MEDIUM,
           ),
-          TicketItemView(TICKET_PRICE, "\$ 40.00"),
+          TicketItemView(TICKET_PRICE, "${checkoutVO?.total ?? 0}"),
         ],
       ),
     );
@@ -129,7 +157,6 @@ class TicketInfoSection extends StatelessWidget {
 }
 
 class DashLineView extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -173,6 +200,8 @@ class TicketItemView extends StatelessWidget {
 }
 
 class MovieTicketPosterView extends StatelessWidget {
+  final String moviePoster;
+  MovieTicketPosterView({required this.moviePoster});
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -184,7 +213,7 @@ class MovieTicketPosterView extends StatelessWidget {
             topRight: Radius.circular(MARGIN_SMALL_2),
           ),
           child: Image.network(
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQGFrQd3ez_nmjQhnH7F3vyJUbDogMKNqoU6nCd-7rJ3ZzgprZo",
+            "$MOVIE_IMAGE_URL$moviePoster",
             fit: BoxFit.cover,
             width: double.maxFinite,
             height: 200,

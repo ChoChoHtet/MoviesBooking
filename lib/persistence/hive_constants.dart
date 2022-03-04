@@ -4,6 +4,7 @@ const HIVE_USER_ID=1;
 const HIVE_MOVIE_ID=2;
 const HIVE_CREDIT_ID=3;
 const HIVE_GENRE_ID=4;
+const HIVE_CARD_ID=5;
 
 //box name
 const BOX_NAMES_USER_VO="BOX_NAMES_USER_VO";

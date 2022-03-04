@@ -18,6 +18,7 @@ import '../data/vos/movie_seat_vo.dart';
 class MovieSeatPage extends StatefulWidget {
   final int movieId;
   final String movieName;
+  final String moviePath;
   final int timeSlotId;
   final String bookingDate;
   final String cinemaName;
@@ -27,6 +28,7 @@ class MovieSeatPage extends StatefulWidget {
   MovieSeatPage(
       {required this.movieId,
       required this.movieName,
+      required this.moviePath,
       required this.timeSlotId,
       required this.bookingDate,
       required this.cinemaName,
@@ -153,6 +155,8 @@ class _MovieSeatPageState extends State<MovieSeatPage> {
                   bookingDate: widget.bookingDate,
                   totalPrice: this.totalPrice,
                   seatNumbers: this.seatRows,
+                  moviePath: widget.moviePath,
+                  cinemaName: widget.cinemaName,
                 )));
   }
 }

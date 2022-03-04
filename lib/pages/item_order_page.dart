@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:movies_booking/data/models/movie_booking_model.dart';
 import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
+import 'package:movies_booking/data/request/snack_request.dart';
 import 'package:movies_booking/data/vos/payment_vo.dart';
 import 'package:movies_booking/data/vos/snack_vo.dart';
 import 'package:movies_booking/pages/add_card_info_page.dart';
@@ -22,7 +23,9 @@ import 'package:movies_booking/widgets/title_text.dart';
 
 class ItemOrderPage extends StatefulWidget {
   final int movieId;
+  final String moviePath;
   final int cinemaId;
+  final String cinemaName;
   final int timeSlotId;
   final String bookingDate;
   final int totalPrice;
@@ -30,7 +33,9 @@ class ItemOrderPage extends StatefulWidget {
 
   ItemOrderPage({
     required this.movieId,
+    required this.moviePath,
     required this.cinemaId,
+    required this.cinemaName,
     required this.timeSlotId,
     required this.bookingDate,
     required this.totalPrice,
@@ -47,6 +52,7 @@ class _ItemOrderPageState extends State<ItemOrderPage> {
 
   List<SnackVO>? snacksList;
   List<PaymentVO>? paymentList;
+  List<SnackRequest> snackRequest= [];
   int totalPrice = 0;
   @override
   void initState() {
@@ -160,10 +166,27 @@ class _ItemOrderPageState extends State<ItemOrderPage> {
   }
 
   void _navigateToPaymentScreen(BuildContext context) {
+    snackRequest = [];
+    this.snacksList?.forEach((element) {
+      if(element.quantity !=null && element.quantity != 0){
+        snackRequest.add(SnackRequest(element.id, element.quantity));
+      }
+    });
+    print("snack List: ${snackRequest.toString()}");
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PaymentPage(),
+        builder: (context) => PaymentPage(
+          movieId: widget.movieId,
+          cinemaId: widget.cinemaId,
+          timeSlotId: widget.timeSlotId,
+          bookingDate: widget.bookingDate,
+          totalPrice: totalPrice,
+          seatNumbers: widget.seatNumbers,
+          cinemaName: widget.cinemaName,
+          moviePath: widget.moviePath,
+          snacks: this.snackRequest,
+        ),
       ),
     );
   }

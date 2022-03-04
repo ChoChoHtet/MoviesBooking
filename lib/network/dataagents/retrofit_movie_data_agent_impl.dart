@@ -1,18 +1,23 @@
 import 'package:dio/dio.dart';
+import 'package:movies_booking/data/request/check_out_request.dart';
+import 'package:movies_booking/data/vos/checkout_vo.dart';
 import 'package:movies_booking/data/vos/cinema_seat_vo.dart';
 import 'package:movies_booking/data/vos/cinema_vo.dart';
 import 'package:movies_booking/data/vos/credit_vo.dart';
 import 'package:movies_booking/data/vos/movie_vo.dart';
 import 'package:movies_booking/data/vos/payment_vo.dart';
 import 'package:movies_booking/data/vos/snack_vo.dart';
+import 'package:movies_booking/data/vos/user_vo.dart';
 import 'package:movies_booking/network/api_constants.dart';
 import 'package:movies_booking/network/dataagents/movie_booking_agents.dart';
 import 'package:movies_booking/network/movie_api.dart';
 import 'package:movies_booking/network/movie_booking_api.dart';
+import 'package:movies_booking/network/response/checkout_reponse.dart';
 import 'package:movies_booking/network/response/common_response.dart';
 import 'package:movies_booking/network/response/get_credit_response.dart';
 import 'package:movies_booking/network/response/get_movie_response.dart';
 import 'package:movies_booking/network/response/get_user_response.dart';
+import 'package:movies_booking/pages/get_card_response.dart';
 
 class RetrofitMovieDataAgentImpl extends MovieBookingAgent {
   late MovieBookingAPI movieBookingAPI;
@@ -79,36 +84,71 @@ class RetrofitMovieDataAgentImpl extends MovieBookingAgent {
   }
 
   @override
-  Future<List<CinemaVO>?> getCinemaTimeSlots(String date,String token) {
+  Future<List<CinemaVO>?> getCinemaTimeSlots(String date, String token) {
     return movieBookingAPI
-        .getCinemaTimeSlots(date,token)
+        .getCinemaTimeSlots(date, token)
         .asStream()
         .map((cinema) => cinema.data)
         .first;
   }
 
   @override
-  Future<List<List<CinemaSeatVO>>?> getCinemaSeatPlans(String token, int timeSlotId, String bookingDate) {
-   return movieBookingAPI.getCinemaSeatPlans(token, timeSlotId.toString(), bookingDate)
-       .asStream()
-       .map((seats) => seats.data)
-       .first ;
+  Future<List<List<CinemaSeatVO>>?> getCinemaSeatPlans(
+      String token, int timeSlotId, String bookingDate) {
+    return movieBookingAPI
+        .getCinemaSeatPlans(token, timeSlotId.toString(), bookingDate)
+        .asStream()
+        .map((seats) => seats.data)
+        .first;
   }
 
   @override
   Future<List<PaymentVO>?> getPaymentMethod(String token) {
-    return movieBookingAPI.getPaymentMethods(token)
+    return movieBookingAPI
+        .getPaymentMethods(token)
         .asStream()
         .map((payments) => payments.data)
-        .first ;
+        .first;
   }
 
   @override
   Future<List<SnackVO>?> getSnacks(String token) {
-    return movieBookingAPI.getSnacks(token)
+    return movieBookingAPI
+        .getSnacks(token)
         .asStream()
         .map((snacks) => snacks.data)
-        .first ;
+        .first;
   }
 
+  @override
+  Future<GetCardResponse> createCard(String token, String cardNumber,
+      String cardHolder, String expirationDate, String cvc) {
+    return movieBookingAPI.createCard(
+        token, cardNumber, cardHolder, expirationDate, cvc);
+  }
+
+  @override
+  Future<UserVO?> getUserProfile(String token) {
+    return movieBookingAPI
+        .getUserProfile(token)
+        .asStream()
+        .map((profile) => profile.data)
+        .first;
+  }
+
+  @override
+  Future<CheckoutVO?> checkoutTicket(String token, CheckOutRequest checkOutRequest) {
+    return movieBookingAPI.checkoutTicket(token, checkOutRequest).then((value){
+      print("check response : ${value.toString()}");
+      if(value.code == 200){
+        return Future<CheckoutResponse>.value(value);
+      }else{
+        return Future<CheckoutResponse>.error(value.message ?? "Checkout error");
+      }
+    }).asStream()
+        .map((checkout) => checkout.data)
+        .first ;
+
+
+  }
 }

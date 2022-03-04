@@ -1,5 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:movies_booking/data/request/check_out_request.dart';
+import 'package:movies_booking/data/request/snack_request.dart';
+import 'package:movies_booking/data/vos/checkout_vo.dart';
 import 'package:movies_booking/pages/add_card_info_page.dart';
 import 'package:movies_booking/pages/item_order_page.dart';
 import 'package:movies_booking/pages/movie_ticket_page.dart';
@@ -11,15 +14,57 @@ import 'package:movies_booking/widgets/elevated_button_view.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
 
-class PaymentPage extends StatelessWidget {
-  final List<String> imgList = [
-    'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=6ff92caffcdd63681a35134a6770ed3b&auto=format&fit=crop&w=1951&q=80',
-    'https://images.unsplash.com/photo-1522205408450-add114ad53fe?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=368f45b0888aeb0b7b08e3a1084d3ede&auto=format&fit=crop&w=1950&q=80',
-    'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=94a1e718d89ca60a6337a6008341ca50&auto=format&fit=crop&w=1950&q=80',
-    'https://images.unsplash.com/photo-1523205771623-e0faa4d2813d?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=89719a0d55dd05e2deae4120227e6efc&auto=format&fit=crop&w=1953&q=80',
-    'https://images.unsplash.com/photo-1508704019882-f9cf40e475b4?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=8c6e5e3aba713b17aa1fe71ab4f0ae5b&auto=format&fit=crop&w=1352&q=80',
-    'https://images.unsplash.com/photo-1519985176271-adb1088fa94c?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=a0c8d632e977f94e5d312d9893258f59&auto=format&fit=crop&w=1355&q=80'
-  ];
+import '../data/models/movie_booking_model.dart';
+import '../data/models/movie_booking_model_impl.dart';
+import '../data/vos/card_vo.dart';
+
+class PaymentPage extends StatefulWidget {
+  @override
+  State<PaymentPage> createState() => _PaymentPageState();
+
+  final int movieId;
+  final int cinemaId;
+  final int timeSlotId;
+  final String bookingDate;
+  final int totalPrice;
+  final String seatNumbers;
+  final String moviePath;
+  final String cinemaName;
+  final List<SnackRequest> snacks;
+  PaymentPage(
+      {required this.movieId,
+      required this.cinemaId,
+      required this.timeSlotId,
+      required this.bookingDate,
+      required this.totalPrice,
+      required this.seatNumbers,
+      required this.moviePath,
+      required this.cinemaName,
+      required this.snacks});
+}
+
+class _PaymentPageState extends State<PaymentPage> {
+  List<CardVO>? cardList;
+  int selectCardId = 0;
+  CheckoutVO? checkoutVO;
+
+  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
+
+  void _getUserProfile() {
+    _movieBookingModel.getUserProfile().then((response) {
+      setState(() {
+        this.cardList = response?.cards;
+      });
+    }).catchError((error) {
+      debugPrint("Profile Error: $error");
+    });
+  }
+
+  @override
+  void initState() {
+    _getUserProfile();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,31 +80,66 @@ class PaymentPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            PaymentAmoutSection(),
+            PaymentAmoutSection(totalPrice: widget.totalPrice,),
             SizedBox(
               height: MARGIN_MEDIUM,
             ),
-            PaymentCardOptionSection(imgList: imgList),
+            Visibility(
+              visible: this.cardList?.isNotEmpty ?? false,
+              child: PaymentCardOptionSection(
+                cardList: this.cardList,
+                onSelectCard: (index) {
+                  selectCardId = this.cardList?[index].id ?? 0;
+                  print("Select Card -> index: $index, $selectCardId");
+                },
+              ),
+            ),
             SizedBox(
               height: MARGIN_XLARGE,
             ),
-            AddNewCardSection(onTapAddNew: () => _navigateToAddNewCardScreen(context),),
+            AddNewCardSection(
+              onTapAddNew: () => _navigateToAddNewCardScreen(context),
+            ),
             SizedBox(
               height: MARGIN_XXLARGE,
             ),
-            ElevatedButtonView("Confirm",() => _navigateToTicketScreen(context)
-            ),
+            ElevatedButtonView("Confirm", () => _checkoutTicket()),
           ],
         ),
       ),
     );
   }
 
-  void _navigateToTicketScreen(BuildContext context) {
+  void _checkoutTicket() {
+     CheckOutRequest checkOutRequest = CheckOutRequest(
+       widget.timeSlotId,
+       widget.seatNumbers,
+       widget.bookingDate,
+       widget.movieId,
+       selectCardId,
+       widget.cinemaId,
+       widget.totalPrice,
+       widget.snacks
+      );
+
+
+    print("CheckOutReq-> ${checkOutRequest.toString()}");
+    _movieBookingModel.checkoutTicket(checkOutRequest).then((response) {
+      _navigateToTicketScreen(context, response);
+    }).catchError((error) {
+      debugPrint("Checkout Error: $error");
+    });
+  }
+
+  void _navigateToTicketScreen(BuildContext context, CheckoutVO? checkoutVO) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MovieTicketPage(),
+        builder: (context) => MovieTicketPage(
+          checkoutVO: checkoutVO,
+          cinemaName: widget.cinemaName,
+          moviePoster: widget.moviePath,
+        ),
       ),
     );
     print("payment confirm clicked");
@@ -67,15 +147,20 @@ class PaymentPage extends StatelessWidget {
 
   void _navigateToAddNewCardScreen(BuildContext context) {
     Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddCardInfoPage(),
-      ),
-    );
+        context,
+        MaterialPageRoute(
+          builder: (context) => AddCardInfoPage(),
+        )).then((value) {
+      if (value == true) {
+        _getUserProfile();
+      }
+    });
   }
 }
 
 class PaymentAmoutSection extends StatelessWidget {
+  final int totalPrice;
+  PaymentAmoutSection({required this.totalPrice});
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -88,32 +173,34 @@ class PaymentAmoutSection extends StatelessWidget {
         SizedBox(
           height: MARGIN_SMALL,
         ),
-        TitleText("\$ 9426.21"),
+        TitleText("\$ $totalPrice"),
       ],
     );
   }
 }
 
 class PaymentCardOptionSection extends StatelessWidget {
+  const PaymentCardOptionSection(
+      {required this.cardList, required this.onSelectCard});
 
-  const PaymentCardOptionSection({required this.imgList});
-
-  final List<String> imgList;
+  final List<CardVO>? cardList;
+  final Function(int) onSelectCard;
 
   @override
   Widget build(BuildContext context) {
-    return CarouselSlider(
+    return CarouselSlider.builder(
+      itemCount: cardList?.length ?? 0,
       options: CarouselOptions(
           aspectRatio: 2,
           viewportFraction: 0.8,
           enlargeCenterPage: true,
           autoPlayCurve: Curves.fastOutSlowIn,
-          initialPage: 3),
-      items: imgList.map((card) {
-        return Builder(builder: (BuildContext context) {
-          return PaymentCardView();
-        });
-      }).toList(),
+          initialPage: 0,
+          onPageChanged: (index, value) => onSelectCard(index)),
+      itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex){
+        return PaymentCardView(cardVO: cardList?[itemIndex]);
+      },
+
     );
   }
 }
@@ -121,7 +208,7 @@ class PaymentCardOptionSection extends StatelessWidget {
 class AddNewCardSection extends StatelessWidget {
   final VoidCallback onTapAddNew;
 
-  const AddNewCardSection({ required this.onTapAddNew});
+  const AddNewCardSection({required this.onTapAddNew});
 
   @override
   Widget build(BuildContext context) {
@@ -148,6 +235,8 @@ class AddNewCardSection extends StatelessWidget {
 }
 
 class PaymentCardView extends StatelessWidget {
+  final CardVO? cardVO;
+  PaymentCardView({required this.cardVO});
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +253,9 @@ class PaymentCardView extends StatelessWidget {
             SizedBox(
               height: MARGIN_LARGE,
             ),
-            CardNumberView(),
+            CardNumberView(
+              cardNumber: cardVO?.cardNumber ?? "",
+            ),
             SizedBox(
               height: MARGIN_MEDIUM,
             ),
@@ -172,7 +263,8 @@ class PaymentCardView extends StatelessWidget {
             SizedBox(
               height: MARGIN_CARD_SMALL,
             ),
-            CardHolderNameAndExpireView("Lily Johnson", "08/21"),
+            CardHolderNameAndExpireView(
+                cardVO?.cardHolder ?? "", cardVO?.expirationDate ?? ""),
           ],
         ));
   }
@@ -203,7 +295,6 @@ class CardHolderNameAndExpireView extends StatelessWidget {
 }
 
 class CardTypeView extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -229,6 +320,8 @@ class CardTypeView extends StatelessWidget {
 }
 
 class CardNumberView extends StatelessWidget {
+  final String cardNumber;
+  CardNumberView({required this.cardNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -251,7 +344,7 @@ class CardNumberView extends StatelessWidget {
         ),
         //SizedBox(width: MARGIN_SMALL,),
         TitleText(
-          "8014",
+          cardNumber,
           textColor: Colors.white,
         ),
       ],

@@ -4,6 +4,9 @@ import 'package:movies_booking/data/vos/credit_vo.dart';
 import 'package:movies_booking/data/vos/user_vo.dart';
 
 import '../../network/response/common_response.dart';
+import '../../pages/get_card_response.dart';
+import '../request/check_out_request.dart';
+import '../vos/checkout_vo.dart';
 import '../vos/movie_vo.dart';
 import '../vos/payment_vo.dart';
 import '../vos/snack_vo.dart';
@@ -29,4 +32,11 @@ abstract class MovieBookingModel{
   Future<List<SnackVO>?> getSnacks();
 
   Future<List<PaymentVO>?> getPaymentMethod();
+
+  Future<UserVO?> getUserProfile();
+
+  Future<GetCardResponse> createCard( String cardNumber,
+      String cardHolder, String expirationDate, String cvc);
+
+  Future<CheckoutVO?> checkoutTicket(CheckOutRequest checkOutRequest);
 }

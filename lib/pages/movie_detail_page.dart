@@ -114,6 +114,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
         builder: (context) => MovieChooseTimePage(
           movieID: this.movie?.id ?? 0,
           movieName: this.movie?.title ?? "",
+          moviePath: this.movie?.posterPath ?? "",
         ),
       ),
     );

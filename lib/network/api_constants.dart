@@ -10,6 +10,10 @@ const EMAIL_LOGIN_END_POINT="/api/v1/email-login";
 const LOGOUT_END_POINT="/api/v1/logout";
 const CINEMA_TIME_SLOTS_END_POINT="/api/v1/cinema-day-timeslots";
 const CINEMA_SEAT_PLAN_END_POINT="/api/v1/seat-plan";
+const CREATE_CARD_END_POINT="/api/v1/card";
+const PROFILE_END_POINT="/api/v1/profile";
+const CHECKOUT_END_POINT="/api/v1/checkout";
+const TRANSACTION_END_POINT ="/api/v1/profile/transactions";
 
 //MOVIE END POINT
 const NOW_PLAYING_END_POINT="/3/movie/now_playing";
@@ -28,6 +32,10 @@ const PARAMS_EXTERNAL_SOURCE="external_source";
 const PARAMS_AUTHORIZATION="Authorization";
 const PARAMS_BOOKING_DATE="booking_date";
 const PARAMS_CINEMA_TIME_SLOT_ID="cinema_day_timeslot_id";
+const PARAMS_CARD_HOLDER="card_holder";
+const PARAMS_CARD_NUMBER="card_number";
+const PARAMS_CARD_EXPIRATION_DATE="expiration_date";
+const PARAMS_CARD_CVC="cvc";
 
 
 

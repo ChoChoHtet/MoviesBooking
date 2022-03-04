@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
+
 import 'package:movies_booking/data/models/movie_booking_model.dart';
+import 'package:movies_booking/data/request/check_out_request.dart';
+import 'package:movies_booking/data/vos/checkout_vo.dart';
 import 'package:movies_booking/data/vos/cinema_seat_vo.dart';
 import 'package:movies_booking/data/vos/cinema_vo.dart';
 import 'package:movies_booking/data/vos/credit_vo.dart';
@@ -10,6 +12,7 @@ import 'package:movies_booking/data/vos/user_vo.dart';
 import 'package:movies_booking/network/dataagents/movie_booking_agents.dart';
 import 'package:movies_booking/network/dataagents/retrofit_movie_data_agent_impl.dart';
 import 'package:movies_booking/network/response/common_response.dart';
+import 'package:movies_booking/pages/get_card_response.dart';
 import 'package:movies_booking/persistence/daos/credit_dao.dart';
 import 'package:movies_booking/persistence/daos/movie_dao.dart';
 
@@ -158,4 +161,24 @@ class MovieBookingModelImpl extends MovieBookingModel {
     var token = userDao.getUserInfo()?.getToken() ?? "";
     return _dataAgent.getSnacks(token);
   }
+
+  @override
+  Future<GetCardResponse> createCard(String cardNumber, String cardHolder, String expirationDate, String cvc) {
+    var token = userDao.getUserInfo()?.getToken() ?? "";
+    return _dataAgent.createCard(token, cardNumber, cardHolder, expirationDate, cvc);
+  }
+
+  @override
+  Future<UserVO?> getUserProfile() {
+    var token = userDao.getUserInfo()?.getToken() ?? "";
+   return _dataAgent.getUserProfile(token);
+  }
+
+  @override
+  Future<CheckoutVO?> checkoutTicket(CheckOutRequest checkOutRequest) {
+    var token = userDao.getUserInfo()?.getToken() ?? "";
+    return _dataAgent.checkoutTicket(token, checkOutRequest);
+  }
+
+
 }

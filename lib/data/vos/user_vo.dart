@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:movies_booking/data/vos/card_vo.dart';
 import 'package:movies_booking/persistence/hive_constants.dart';
 
 part 'user_vo.g.dart';
@@ -34,6 +35,10 @@ class UserVO {
   @HiveField(6)
   String? token;
 
+  @JsonKey(name: "cards")
+  @HiveField(7)
+  List<CardVO>? cards;
+
   String getToken() {
     return token != null ? "Bearer "+token! : "no token" ;
   }
@@ -41,11 +46,12 @@ class UserVO {
 
   @override
   String toString() {
-    return 'UserVO{id: $id, name: $name, email: $email, phone: $phone, totalExpense: $totalExpense, profileImage: $profileImage, token: $token}';
+    return 'UserVO{id: $id, name: $name, email: $email, phone: $phone, totalExpense: $totalExpense, profileImage: $profileImage, token: $token, cards: $cards}';
   }
 
+
   UserVO(this.id, this.name, this.email, this.phone, this.totalExpense,
-      this.profileImage, this.token);
+      this.profileImage, this.token, this.cards);
 
   factory UserVO.fromJson(Map<String,dynamic>json) => _$UserVOFromJson(json);
   Map<String,dynamic> toJson() => _$UserVOToJson(this);

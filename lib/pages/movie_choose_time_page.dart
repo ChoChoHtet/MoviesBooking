@@ -17,7 +17,8 @@ import 'package:collection/collection.dart';
 class MovieChooseTimePage extends StatefulWidget {
   final String movieName;
   final int movieID;
-  MovieChooseTimePage({required this.movieID,required this.movieName});
+  final String moviePath;
+  MovieChooseTimePage({required this.movieID,required this.movieName,required this.moviePath});
   final List<DateVO> dateTime =
       [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((numOfDays) {
     return DateTime.now().add(Duration(days: numOfDays));
@@ -170,6 +171,7 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
           builder: (context) => MovieSeatPage(
             movieId: widget.movieID,
             movieName: widget.movieName,
+            moviePath:widget.moviePath ,
             timeSlotId: slotId,
             bookingDate: bookingDate,
             cinemaName:cinemaName ,
