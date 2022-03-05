@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:movies_booking/data/models/movie_booking_model.dart';
 import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
 import 'package:movies_booking/data/vos/user_vo.dart';
 import 'package:movies_booking/pages/home_page.dart';
-import 'package:movies_booking/pages/movie_detail_page.dart';
 import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
 import 'package:movies_booking/resources/strings.dart';
@@ -53,7 +53,6 @@ class RegistrationTabView extends StatefulWidget {
 class _RegistrationTabViewState extends State<RegistrationTabView>
     with TickerProviderStateMixin {
   MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
-
   UserVO? user;
   @override
   void initState() {
@@ -66,7 +65,8 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
         .emailRegister(name, email, phone, password)
         .then((userResponse) {
       this.user = userResponse;
-      print("Register success-> ${user?.name},${user?.email},token:${user?.token}");
+      print(
+          "Register success-> ${user?.name},${user?.email},token:${user?.token}");
       _navigateToHomeScreen(context);
     }).catchError((error) {
       debugPrint("Register Error -> $error");
@@ -77,7 +77,8 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
     print("clicked login-> $email,$password");
     _movieBookingModel.emailLogin(email, password).then((userResponse) {
       this.user = userResponse;
-      print("Login success -> ${user?.name},${user?.email},token:${user?.token}");
+      print(
+          "Login success -> ${user?.name},${user?.email},token:${user?.token}");
       _navigateToHomeScreen(context);
     }).catchError((error) {
       debugPrint("Login Error -> $error");
@@ -92,6 +93,66 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
       ),
     );
     print("confirm clicked");
+  }
+
+  void _googleLogin() {
+    print("google login");
+    GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+    );
+    _googleSignIn.signIn().then((googleAccount) {
+      googleAccount?.authentication.then((authentication) {
+        print("Google access token: ${authentication.accessToken}");
+        _movieBookingModel
+            .loginGoogle(authentication.accessToken ?? "")
+            .then((response) {
+          this.user = response;
+          print(
+              "Google Login success-> ${user?.name},${user?.email},token:${user?.token}");
+          _navigateToHomeScreen(context);
+        }).catchError((error) {
+          debugPrint("Google Login Error: $error");
+        });
+      });
+    });
+  }
+
+  void _facebookLogin() {
+
+  }
+
+  void _registerGoogle(
+      String name, String email, String phone, String password) {
+    print("google register");
+    GoogleSignIn _googleSignIn = GoogleSignIn(
+      scopes: [
+        'email',
+        'https://www.googleapis.com/auth/contacts.readonly',
+      ],
+    );
+    _googleSignIn.signIn().then((googleAccount) {
+      googleAccount?.authentication.then((authentication) {
+        print("Google access token: ${authentication.accessToken}");
+        _movieBookingModel
+            .googleRegister(
+                name, email, phone, password, authentication.accessToken ?? "")
+            .then((response) {
+          this.user = response;
+          print(
+              "Google Register success-> ${user?.name},${user?.email},token:${user?.token}");
+          _navigateToHomeScreen(context);
+        }).catchError((error) {
+          debugPrint("Google Register Error: $error");
+        });
+      });
+    });
+  }
+
+  void _registerFacebook() {
+    print("google register");
   }
 
   @override
@@ -131,10 +192,16 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
               LoginView(
                 onClickConfirm: (email, password) =>
                     _emailLogin(email, password),
+                onTapGoogle: () => _googleLogin(),
+                onTapFacebook: () => _facebookLogin(),
               ),
-              SignInView(onClickConfirm: (name, email, phone, password) {
-                _registerUser(name, email, phone, password);
-              }),
+              SignInView(
+                onClickConfirm: (name, email, phone, password) =>
+                    _registerUser(name, email, phone, password),
+                onTapFacebook: _registerFacebook,
+                onTapGoogle: (name, email, phone, password) =>
+                    _registerGoogle(name, email, phone, password),
+              ),
             ],
           ),
         )
@@ -145,9 +212,14 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
 
 class LoginView extends StatelessWidget {
   final Function(String email, String password) onClickConfirm;
+  final VoidCallback onTapGoogle;
+  final VoidCallback onTapFacebook;
   var _emailController = TextEditingController();
   var _passwordController = TextEditingController();
-  LoginView({required this.onClickConfirm});
+  LoginView(
+      {required this.onClickConfirm,
+      required this.onTapGoogle,
+      required this.onTapFacebook});
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -173,7 +245,10 @@ class LoginView extends StatelessWidget {
         SizedBox(
           height: MARGIN_XLARGE,
         ),
-        SocialMediaView(),
+        SocialMediaView(
+          onTapFacebook: onTapFacebook,
+          onTapGoogle: onTapGoogle,
+        ),
         SizedBox(
           height: MARGIN_XLARGE,
         ),
@@ -187,22 +262,18 @@ class LoginView extends StatelessWidget {
       ],
     );
   }
-
-  void _navigateToMoviesDetailScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomePage(),
-      ),
-    );
-    print("confirm clicked");
-  }
 }
 
 class SignInView extends StatelessWidget {
   final Function(String name, String email, String phone, String password)
       onClickConfirm;
-  SignInView({required this.onClickConfirm});
+  final Function(String name, String email, String phone, String password)
+      onTapGoogle;
+  final VoidCallback onTapFacebook;
+  SignInView(
+      {required this.onClickConfirm,
+      required this.onTapGoogle,
+      required this.onTapFacebook});
   String name = "";
   String email = "";
   String password = "";
@@ -244,7 +315,15 @@ class SignInView extends StatelessWidget {
           child: ForgotPasswordView(),
         ),
         SizedBox(height: MARGIN_XLARGE),
-        SocialMediaView(),
+        SocialMediaView(
+          onTapFacebook: onTapFacebook,
+          onTapGoogle: () => onTapGoogle(
+            _nameController.text,
+            _emailController.text,
+            _phoneController.text,
+            _passwordController.text,
+          ),
+        ),
         SizedBox(height: MARGIN_XLARGE),
         ElevatedButtonView(
             REGISTRATION_CONFIRM_BUTTON_TEXT,
@@ -269,17 +348,27 @@ class SignInView extends StatelessWidget {
 }
 
 class SocialMediaView extends StatelessWidget {
+  final VoidCallback onTapGoogle;
+  final VoidCallback onTapFacebook;
+  SocialMediaView({required this.onTapGoogle, required this.onTapFacebook});
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        OutlineButtonView(
-            REGISTRATION_FACEBOOK_BUTTON_TEXT, "assets/ic_facebook.png"),
+        InkWell(
+          onTap: onTapFacebook,
+          child: OutlineButtonView(
+              REGISTRATION_FACEBOOK_BUTTON_TEXT, "assets/ic_facebook.png"),
+        ),
         SizedBox(
           height: MARGIN_XLARGE,
         ),
-        OutlineButtonView(
-            REGISTRATION_GOOGLE_BUTTON_TEXT, "assets/ic_google.png"),
+        InkWell(
+          onTap: onTapGoogle,
+          child: OutlineButtonView(
+              REGISTRATION_GOOGLE_BUTTON_TEXT, "assets/ic_google.png"),
+        ),
       ],
     );
   }

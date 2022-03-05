@@ -14,6 +14,8 @@ const CREATE_CARD_END_POINT="/api/v1/card";
 const PROFILE_END_POINT="/api/v1/profile";
 const CHECKOUT_END_POINT="/api/v1/checkout";
 const TRANSACTION_END_POINT ="/api/v1/profile/transactions";
+const GOOGLE_SIGN_IN_END_POINT="/api/v1/google-login";
+const FACEBOOK_SIGN_IN_END_POINT="/api/v1/facebook-login";
 
 //MOVIE END POINT
 const NOW_PLAYING_END_POINT="/3/movie/now_playing";
@@ -36,6 +38,13 @@ const PARAMS_CARD_HOLDER="card_holder";
 const PARAMS_CARD_NUMBER="card_number";
 const PARAMS_CARD_EXPIRATION_DATE="expiration_date";
 const PARAMS_CARD_CVC="cvc";
+const PARAMS_GOOGLE_ACCESS_TOKEN="google-access-token";
+const PARAMS_FACEBOOK_ACCESS_TOKEN="facebook-access-token";
+const PARAMS_NAME="name";
+const PARAMS_EMAIL="email";
+const PARAMS_PHONE="phone";
+const PARAMS_PASSWORD="password";
+const PARAMS_ACCESS_TOKEN ="access-token";
 
 
 

@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1050395337028",
+    "project_id": "fluttermoviebooking",
+    "storage_bucket": "fluttermoviebooking.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1050395337028:android:0506a18a20a94c3fee7711",
+        "android_client_info": {
+          "package_name": "com.example.movies_booking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1050395337028-vdddlgjr7bveddq65vbluqee750bipdf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.movies_booking",
+            "certificate_hash": "5d397b2c4a3cf0fe1bc69dafebeb3ab6a4be55e5"
+          }
+        },
+        {
+          "client_id": "1050395337028-vbgctb48vr16vmi3arljgjltmjmb4q8e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2bCh0mKlh6uOEholbo2fDko9gXEHrwkg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1050395337028-vbgctb48vr16vmi3arljgjltmjmb4q8e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1050395337028-gmtrohnvfdfl67qv5i3q3em7l28ghdss.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.moviesBooking"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
 import 'package:movies_booking/pages/registration_page.dart';
@@ -75,6 +76,7 @@ class _HomePageState extends State<HomePage> {
 
   void _logout(BuildContext context) {
     print("logout successful");
+
     _movieBookingModel.logout().then((value) {
       print("logout successful -> ${value.message}");
       _navigateRegistrationPage(context);

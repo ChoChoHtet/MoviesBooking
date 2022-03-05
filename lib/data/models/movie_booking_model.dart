@@ -11,9 +11,17 @@ import '../vos/movie_vo.dart';
 import '../vos/payment_vo.dart';
 import '../vos/snack_vo.dart';
 
-abstract class MovieBookingModel{
-  Future<UserVO?> emailRegister(String name, String email, String phone, String password);
-  Future<UserVO?> emailLogin(String email,String password);
+abstract class MovieBookingModel {
+  Future<UserVO?> emailRegister(
+      String name, String email, String phone, String password);
+
+  Future<UserVO?> googleRegister(String name, String email, String phone,
+      String password, String googleToken);
+
+  Future<UserVO?> emailLogin(String email, String password);
+
+  Future<UserVO> loginGoogle(String accessToken);
+
   Future<CommonResponse> logout();
   Future<UserVO?> getUserInfo();
   Future<List<CinemaVO>?> getCinemaTimeSlots(String date);
@@ -26,8 +34,8 @@ abstract class MovieBookingModel{
 
   Future<List<CreditVO>?> getMovieCredit(int movieId);
 
-  Future<List<CinemaSeatVO>?> getCinemaSeats(int timeSlotId,String bookingDate);
-
+  Future<List<CinemaSeatVO>?> getCinemaSeats(
+      int timeSlotId, String bookingDate);
 
   Future<List<SnackVO>?> getSnacks();
 
@@ -35,8 +43,8 @@ abstract class MovieBookingModel{
 
   Future<UserVO?> getUserProfile();
 
-  Future<GetCardResponse> createCard( String cardNumber,
-      String cardHolder, String expirationDate, String cvc);
+  Future<GetCardResponse> createCard(
+      String cardNumber, String cardHolder, String expirationDate, String cvc);
 
   Future<CheckoutVO?> checkoutTicket(CheckOutRequest checkOutRequest);
 }

@@ -31,11 +31,37 @@ abstract class MovieBookingAPI {
       @Field("phone") String phone,
       @Field("password") String password);
 
+  //Register user
+  @POST(REGISTER_EMAIL_END_POINT)
+  @FormUrlEncoded()
+  Future<GetUserResponse> googleOrFacebookRegister(
+    @Field(PARAMS_NAME) String name,
+    @Field(PARAMS_EMAIL) String email,
+    @Field(PARAMS_PHONE) String phone,
+    @Field(PARAMS_PASSWORD) String password,
+    @Field(PARAMS_GOOGLE_ACCESS_TOKEN) String google,
+    @Field(PARAMS_FACEBOOK_ACCESS_TOKEN) String facebook,
+  );
+
   //Email login
   @POST(EMAIL_LOGIN_END_POINT)
   @FormUrlEncoded()
   Future<GetUserResponse> emailLogin(
       @Field("email") String email, @Field("password") String password);
+
+  //Email login
+  @POST(GOOGLE_SIGN_IN_END_POINT)
+  @FormUrlEncoded()
+  Future<GetUserResponse> loginGoogle(
+      @Field(PARAMS_ACCESS_TOKEN) String accessToken);
+
+
+  //Email login
+  @POST(FACEBOOK_SIGN_IN_END_POINT)
+  @FormUrlEncoded()
+  Future<GetUserResponse> loginFacebook(
+      @Field(PARAMS_ACCESS_TOKEN) String accessToken);
+
 
   //user logout
   @POST(LOGOUT_END_POINT)
@@ -83,5 +109,4 @@ abstract class MovieBookingAPI {
   Future<CheckoutResponse> checkoutTicket(
       @Header(PARAMS_AUTHORIZATION) String token,
       @Body() CheckOutRequest checkOutRequest);
-
 }

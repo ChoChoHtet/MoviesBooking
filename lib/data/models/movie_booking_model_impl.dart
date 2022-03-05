@@ -35,11 +35,6 @@ class MovieBookingModelImpl extends MovieBookingModel {
   @override
   Future<UserVO?> emailRegister(
       String name, String email, String phone, String password) {
-    // return _dataAgent
-    //     .emailRegister(name, email, phone, password)
-    //     .then((value) => value.data)
-    //     .asStream()
-    //     .first;
     return _dataAgent
         .emailRegister(name, email, phone, password)
         .then((userResponse) async {
@@ -54,6 +49,21 @@ class MovieBookingModelImpl extends MovieBookingModel {
   }
 
   @override
+  Future<UserVO?> googleRegister(String name, String email, String phone, String password, String googleToken) {
+    return _dataAgent
+        .googleRegister(name, email, phone, password,googleToken)
+        .then((userResponse) async {
+      var userVo = userResponse.data;
+      if (userVo != null) {
+        userVo.token = userResponse.token;
+        print("Google Login token: ${userVo.token},res ${userResponse.token}");
+        userDao.saveUserInfo(userVo);
+      }
+      return Future.value(userResponse.data);
+    });
+  }
+
+  @override
   Future<UserVO?> emailLogin(String email, String password) {
     return _dataAgent.emailLogin(email, password).then((userResponse) async {
       var userVo = userResponse.data;
@@ -61,6 +71,24 @@ class MovieBookingModelImpl extends MovieBookingModel {
       if (userVo != null) {
         userVo.token = userResponse.token;
         print("login token: ${userVo.token},res ${userResponse.token}");
+        userDao.saveUserInfo(userVo);
+      }
+      if (userResponse.code == 200) {
+        return Future.value(userResponse.data);
+      } else {
+        return Future.error(userResponse.message ?? "Something went wrong");
+      }
+    });
+  }
+
+  @override
+  Future<UserVO> loginGoogle(String accessToken) {
+    return _dataAgent.loginGoogle(accessToken).then((userResponse) async {
+      var userVo = userResponse.data;
+      print("google login success: ${userResponse.toString()}");
+      if (userVo != null) {
+        userVo.token = userResponse.token;
+        print("google login success: ${userVo.token},res ${userResponse.token}");
         userDao.saveUserInfo(userVo);
       }
       if (userResponse.code == 200) {
@@ -179,6 +207,9 @@ class MovieBookingModelImpl extends MovieBookingModel {
     var token = userDao.getUserInfo()?.getToken() ?? "";
     return _dataAgent.checkoutTicket(token, checkOutRequest);
   }
+
+
+
 
 
 }

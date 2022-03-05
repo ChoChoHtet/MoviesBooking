@@ -19,7 +19,12 @@ abstract class MovieBookingAgent {
   Future<GetUserResponse> emailRegister(
       String name, String email, String phone, String password);
 
+  Future<GetUserResponse> googleRegister(
+      String name, String email, String phone, String password,String googleToken);
+
   Future<GetUserResponse> emailLogin(String email, String password);
+
+  Future<GetUserResponse> loginGoogle(String accessToken);
 
   Future<CommonResponse> logout(String token);
 

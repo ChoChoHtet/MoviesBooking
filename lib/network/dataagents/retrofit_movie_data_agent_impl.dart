@@ -41,6 +41,12 @@ class RetrofitMovieDataAgentImpl extends MovieBookingAgent {
   }
 
   @override
+  Future<GetUserResponse> googleRegister(String name, String email,
+      String phone, String password, String googleToken) {
+    return movieBookingAPI.googleOrFacebookRegister(name, email, phone, password,googleToken,"");
+  }
+
+  @override
   Future<GetUserResponse> emailLogin(String email, String password) {
     return movieBookingAPI.emailLogin(email, password);
   }
@@ -151,4 +157,11 @@ class RetrofitMovieDataAgentImpl extends MovieBookingAgent {
 
 
   }
+
+  @override
+  Future<GetUserResponse> loginGoogle(String accessToken) {
+    return movieBookingAPI.loginGoogle(accessToken);
+  }
+
+
 }

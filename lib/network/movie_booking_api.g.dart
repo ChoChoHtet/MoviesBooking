@@ -40,6 +40,33 @@ class _MovieBookingAPI implements MovieBookingAPI {
   }
 
   @override
+  Future<GetUserResponse> googleOrFacebookRegister(
+      name, email, phone, password, google, facebook) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'password': password,
+      'google-access-token': google,
+      'facebook-access-token': facebook
+    };
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetUserResponse>(Options(
+                method: 'POST',
+                headers: _headers,
+                extra: _extra,
+                contentType: 'application/x-www-form-urlencoded')
+            .compose(_dio.options, '/api/v1/register',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetUserResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<GetUserResponse> emailLogin(email, password) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -52,6 +79,44 @@ class _MovieBookingAPI implements MovieBookingAPI {
                 extra: _extra,
                 contentType: 'application/x-www-form-urlencoded')
             .compose(_dio.options, '/api/v1/email-login',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetUserResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetUserResponse> loginGoogle(accessToken) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'access-token': accessToken};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetUserResponse>(Options(
+                method: 'POST',
+                headers: _headers,
+                extra: _extra,
+                contentType: 'application/x-www-form-urlencoded')
+            .compose(_dio.options, '/api/v1/google-login',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetUserResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetUserResponse> loginFacebook(accessToken) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'access-token': accessToken};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetUserResponse>(Options(
+                method: 'POST',
+                headers: _headers,
+                extra: _extra,
+                contentType: 'application/x-www-form-urlencoded')
+            .compose(_dio.options, '/api/v1/facebook-login',
                 queryParameters: queryParameters, data: _data)
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = GetUserResponse.fromJson(_result.data!);
