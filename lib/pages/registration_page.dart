@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:movies_booking/data/models/movie_booking_model.dart';
 import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
@@ -151,8 +152,15 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
     });
   }
 
-  void _registerFacebook() {
-    print("google register");
+  void _registerFacebook() async {
+    //print("google register");
+   /* final LoginResult result = await FacebookAuth.instance.login();
+    if(result.status == LoginStatus.success){
+      print("Facebook access token: ${result.accessToken}");
+    }else{
+      print(result.status);
+      print(result.message);
+    }*/
   }
 
   @override
@@ -198,7 +206,7 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
               SignInView(
                 onClickConfirm: (name, email, phone, password) =>
                     _registerUser(name, email, phone, password),
-                onTapFacebook: _registerFacebook,
+                onTapFacebook:()=> _registerFacebook(),
                 onTapGoogle: (name, email, phone, password) =>
                     _registerGoogle(name, email, phone, password),
               ),
