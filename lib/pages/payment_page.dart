@@ -53,6 +53,7 @@ class _PaymentPageState extends State<PaymentPage> {
       debugPrint("Profile CARD: ${response?.cards?.length}");
       setState(() {
         this.cardList = response?.cards;
+        selectCardId = this.cardList?[0].id ?? 0;
       });
     }).onError((error) {
       debugPrint("Profile Error: $error");
@@ -151,7 +152,7 @@ class _PaymentPageState extends State<PaymentPage> {
           builder: (context) => AddCardInfoPage(),
         ));
 
-       /* .then((value) {
+    /* .then((value) {
       if (value == true) {
         _getUserProfile();
       }
@@ -187,12 +188,15 @@ class PaymentCardOptionSection extends StatelessWidget {
   final List<CardVO>? cardList;
   final Function(int) onSelectCard;
 
+  //CarouselController carouselController = CarouselController();
+
   @override
   Widget build(BuildContext context) {
-    return CarouselSlider.builder(
-      itemCount: cardList?.length ?? 0,
+    debugPrint("Card List length: ${cardList?.length ?? 0}");
+     return CarouselSlider.builder(
+      itemCount: this.cardList?.length ?? 0,
       options: CarouselOptions(
-          aspectRatio: 2,
+         aspectRatio: 2,
           viewportFraction: 0.8,
           enlargeCenterPage: true,
           autoPlayCurve: Curves.fastOutSlowIn,
@@ -202,6 +206,18 @@ class PaymentCardOptionSection extends StatelessWidget {
         return PaymentCardView(cardVO: cardList?[itemIndex]);
       },
     );
+
+    /*return CarouselSlider(
+      options: CarouselOptions(enlargeCenterPage: true),
+      items: this.cardList?.map((i) {
+            return Builder(
+              builder: (BuildContext context) {
+                return PaymentCardView(cardVO: i);
+              },
+            );
+          }).toList() ??
+          [],
+    );*/
   }
 }
 

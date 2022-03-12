@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:movies_booking/data/models/movie_booking_model.dart';
-import 'package:movies_booking/pages/payment_page.dart';
 import 'package:movies_booking/resources/dimen.dart';
 import 'package:movies_booking/widgets/close_button_view.dart';
 import 'package:movies_booking/widgets/elevated_button_view.dart';

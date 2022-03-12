@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 //import 'package:google_sign_in/google_sign_in.dart';
@@ -83,6 +84,7 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
       _navigateToHomeScreen(context);
     }).catchError((error) {
       debugPrint("Login Error -> $error");
+      _showCommonErrorDialog(context, error);
     });
   }
 
@@ -95,7 +97,20 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
     );
     print("confirm clicked");
   }
-
+  void _showCommonErrorDialog(BuildContext context, String message) {
+    showCupertinoDialog(
+        context: context,
+        builder: (builder) => CupertinoAlertDialog(
+          title: Text("Error"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("OKay"),
+            )
+          ],
+        ));
+  }
   void _googleLogin() {
     print("google login");
    /* GoogleSignIn _googleSignIn = GoogleSignIn(
@@ -222,8 +237,8 @@ class LoginView extends StatelessWidget {
   final Function(String email, String password) onClickConfirm;
   final VoidCallback onTapGoogle;
   final VoidCallback onTapFacebook;
-  var _emailController = TextEditingController();
-  var _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   LoginView(
       {required this.onClickConfirm,
       required this.onTapGoogle,
@@ -282,14 +297,14 @@ class SignInView extends StatelessWidget {
       {required this.onClickConfirm,
       required this.onTapGoogle,
       required this.onTapFacebook});
-  String name = "";
-  String email = "";
-  String password = "";
-  String phone = "";
-  var _emailController = TextEditingController();
-  var _phoneController = TextEditingController();
-  var _nameController = TextEditingController();
-  var _passwordController = TextEditingController();
+  final String name = "";
+  final String email = "";
+  final String password = "";
+  final String phone = "";
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -345,14 +360,6 @@ class SignInView extends StatelessWidget {
     );
   }
 
-  void _navigateToHomeScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomePage(),
-      ),
-    );
-  }
 }
 
 class SocialMediaView extends StatelessWidget {

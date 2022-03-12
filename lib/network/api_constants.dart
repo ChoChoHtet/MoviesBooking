@@ -3,6 +3,7 @@
 const CINEMA_BASE_URL="https://tmba.padc.com.mm";
 const MOVIES_BASE_URL="https://api.themoviedb.org";
 const MOVIE_IMAGE_URL="https://image.tmdb.org/t/p/w200/";
+const AVATAR_IMAGE_URL="https://www.w3schools.com/w3images/avatar2.png";
 
 //CINEMA END POINT
 const REGISTER_EMAIL_END_POINT="/api/v1/register";

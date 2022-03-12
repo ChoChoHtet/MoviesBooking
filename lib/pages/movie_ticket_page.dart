@@ -218,8 +218,8 @@ class MovieTicketPosterView extends StatelessWidget {
           ),
           child: Image.network(
             "$MOVIE_IMAGE_URL$moviePoster",
-            fit: BoxFit.cover,
-            width: double.maxFinite,
+            fit: BoxFit.fill,
+            width: double.infinity,
             height: 200,
           ),
         ),

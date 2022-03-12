@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:movies_booking/data/models/movie_booking_model.dart';
@@ -62,17 +63,6 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
         widget.dateTime[index].isSelected = false;
       }
     });
-/*
-    _movieBookingModel.getCinemaTimeSlots(date).then((cinemas) {
-      print("cinema slot ${cinemas.toString()}");
-      setState(() {
-        this.bookingDate = date;
-        this.cinemaTimeList = cinemas;
-      });
-    }).catchError((error) {
-      debugPrint("Cinema Time Slot Error");
-    });
-*/
 
     _movieBookingModel.getCinemaTimeSlotDB(date).listen((cinemas) {
      // print("cinema slot ${cinemas.toString()}");
@@ -166,7 +156,23 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
       ),
     );
   }
-
+  void _showAlertDialog(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (ctx) => CupertinoAlertDialog(
+        title: Text("Movie Show Time"),
+        content: Text("Please Select Movie Time"),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
   void _navigateMovieSeatPage(
       BuildContext context,
       int slotId,
@@ -192,6 +198,8 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
           ),
         ),
       );
+    }else{
+      _showAlertDialog(context);
     }
 
   }

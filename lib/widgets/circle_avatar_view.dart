@@ -7,15 +7,14 @@ class CircleAvatarView extends StatelessWidget {
   const CircleAvatarView(this.url);
   @override
   Widget build(BuildContext context) {
-    return  Row(
+    return Row(
       children: [
         Container(
           height: AVATAR_SIZE,
           width: AVATAR_SIZE,
           child: CircleAvatar(
-            backgroundImage: NetworkImage(
-              "$MOVIE_IMAGE_URL$url",
-            ),
+            backgroundImage: url.isNotEmpty ? NetworkImage("$MOVIE_IMAGE_URL$url"):
+            NetworkImage(AVATAR_IMAGE_URL)
           ),
         ),
         SizedBox(

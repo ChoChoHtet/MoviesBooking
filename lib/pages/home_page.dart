@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -45,33 +46,17 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _getNowShowingMovies() {
-/*    _movieBookingModel.getNowShowingMovie().then((nowShowing) {
-      setState(() {
-        this.nowShowingMovies = nowShowing;
-      });
-    }).catchError((error) {
-      debugPrint("Now Showing error: $error");
-    });
-   */
     _movieBookingModel.getNowShowingMovieDB().listen((nowShowing) {
-     // debugPrint("Now Showing : ${nowShowing?.length}");
+      // debugPrint("Now Showing : ${nowShowing?.length}");
       setState(() {
         this.nowShowingMovies = nowShowing;
       });
     }).onError((error) {
       debugPrint("Now Showing error: $error");
     });
-
   }
 
   void _getComingSoonMovie() {
-/*    _movieBookingModel.getComingSoonMovie().then((comingSoon) {
-      setState(() {
-        this.comingSoonMovies = comingSoon;
-      });
-    }).catchError((error) {
-      debugPrint("Coming error: $error");
-    });*/
     _movieBookingModel.getComingSoonMovieDB().listen((comingSoon) {
       setState(() {
         this.comingSoonMovies = comingSoon;
@@ -82,16 +67,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _getUserInfo() {
-/*    _movieBookingModel.getUserInfo().then((userResponse) {
-      print("User Info -> ${user.toString()}");
-      setState(() {
-        this.user = userResponse;
-      });
-    }).catchError((error) {
-      debugPrint("Get User Info DB error: $error");
-    });*/
     _movieBookingModel.getUserInfoDB().listen((userResponse) {
-     // print("User Info -> ${userResponse.toString()}");
+      // print("User Info -> ${userResponse.toString()}");
       setState(() {
         this.user = userResponse;
       });
@@ -158,7 +135,10 @@ class _HomePageState extends State<HomePage> {
                 DrawerContentSection(menuTitle: menuTitle),
                 Spacer(),
                 LogoutView(
-                  onTapLogout: () => _logout(context),
+                  onTapLogout: () {
+                    Navigator.pop(context);
+                    _showAlertDialog(context);
+                  },
                 ),
                 SizedBox(
                   height: MARGIN_XLARGE,
@@ -192,6 +172,31 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+
+  void _showAlertDialog(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (ctx) => CupertinoAlertDialog(
+        title: Text("Movie Booking"),
+        content: Text("Are you sure want to logout"),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: Text("CANCEL"),
+          ),
+          TextButton(
+            onPressed: () {
+              _logout(context);
+            },
+            child: Text("OK"),
+          ),
+        ],
       ),
     );
   }
@@ -323,18 +328,16 @@ class UserProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // CircleAvatarView(
-        //   "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
-        // ),,
         Container(
           height: AVATAR_SIZE,
           width: AVATAR_SIZE,
           child: CircleAvatar(
             backgroundImage: NetworkImage(
-                "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
+              "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
             ),
           ),
         ),
+        SizedBox(width: MARGIN_MEDIUM,),
         LargeTitleText(username),
       ],
     );
@@ -396,7 +399,7 @@ class HorizontalMovieView extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             itemCount: movieList?.length ?? 0,
             itemBuilder: (BuildContext context, int index) => GestureDetector(
-              onTap:() => onTapPoster(movieList?[index].id ?? 0),
+              onTap: () => onTapPoster(movieList?[index].id ?? 0),
               child: MoviesView(
                 movies: movieList?[index],
               ),
