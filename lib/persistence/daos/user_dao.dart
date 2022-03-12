@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 import 'package:movies_booking/data/vos/user_vo.dart';
 import 'package:movies_booking/persistence/hive_constants.dart';
@@ -11,6 +12,7 @@ class UserDao {
   }
 
   void saveUserInfo(UserVO user) async {
+    debugPrint("User Dao: ${user.toString()}");
     await getUserBox().put("user", user);
   }
 
@@ -20,5 +22,13 @@ class UserDao {
 
   Box<UserVO> getUserBox() {
     return Hive.box<UserVO>(BOX_NAMES_USER_VO);
+  }
+
+  Stream<void> getUserEventStream(){
+    return getUserBox().watch();
+  }
+
+  Stream<UserVO?> getUserStream(){
+    return Stream.value(getUserInfo());
   }
 }

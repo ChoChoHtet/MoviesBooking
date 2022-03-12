@@ -45,7 +45,7 @@ abstract class MovieBookingAgent {
 
   Future<List<PaymentVO>?> getPaymentMethod(String token);
 
-  Future<UserVO?> getUserProfile(String token);
+  Future<GetUserResponse?> getUserProfile(String token);
 
   Future<GetCardResponse> createCard(String token, String cardNumber,
       String cardHolder, String expirationDate, String cvc);

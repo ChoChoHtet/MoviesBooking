@@ -62,6 +62,7 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
         widget.dateTime[index].isSelected = false;
       }
     });
+/*
     _movieBookingModel.getCinemaTimeSlots(date).then((cinemas) {
       print("cinema slot ${cinemas.toString()}");
       setState(() {
@@ -69,6 +70,17 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
         this.cinemaTimeList = cinemas;
       });
     }).catchError((error) {
+      debugPrint("Cinema Time Slot Error");
+    });
+*/
+
+    _movieBookingModel.getCinemaTimeSlotDB(date).listen((cinemas) {
+     // print("cinema slot ${cinemas.toString()}");
+      setState(() {
+        this.bookingDate = date;
+        this.cinemaTimeList = cinemas;
+      });
+    }).onError((error) {
       debugPrint("Cinema Time Slot Error");
     });
   }
@@ -93,7 +105,7 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
 
   bool _validateTimeSlot() {
     List<CinemaVO>? list = cinemaTimeList?.where((element) => element.isSelected == true).toList();
-    print("cinemaVO: ${list.toString()}");
+   // print("cinemaVO: ${list.toString()}");
     return  list !=null && list.isNotEmpty ;
   }
 
@@ -281,7 +293,7 @@ class CustomRadioView extends StatelessWidget {
               : Border.all(color: Colors.grey, width: 1)),
       child: Center(
         child: NormalTextView(
-          "$startTime,$id",
+          "$startTime",
           textColor: this.isSelected ? Colors.white : Colors.grey,
         ),
       ),

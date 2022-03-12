@@ -1,24 +1,33 @@
 import 'package:hive/hive.dart';
+import 'package:movies_booking/data/vos/cinema_time_hive_vo.dart';
+import 'package:movies_booking/data/vos/cinema_vo.dart';
 import 'package:movies_booking/persistence/hive_constants.dart';
 
-import '../../data/vos/date_vo.dart';
 
-class DateDao{
-  DateDao._internal();
-  static final DateDao _singleton = DateDao._internal();
-  factory DateDao(){
+
+class CinemaTimeSlotDao{
+  CinemaTimeSlotDao._internal();
+  static final CinemaTimeSlotDao _singleton = CinemaTimeSlotDao._internal();
+  factory CinemaTimeSlotDao(){
     return _singleton;
   }
-  void saveDateTime(List<DateVO> dates) async {
-    Map<String,DateVO> movieMap = Map.fromIterable(
-        dates,key: (dateTime) =>dateTime.date,value: (date) => date);
-    await getDateBox().putAll(movieMap);
+  void saveDateTime(String date,CinemaTimeHiveVO cinemaVO) async {
+    print("dao cinema list size: ${cinemaVO.cinemaTime?.length}");
+    await getCinemaBox().put(date,cinemaVO);
   }
 
-  List<DateVO> getDateVO(){
-    return getDateBox().values.toList();
+  List<CinemaVO> getCinemaVO(String date){
+    return getCinemaBox().get(date)?.cinemaTime ?? [];
   }
-  Box<DateVO> getDateBox(){
-    return Hive.box<DateVO>(BOX_NAMES_DATE_TIME_VO);
+  Box<CinemaTimeHiveVO> getCinemaBox(){
+    return Hive.box<CinemaTimeHiveVO>(BOX_NAMES_DATE_TIME_VO);
+  }
+
+  Stream<void> getCinemaEventStream(){
+    return getCinemaBox().watch();
+  }
+
+  Stream<List<CinemaVO>> getCinemaStream(String date){
+    return Stream.value(getCinemaVO(date));
   }
 }

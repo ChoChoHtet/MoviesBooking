@@ -28,13 +28,6 @@ class MovieDetailPage extends StatefulWidget {
 }
 
 class _MovieDetailPageState extends State<MovieDetailPage> {
-  // final List<String> genreList = ["Mystery", "Adventure"];
-
-  // final List<String> castList = [
-  //   "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
-  //   "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
-  //   "https://img.i-scmp.com/cdn-cgi/image/fit=contain,width=1098,format=auto/sites/default/files/styles/1200x800/public/d8/images/methode/2019/03/27/dffa4156-4f80-11e9-8617-6babbcfb60eb_image_hires_141554.JPG?itok=_XQdld_B&v=1553667358",
-  // ];
   MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
   MovieVO? movie;
   List<CreditVO>? castList;
@@ -56,11 +49,18 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
   }
 
   void _getMovieDetail() {
-    _movieBookingModel.getMovieDetail(widget.movieId ?? 0).then((response) {
+/*    _movieBookingModel.getMovieDetail(widget.movieId ?? 0).then((response) {
       setState(() {
         this.movie = response;
       });
     }).catchError((error) {
+      debugPrint("Movie Detail Error :$error");
+    });*/
+    _movieBookingModel.getMovieDetailDB(widget.movieId ?? 0).listen((response) {
+      setState(() {
+        this.movie = response;
+      });
+    }).onError((error) {
       debugPrint("Movie Detail Error :$error");
     });
   }

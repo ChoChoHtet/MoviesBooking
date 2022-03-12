@@ -4,7 +4,6 @@ import 'package:movies_booking/data/request/check_out_request.dart';
 import 'package:movies_booking/data/request/snack_request.dart';
 import 'package:movies_booking/data/vos/checkout_vo.dart';
 import 'package:movies_booking/pages/add_card_info_page.dart';
-import 'package:movies_booking/pages/item_order_page.dart';
 import 'package:movies_booking/pages/movie_ticket_page.dart';
 import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
@@ -44,18 +43,18 @@ class PaymentPage extends StatefulWidget {
 }
 
 class _PaymentPageState extends State<PaymentPage> {
+  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
   List<CardVO>? cardList;
   int selectCardId = 0;
   CheckoutVO? checkoutVO;
 
-  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
-
   void _getUserProfile() {
-    _movieBookingModel.getUserProfile().then((response) {
+    _movieBookingModel.getUserInfoDB().listen((response) {
+      debugPrint("Profile CARD: ${response?.cards?.length}");
       setState(() {
         this.cardList = response?.cards;
       });
-    }).catchError((error) {
+    }).onError((error) {
       debugPrint("Profile Error: $error");
     });
   }
@@ -80,7 +79,9 @@ class _PaymentPageState extends State<PaymentPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            PaymentAmoutSection(totalPrice: widget.totalPrice,),
+            PaymentAmoutSection(
+              totalPrice: widget.totalPrice,
+            ),
             SizedBox(
               height: MARGIN_MEDIUM,
             ),
@@ -111,17 +112,15 @@ class _PaymentPageState extends State<PaymentPage> {
   }
 
   void _checkoutTicket() {
-     CheckOutRequest checkOutRequest = CheckOutRequest(
-       widget.timeSlotId,
-       widget.seatNumbers,
-       widget.bookingDate,
-       widget.movieId,
-       selectCardId,
-       widget.cinemaId,
-       widget.totalPrice,
-       widget.snacks
-      );
-
+    CheckOutRequest checkOutRequest = CheckOutRequest(
+        widget.timeSlotId,
+        widget.seatNumbers,
+        widget.bookingDate,
+        widget.movieId,
+        selectCardId,
+        widget.cinemaId,
+        widget.totalPrice,
+        widget.snacks);
 
     print("CheckOutReq-> ${checkOutRequest.toString()}");
     _movieBookingModel.checkoutTicket(checkOutRequest).then((response) {
@@ -150,11 +149,13 @@ class _PaymentPageState extends State<PaymentPage> {
         context,
         MaterialPageRoute(
           builder: (context) => AddCardInfoPage(),
-        )).then((value) {
+        ));
+
+       /* .then((value) {
       if (value == true) {
         _getUserProfile();
       }
-    });
+    });*/
   }
 }
 
@@ -197,10 +198,9 @@ class PaymentCardOptionSection extends StatelessWidget {
           autoPlayCurve: Curves.fastOutSlowIn,
           initialPage: 0,
           onPageChanged: (index, value) => onSelectCard(index)),
-      itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex){
+      itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
         return PaymentCardView(cardVO: cardList?[itemIndex]);
       },
-
     );
   }
 }

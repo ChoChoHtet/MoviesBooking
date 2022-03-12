@@ -42,9 +42,10 @@ dependencies:
   hive_generator: ^1.1.2
   collection: ^1.15.0
   intl: ^0.17.0
-  google_sign_in: ^5.2.4
+ # google_sign_in: ^5.2.4
   flutter_facebook_auth: ^4.1.1
   #fluttertoast: ^8.0.8
+  stream_transform: ^2.0.0
 
 dev_dependencies:
   flutter_test:

@@ -30,4 +30,40 @@ class MovieDao{
   Box<MovieVO> getMovieBox(){
     return Hive.box<MovieVO>(BOX_NAMES_MOVIE_VO);
   }
+  /// Reactive Programming
+
+  Stream<void> getAllMovieEventStream(){
+    return getMovieBox().watch();
+  }
+  Stream<List<MovieVO>> getNowShowingMovieStream() {
+    return Stream.value(getAllMovies()
+    // .where((element) => element.isNowShowing ?? false)
+        .toList());
+  }
+
+  Stream<List<MovieVO>> getComingSoonMovieStream() {
+    return Stream.value(getAllMovies()
+   // .where((element) => element.isComingSoon ?? false)
+        .toList());
+  }
+  Stream<MovieVO?> getMovieDetailStream(int movieId){
+    return Stream.value(getMoviesById(movieId));
+  }
+  List<MovieVO> getNowShowingMovies(){
+    if( getAllMovies().isNotEmpty){
+      return getAllMovies()
+          .where((element) => element.isNowShowing ?? false).toList();
+    }else {
+      return [];
+    }
+  }
+
+  List<MovieVO> getComingSoonMovies(){
+    if( getAllMovies().isNotEmpty){
+      return getAllMovies()
+          .where((element) => element.isComingSoon ?? false).toList();
+    }else {
+      return [];
+    }
+  }
 }

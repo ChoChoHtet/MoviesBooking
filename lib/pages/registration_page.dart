@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+//import 'package:google_sign_in/google_sign_in.dart';
 import 'package:movies_booking/data/models/movie_booking_model.dart';
 import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
 import 'package:movies_booking/data/vos/user_vo.dart';
@@ -98,7 +98,7 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
 
   void _googleLogin() {
     print("google login");
-    GoogleSignIn _googleSignIn = GoogleSignIn(
+   /* GoogleSignIn _googleSignIn = GoogleSignIn(
       scopes: [
         'email',
         'https://www.googleapis.com/auth/contacts.readonly',
@@ -118,7 +118,7 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
           debugPrint("Google Login Error: $error");
         });
       });
-    });
+    });*/
   }
 
   void _facebookLogin() {
@@ -128,7 +128,7 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
   void _registerGoogle(
       String name, String email, String phone, String password) {
     print("google register");
-    GoogleSignIn _googleSignIn = GoogleSignIn(
+   /* GoogleSignIn _googleSignIn = GoogleSignIn(
       scopes: [
         'email',
         'https://www.googleapis.com/auth/contacts.readonly',
@@ -149,7 +149,7 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
           debugPrint("Google Register Error: $error");
         });
       });
-    });
+    });*/
   }
 
   void _registerFacebook() async {

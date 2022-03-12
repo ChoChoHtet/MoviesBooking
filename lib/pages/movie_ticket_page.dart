@@ -9,6 +9,8 @@ import 'package:movies_booking/widgets/large_title_text.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
 
+import 'home_page.dart';
+
 class MovieTicketPage extends StatelessWidget {
   final CheckoutVO? checkoutVO;
   final String cinemaName;
@@ -26,7 +28,9 @@ class MovieTicketPage extends StatelessWidget {
         elevation: 0,
         leading: CloseButtonView(
           () {
-            Navigator.pop(context);
+            //Navigator.pop(context);
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => HomePage()));
           },
         ),
       ),

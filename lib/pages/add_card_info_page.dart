@@ -30,6 +30,7 @@ class _AddCardInfoPageState extends State<AddCardInfoPage> {
         .then((response) {
       print("card Success: ${response.code}");
       if (response.code == 200) {
+        _movieBookingModel.getUserProfile();
         Navigator.pop(context, true);
       }
     }).catchError((error) {

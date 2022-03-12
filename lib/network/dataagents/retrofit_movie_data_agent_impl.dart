@@ -68,7 +68,7 @@ class RetrofitMovieDataAgentImpl extends MovieBookingAgent {
   @override
   Future<List<MovieVO>?> getNowShowingMovie() {
     return movieAPI
-        .getComingSoonMovies(API_KEY, PAGE.toString(), LANGUAGE_EN_US)
+        .getNowShowingMovies(API_KEY, PAGE.toString(), LANGUAGE_EN_US)
         .asStream()
         .map((response) => response.results)
         .first;
@@ -134,12 +134,12 @@ class RetrofitMovieDataAgentImpl extends MovieBookingAgent {
   }
 
   @override
-  Future<UserVO?> getUserProfile(String token) {
+  Future<GetUserResponse?> getUserProfile(String token) {
     return movieBookingAPI
-        .getUserProfile(token)
-        .asStream()
+        .getUserProfile(token);
+        /*.asStream()
         .map((profile) => profile.data)
-        .first;
+        .first;*/
   }
 
   @override

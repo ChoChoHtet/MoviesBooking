@@ -23,28 +23,44 @@ abstract class MovieBookingModel {
   Future<UserVO> loginGoogle(String accessToken);
 
   Future<CommonResponse> logout();
+
+  void getCinemaTimeSlots(String date);
+
+  void getNowShowingMovie();
+
+  void getComingSoonMovie();
+
   Future<UserVO?> getUserInfo();
-  Future<List<CinemaVO>?> getCinemaTimeSlots(String date);
 
-  Future<List<MovieVO>?> getNowShowingMovie();
+  void getUserProfile();
 
-  Future<List<MovieVO>?> getComingSoonMovie();
+  void getMovieDetail(int movieId);
 
-  Future<MovieVO?> getMovieDetail(int movieId);
+  void getDateTimeList();
+
+  void getSnacks();
+
+  void getPaymentMethod();
 
   Future<List<CreditVO>?> getMovieCredit(int movieId);
 
   Future<List<CinemaSeatVO>?> getCinemaSeats(
       int timeSlotId, String bookingDate);
 
-  Future<List<SnackVO>?> getSnacks();
-
-  Future<List<PaymentVO>?> getPaymentMethod();
-
-  Future<UserVO?> getUserProfile();
-
   Future<GetCardResponse> createCard(
       String cardNumber, String cardHolder, String expirationDate, String cvc);
 
   Future<CheckoutVO?> checkoutTicket(CheckOutRequest checkOutRequest);
+
+  ///Database
+  Stream<List<MovieVO>?> getNowShowingMovieDB();
+  Stream<List<MovieVO>?> getComingSoonMovieDB();
+  Stream<UserVO?> getUserInfoDB();
+  //Stream<MovieVO?> getMovieDetailDB(int movieId);
+  Stream<List<CinemaVO>> getCinemaTimeSlotDB(String date);
+
+  Stream<MovieVO?> getMovieDetailDB(int movieId);
+  //Future<List<CinemaVO>> getCinemaTimeSlotDB(String date);
+  Stream<List<SnackVO>> getSnackFromDB();
+  Stream<List<PaymentVO>?> getPaymentMethodFromDB();
 }

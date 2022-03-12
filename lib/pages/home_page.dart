@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+//import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
 import 'package:movies_booking/pages/registration_page.dart';
@@ -7,11 +7,11 @@ import 'package:movies_booking/persistence/hive_constants.dart';
 import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
 import 'package:movies_booking/viewItems/movies_view.dart';
-import 'package:movies_booking/widgets/circle_avatar_view.dart';
 import 'package:movies_booking/widgets/large_title_text.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
 
+import '../data/models/movie_booking_model.dart';
 import '../data/vos/movie_vo.dart';
 import '../data/vos/user_vo.dart';
 import 'movie_detail_page.dart';
@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
     "Rate us"
   ];
 
-  MovieBookingModelImpl _movieBookingModel = MovieBookingModelImpl();
+  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
   UserVO? user;
   List<MovieVO>? nowShowingMovies;
   List<MovieVO>? comingSoonMovies;
@@ -40,36 +40,62 @@ class _HomePageState extends State<HomePage> {
     _getUserInfo();
     _getNowShowingMovies();
     _getComingSoonMovie();
+    _movieBookingModel.getSnacks();
     super.initState();
   }
 
   void _getNowShowingMovies() {
-    _movieBookingModel.getNowShowingMovie().then((nowShowing) {
+/*    _movieBookingModel.getNowShowingMovie().then((nowShowing) {
       setState(() {
         this.nowShowingMovies = nowShowing;
       });
     }).catchError((error) {
       debugPrint("Now Showing error: $error");
     });
+   */
+    _movieBookingModel.getNowShowingMovieDB().listen((nowShowing) {
+     // debugPrint("Now Showing : ${nowShowing?.length}");
+      setState(() {
+        this.nowShowingMovies = nowShowing;
+      });
+    }).onError((error) {
+      debugPrint("Now Showing error: $error");
+    });
+
   }
 
   void _getComingSoonMovie() {
-    _movieBookingModel.getComingSoonMovie().then((comingSoon) {
+/*    _movieBookingModel.getComingSoonMovie().then((comingSoon) {
       setState(() {
         this.comingSoonMovies = comingSoon;
       });
     }).catchError((error) {
       debugPrint("Coming error: $error");
+    });*/
+    _movieBookingModel.getComingSoonMovieDB().listen((comingSoon) {
+      setState(() {
+        this.comingSoonMovies = comingSoon;
+      });
+    }).onError((error) {
+      debugPrint("Coming error: $error");
     });
   }
 
   void _getUserInfo() {
-    _movieBookingModel.getUserInfo().then((userResponse) {
+/*    _movieBookingModel.getUserInfo().then((userResponse) {
       print("User Info -> ${user.toString()}");
       setState(() {
         this.user = userResponse;
       });
     }).catchError((error) {
+      debugPrint("Get User Info DB error: $error");
+    });*/
+    _movieBookingModel.getUserInfoDB().listen((userResponse) {
+     // print("User Info -> ${userResponse.toString()}");
+      setState(() {
+        this.user = userResponse;
+      });
+    }).onError((error) {
       debugPrint("Get User Info DB error: $error");
     });
   }
