@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:movies_booking/bloc/movie_detail_bloc.dart';
 import 'package:movies_booking/data/models/movie_booking_model.dart';
 import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
 import 'package:movies_booking/data/vos/credit_vo.dart';
@@ -17,104 +18,79 @@ import 'package:movies_booking/widgets/elevated_button_view.dart';
 import 'package:movies_booking/widgets/large_title_text.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
+import 'package:provider/provider.dart';
 
 import '../data/vos/movie_vo.dart';
 
-class MovieDetailPage extends StatefulWidget {
+class MovieDetailPage extends StatelessWidget {
   final int? movieId;
   MovieDetailPage({required this.movieId});
   @override
-  State<MovieDetailPage> createState() => _MovieDetailPageState();
-}
-
-class _MovieDetailPageState extends State<MovieDetailPage> {
-  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
-  MovieVO? movie;
-  List<CreditVO>? castList;
-  @override
-  void initState() {
-    _getMovieDetail();
-    _getMovieCredit();
-    super.initState();
-  }
-
-  void _getMovieCredit() {
-    _movieBookingModel.getMovieCredit(widget.movieId ?? 0).then((response) {
-      setState(() {
-        this.castList = response;
-      });
-    }).catchError((error) {
-      debugPrint("Movie Credit Error :$error");
-    });
-  }
-
-  void _getMovieDetail() {
-/*    _movieBookingModel.getMovieDetail(widget.movieId ?? 0).then((response) {
-      setState(() {
-        this.movie = response;
-      });
-    }).catchError((error) {
-      debugPrint("Movie Detail Error :$error");
-    });*/
-    _movieBookingModel.getMovieDetailDB(widget.movieId ?? 0).listen((response) {
-      setState(() {
-        this.movie = response;
-      });
-    }).onError((error) {
-      debugPrint("Movie Detail Error :$error");
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Stack(
-      children: [
-        Positioned.fill(
-          child: CustomScrollView(
-            slivers: [
-              MoviesSliverAppBar(
-                posterPath: movie?.posterPath ?? "",
-                onTapBack: () => Navigator.pop(context),
-              ),
-              SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    MoviesInfoView(
-                      genreList: movie?.getGenreAsString() ?? [],
-                      castList: this.castList,
-                      movie: this.movie,
+    return ChangeNotifierProvider(
+      create: (context) => MovieDetailBloc(movieId ?? 0),
+      child: Scaffold(
+          body: Selector<MovieDetailBloc, MovieVO?>(
+        selector: (context, bloc) => bloc.movie,
+        builder: (BuildContext context, movie, Widget? child) {
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: CustomScrollView(
+                  slivers: [
+                    MoviesSliverAppBar(
+                      posterPath: movie?.posterPath ?? "",
+                      onTapBack: () => Navigator.pop(context),
+                    ),
+                    SliverList(
+                      delegate: SliverChildListDelegate(
+                        [
+                          Selector<MovieDetailBloc, List<CreditVO>?>(
+                            selector: (context, bloc) => bloc.castList,
+                            builder: (BuildContext context, castList,
+                                Widget? child) {
+                              return MoviesInfoView(
+                                genreList: movie?.getGenreAsString() ?? [],
+                                castList: castList,
+                                movie: movie,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(MARGIN_MEDIUM),
+                  child: ElevatedButtonView(
+                    MOVIES_DETAIL_GET_YOUR_TICKET_BUTTON_TEXT,
+                    () {
+                      MovieDetailBloc bloc =
+                          Provider.of<MovieDetailBloc>(context, listen: false);
+                      _navigateToChooseTimePage(context, bloc.movie);
+                    },
+                  ),
+                ),
+              ),
             ],
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.all(MARGIN_MEDIUM),
-            child: ElevatedButtonView(
-              MOVIES_DETAIL_GET_YOUR_TICKET_BUTTON_TEXT,
-              () {
-                _navigateToChooseTimePage(context);
-              },
-            ),
-          ),
-        ),
-      ],
-    ));
+          );
+        },
+      )),
+    );
   }
 
-  void _navigateToChooseTimePage(BuildContext context) {
-     Navigator.push(
+  void _navigateToChooseTimePage(BuildContext context, MovieVO? movie) {
+    Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => MovieChooseTimePage(
-          movieID: this.movie?.id ?? 0,
-          movieName: this.movie?.title ?? "",
-          moviePath: this.movie?.posterPath ?? "",
+          movieID: movie?.id ?? 0,
+          movieName: movie?.title ?? "",
+          moviePath: movie?.posterPath ?? "",
         ),
       ),
     );

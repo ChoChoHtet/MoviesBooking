@@ -50,6 +50,31 @@ class UserVO {
   }
 
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is UserVO &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          email == other.email &&
+          phone == other.phone &&
+          totalExpense == other.totalExpense &&
+          profileImage == other.profileImage &&
+          token == other.token &&
+          cards == other.cards;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      name.hashCode ^
+      email.hashCode ^
+      phone.hashCode ^
+      totalExpense.hashCode ^
+      profileImage.hashCode ^
+      token.hashCode ^
+      cards.hashCode;
+
   UserVO(this.id, this.name, this.email, this.phone, this.totalExpense,
       this.profileImage, this.token, this.cards);
 

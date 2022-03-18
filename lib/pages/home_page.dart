@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:movies_booking/bloc/home_bloc.dart';
 import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
+import 'package:movies_booking/network/response/common_response.dart';
 import 'package:movies_booking/pages/registration_page.dart';
 import 'package:movies_booking/persistence/hive_constants.dart';
 import 'package:movies_booking/resources/colors.dart';
@@ -11,18 +13,14 @@ import 'package:movies_booking/viewItems/movies_view.dart';
 import 'package:movies_booking/widgets/large_title_text.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
+import 'package:provider/provider.dart';
 
 import '../data/models/movie_booking_model.dart';
 import '../data/vos/movie_vo.dart';
 import '../data/vos/user_vo.dart';
 import 'movie_detail_page.dart';
 
-class HomePage extends StatefulWidget {
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class HomePage extends StatelessWidget {
   final List<String> menuTitle = [
     "Promotion Code",
     "Select a language",
@@ -30,65 +28,6 @@ class _HomePageState extends State<HomePage> {
     "Help",
     "Rate us"
   ];
-
-  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
-  UserVO? user;
-  List<MovieVO>? nowShowingMovies;
-  List<MovieVO>? comingSoonMovies;
-
-  @override
-  void initState() {
-    _getUserInfo();
-    _getNowShowingMovies();
-    _getComingSoonMovie();
-    _movieBookingModel.getSnacks();
-    super.initState();
-  }
-
-  void _getNowShowingMovies() {
-    _movieBookingModel.getNowShowingMovieDB().listen((nowShowing) {
-      // debugPrint("Now Showing : ${nowShowing?.length}");
-      setState(() {
-        this.nowShowingMovies = nowShowing;
-      });
-    }).onError((error) {
-      debugPrint("Now Showing error: $error");
-    });
-  }
-
-  void _getComingSoonMovie() {
-    _movieBookingModel.getComingSoonMovieDB().listen((comingSoon) {
-      setState(() {
-        this.comingSoonMovies = comingSoon;
-      });
-    }).onError((error) {
-      debugPrint("Coming error: $error");
-    });
-  }
-
-  void _getUserInfo() {
-    _movieBookingModel.getUserInfoDB().listen((userResponse) {
-      // print("User Info -> ${userResponse.toString()}");
-      setState(() {
-        this.user = userResponse;
-      });
-    }).onError((error) {
-      debugPrint("Get User Info DB error: $error");
-    });
-  }
-
-  void _logout(BuildContext context) {
-    print("logout successful");
-
-    _movieBookingModel.logout().then((value) {
-      print("logout successful -> ${value.message}");
-      _navigateRegistrationPage(context);
-      Hive.box<UserVO>(BOX_NAMES_USER_VO).clear();
-    }).catchError((error) {
-      print("logout error -> $error");
-    });
-    //_navigateRegistrationPage(context);
-  }
 
   void _navigateRegistrationPage(BuildContext context) {
     Navigator.push(
@@ -99,85 +38,138 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _showCommonErrorDialog(BuildContext context, String message) {
+    showCupertinoDialog(
+        context: context,
+        builder: (builder) => CupertinoAlertDialog(
+              title: Text("Error"),
+              content: Text(message),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("OKay"),
+                )
+              ],
+            ));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return ChangeNotifierProvider(
+      create: (context) => HomeBloc(),
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: Builder(
-          builder: (context) =>
-              MenuButtonView(() => Scaffold.of(context).openDrawer()),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: Builder(
+            builder: (context) =>
+                MenuButtonView(() => Scaffold.of(context).openDrawer()),
+          ),
+          actions: [
+            SearchButtonView(),
+          ],
         ),
-        actions: [
-          SearchButtonView(),
-        ],
-      ),
-      drawer: Container(
-        width: MediaQuery.of(context).size.width * 0.8,
-        child: Drawer(
-          child: Container(
-            color: WELCOME_SCREEN_BACKGROUND_COLOR,
-            padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 96,
-                ),
-                DrawerHeaderSection(
-                  email: user?.email ?? "",
-                  name: user?.name ?? "",
-                ),
-                SizedBox(
-                  height: MARGIN_XLARGE,
-                ),
-                DrawerContentSection(menuTitle: menuTitle),
-                Spacer(),
-                LogoutView(
-                  onTapLogout: () {
-                    Navigator.pop(context);
-                    _showAlertDialog(context);
-                  },
-                ),
-                SizedBox(
-                  height: MARGIN_XLARGE,
-                ),
-              ],
+        drawer: Container(
+          width: MediaQuery.of(context).size.width * 0.8,
+          child: Drawer(
+            child: Container(
+              color: WELCOME_SCREEN_BACKGROUND_COLOR,
+              padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 96,
+                  ),
+                  Selector<HomeBloc, UserVO?>(
+                    selector: (context, bloc) => bloc.user,
+                    builder: (BuildContext context, user, Widget? child) {
+                      return DrawerHeaderSection(
+                        email: user?.email ?? "",
+                        name: user?.name ?? "",
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    height: MARGIN_XLARGE,
+                  ),
+                  DrawerContentSection(menuTitle: menuTitle),
+                  Spacer(),
+                  Selector<HomeBloc, CommonResponse?>(
+                    selector: (context, bloc) => bloc.commonResponse,
+                    builder: (BuildContext context, value, Widget? child) {
+                      return LogoutView(
+                        onTapLogout: () {
+                          HomeBloc bloc = Provider.of<HomeBloc>(context,listen: false);
+                          //Navigator.pop(context);
+                         // showAlertDialog(context);
+                           bloc.onTapLogout().then((value){
+                            _navigateRegistrationPage(context);
+                            bloc.clearUserInfo();
+                          }).catchError((error){
+                            //_showCommonErrorDialog(context, error as String);
+                            debugPrint("Logout error: $error");
+                          });
+                        },
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    height: MARGIN_XLARGE,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(MARGIN_MEDIUM),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              UserProfileView(
-                username: user?.name ?? "",
-              ),
-              SizedBox(height: MARGIN_SMALL_2),
-              HorizontalMovieView(
-                title: "Now Showing",
-                onTapPoster: (id) => _navigateToMoviesDetailScreen(context, id),
-                movieList: nowShowingMovies,
-              ),
-              SizedBox(height: MARGIN_XLARGE),
-              HorizontalMovieView(
-                title: "Coming Soon",
-                onTapPoster: (id) => _navigateToMoviesDetailScreen(context, id),
-                movieList: comingSoonMovies,
-              ),
-            ],
+        body: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(MARGIN_MEDIUM),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Selector<HomeBloc, UserVO?>(
+                  selector: (context, bloc) => bloc.user,
+                  builder: (BuildContext context, user, Widget? child) {
+                    return UserProfileView(
+                      username: user?.name ?? "",
+                    );
+                  },
+                ),
+                SizedBox(height: MARGIN_SMALL_2),
+                Selector<HomeBloc, List<MovieVO>?>(
+                  selector: (context, bloc) => bloc.nowShowingMovies,
+                  builder:
+                      (BuildContext context, nowShowingList, Widget? child) {
+                    return HorizontalMovieView(
+                      title: "Now Showing",
+                      onTapPoster: (id) =>
+                          _navigateToMoviesDetailScreen(context, id),
+                      movieList: nowShowingList,
+                    );
+                  },
+                ),
+                SizedBox(height: MARGIN_XLARGE),
+                Selector<HomeBloc, List<MovieVO>?>(
+                    selector: (context, bloc) => bloc.comingSoonMovies,
+                    builder:
+                        (BuildContext context, comingSoonList, Widget? child) {
+                      return HorizontalMovieView(
+                        title: "Coming Soon",
+                        onTapPoster: (id) =>
+                            _navigateToMoviesDetailScreen(context, id),
+                        movieList: comingSoonList,
+                      );
+                    }),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-
-  void _showAlertDialog(BuildContext context) {
+  void showAlertDialog(BuildContext context) {
     showCupertinoDialog(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
@@ -192,7 +184,15 @@ class _HomePageState extends State<HomePage> {
           ),
           TextButton(
             onPressed: () {
-              _logout(context);
+              //_logout(context);
+              HomeBloc bloc = Provider.of<HomeBloc>(context, listen: false);
+              bloc.onTapLogout().then((value) {
+                _navigateRegistrationPage(context);
+                bloc.clearUserInfo();
+              }).catchError((error) {
+                //_showCommonErrorDialog(context, error as String);
+                debugPrint("Logout error: $error");
+              });
             },
             child: Text("OK"),
           ),
@@ -337,7 +337,9 @@ class UserProfileView extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: MARGIN_MEDIUM,),
+        SizedBox(
+          width: MARGIN_MEDIUM,
+        ),
         LargeTitleText(username),
       ],
     );

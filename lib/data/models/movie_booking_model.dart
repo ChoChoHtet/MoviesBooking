@@ -36,11 +36,11 @@ abstract class MovieBookingModel {
 
   void getMovieDetail(int movieId);
 
-  void getDateTimeList();
-
   void getSnacks();
 
   void getPaymentMethod();
+
+  void clearUserData();
 
   Future<List<CreditVO>?> getMovieCredit(int movieId);
 

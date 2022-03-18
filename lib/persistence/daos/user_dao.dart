@@ -12,8 +12,11 @@ class UserDao {
   }
 
   void saveUserInfo(UserVO user) async {
-    debugPrint("User Dao: ${user.toString()}");
+    //debugPrint("User Dao: ${user.toString()}");
     await getUserBox().put("user", user);
+  }
+  void deleteUser(){
+    Hive.box<UserVO>(BOX_NAMES_USER_VO).clear();
   }
 
   UserVO? getUserInfo()  {

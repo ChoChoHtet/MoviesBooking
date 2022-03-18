@@ -181,19 +181,6 @@ class MovieBookingModelImpl extends MovieBookingModel {
     });
   }
 
-  @override
-  void getDateTimeList() {
-    final List<DateVO> dateTime =
-        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((numOfDays) {
-      return DateTime.now().add(Duration(days: numOfDays));
-    }).map((dateTime) {
-      return DateVO(
-          DateFormat("yyyy-MM-dd").format(dateTime),
-          DateFormat("E").format(dateTime),
-          DateFormat("dd").format(dateTime),
-          DateTime.now() == dateTime ? true : false);
-    }).toList();
-  }
 
   @override
   Future<List<CinemaSeatVO>?> getCinemaSeats(
@@ -245,14 +232,17 @@ class MovieBookingModelImpl extends MovieBookingModel {
   void getUserProfile() {
     var token = userDao.getUserInfo()?.getToken() ?? "";
     _dataAgent.getUserProfile(token).then((user){
-      debugPrint("profile token: ${user.toString()}");
-      //TODO check user
+     // debugPrint("profile token: ${user.toString()}");
       if(user != null){
         var userVO = user.data ;
         userVO?.token = userDao.getUserInfo()?.token;
         userDao.saveUserInfo(userVO!);
       }
     });
+  }
+  @override
+  void clearUserData() {
+    userDao.deleteUser();
   }
 
   @override

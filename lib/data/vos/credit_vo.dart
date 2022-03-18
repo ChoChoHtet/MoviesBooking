@@ -25,7 +25,19 @@ class CreditVO{
   CreditVO(this.id, this.name, this.profilePath, this.creditId);
 
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CreditVO &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          profilePath == other.profilePath &&
+          creditId == other.creditId;
 
+  @override
+  int get hashCode =>
+      id.hashCode ^ name.hashCode ^ profilePath.hashCode ^ creditId.hashCode;
 
   factory CreditVO.fromJson(Map<String,dynamic>json) => _$CreditVOFromJson(json);
   Map<String,dynamic> toJson() => _$CreditVOToJson(this);
