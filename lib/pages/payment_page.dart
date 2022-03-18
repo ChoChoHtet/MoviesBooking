@@ -196,28 +196,18 @@ class PaymentCardOptionSection extends StatelessWidget {
      return CarouselSlider.builder(
       itemCount: this.cardList?.length ?? 0,
       options: CarouselOptions(
-         aspectRatio: 2,
+          aspectRatio: 2,
           viewportFraction: 0.8,
           enlargeCenterPage: true,
           autoPlayCurve: Curves.fastOutSlowIn,
           initialPage: 0,
+          enableInfiniteScroll: false,
           onPageChanged: (index, value) => onSelectCard(index)),
       itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
         return PaymentCardView(cardVO: cardList?[itemIndex]);
       },
     );
 
-    /*return CarouselSlider(
-      options: CarouselOptions(enlargeCenterPage: true),
-      items: this.cardList?.map((i) {
-            return Builder(
-              builder: (BuildContext context) {
-                return PaymentCardView(cardVO: i);
-              },
-            );
-          }).toList() ??
-          [],
-    );*/
   }
 }
 
