@@ -100,16 +100,8 @@ class HomePage extends StatelessWidget {
                     builder: (BuildContext context, value, Widget? child) {
                       return LogoutView(
                         onTapLogout: () {
-                          HomeBloc bloc = Provider.of<HomeBloc>(context,listen: false);
-                          //Navigator.pop(context);
-                         // showAlertDialog(context);
-                           bloc.onTapLogout().then((value){
-                            _navigateRegistrationPage(context);
-                            bloc.clearUserInfo();
-                          }).catchError((error){
-                            //_showCommonErrorDialog(context, error as String);
-                            debugPrint("Logout error: $error");
-                          });
+                         // Navigator.pop(context);
+                          showAlertDialog(context);
                         },
                       );
                     },
@@ -169,7 +161,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void showAlertDialog(BuildContext context) {
+  void showAlertDialog(BuildContext context ) {
     showCupertinoDialog(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
@@ -184,11 +176,9 @@ class HomePage extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              //_logout(context);
               HomeBloc bloc = Provider.of<HomeBloc>(context, listen: false);
               bloc.onTapLogout().then((value) {
                 _navigateRegistrationPage(context);
-                bloc.clearUserInfo();
               }).catchError((error) {
                 //_showCommonErrorDialog(context, error as String);
                 debugPrint("Logout error: $error");

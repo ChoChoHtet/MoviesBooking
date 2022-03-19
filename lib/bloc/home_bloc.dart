@@ -36,7 +36,10 @@ class HomeBloc extends ChangeNotifier {
   }
 
   Future<CommonResponse?> onTapLogout() {
-     return _model.logout();
+     return _model.logout().then((value) {
+       clearUserInfo();
+       return Future.value(value);
+     });
   }
 
   void clearUserInfo() {
