@@ -15,6 +15,19 @@ class GetCardResponse{
 
   GetCardResponse(this.code, this.message, this.data);
 
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is GetCardResponse &&
+          runtimeType == other.runtimeType &&
+          code == other.code &&
+          message == other.message &&
+          data == other.data;
+
+  @override
+  int get hashCode => code.hashCode ^ message.hashCode ^ data.hashCode;
+
   factory GetCardResponse.fromJson(Map<String,dynamic>json) => _$GetCardResponseFromJson(json);
   Map<String,dynamic> toJson() => _$GetCardResponseToJson(this);
 

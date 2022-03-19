@@ -61,6 +61,42 @@ class CheckoutVO{
       this.snacks,
       this.qrCode);
 
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CheckoutVO &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          bookingNo == other.bookingNo &&
+          bookingDate == other.bookingDate &&
+          row == other.row &&
+          seat == other.seat &&
+          totalSeat == other.totalSeat &&
+          total == other.total &&
+          movieId == other.movieId &&
+          cinemaId == other.cinemaId &&
+          username == other.username &&
+          timeSlot == other.timeSlot &&
+          snacks == other.snacks &&
+          qrCode == other.qrCode;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      bookingNo.hashCode ^
+      bookingDate.hashCode ^
+      row.hashCode ^
+      seat.hashCode ^
+      totalSeat.hashCode ^
+      total.hashCode ^
+      movieId.hashCode ^
+      cinemaId.hashCode ^
+      username.hashCode ^
+      timeSlot.hashCode ^
+      snacks.hashCode ^
+      qrCode.hashCode;
+
   factory CheckoutVO.fromJson(Map<String,dynamic>json) => _$CheckoutVOFromJson(json);
   Map<String,dynamic> toJson() => _$CheckoutVOToJson(this);
 }
