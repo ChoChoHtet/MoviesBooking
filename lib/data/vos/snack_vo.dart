@@ -34,6 +34,27 @@ class SnackVO{
       this.quantity);
 
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SnackVO &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          description == other.description &&
+          price == other.price &&
+          image == other.image &&
+          quantity == other.quantity;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      name.hashCode ^
+      description.hashCode ^
+      price.hashCode ^
+      image.hashCode ^
+      quantity.hashCode;
+
   factory SnackVO.fromJson(Map<String,dynamic>json) => _$SnackVOFromJson(json);
   Map<String,dynamic> toJson() => _$SnackVOToJson(this);
 

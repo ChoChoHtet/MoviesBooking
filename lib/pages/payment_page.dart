@@ -53,7 +53,7 @@ class _PaymentPageState extends State<PaymentPage> {
       debugPrint("Profile CARD: ${response?.cards?.length}");
       setState(() {
         this.cardList = response?.cards;
-        selectCardId = this.cardList?[0].id ?? 0;
+        selectCardId =  cardList != null && cardList!.isNotEmpty ? cardList![0].id ?? 0 : 0;
       });
     }).onError((error) {
       debugPrint("Profile Error: $error");

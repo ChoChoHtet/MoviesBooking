@@ -71,13 +71,6 @@ class ChooseTimeBloc extends ChangeNotifier {
     cinemaName = cinemaVO?.cinema ?? "";
     cinemaId = cinemaVO?.cinemaId ?? 0;
 
-/*    cinemaTimeList?.forEachIndexed((index, element) {
-      if (element.cinemaId == cinemaVO?.cinemaId) {
-        cinemaTimeList?[index].isSelected = true;
-      } else {
-        cinemaTimeList?[index].isSelected = false;
-      }
-    });*/
     cinemaVO?.timeSlots?.forEachIndexed((index1, element) {
       if (element.timeSlotId == slot?.timeSlotId) {
         cinemaVO.timeSlots?[index1].isSelected = true;
