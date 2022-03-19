@@ -36,24 +36,14 @@ class ChooseTimeBloc extends ChangeNotifier {
   }
 
   void setDateTimeSelected(List<DateVO> dateTime, String date) {
-   List<DateVO> dateList = dateTime.map((e) {
-    e.isSelected =false;
-    return e;
-   }).mapIndexed((index, element) {
-     if (element.date == date) {
-       dateTime[index].isSelected = true;
-     } else {
-       dateTime[index].isSelected = false;
-     }
+    List<DateVO> dateList = dateTime.map((element) {
+      if (element.date == date) {
+        element.isSelected = true;
+      } else {
+        element.isSelected = false;
+      }
       return element;
     }).toList();
-    /*dateTime.forEachIndexed((index, element) {
-      if (element.date == date) {
-        dateTime[index].isSelected = true;
-      } else {
-        dateTime[index].isSelected = false;
-      }
-    });*/
     this.dateTime = dateList;
     notifyListeners();
   }
@@ -80,13 +70,14 @@ class ChooseTimeBloc extends ChangeNotifier {
     startTime = slot?.startTime ?? "";
     cinemaName = cinemaVO?.cinema ?? "";
     cinemaId = cinemaVO?.cinemaId ?? 0;
-    cinemaTimeList?.forEachIndexed((index, element) {
+
+/*    cinemaTimeList?.forEachIndexed((index, element) {
       if (element.cinemaId == cinemaVO?.cinemaId) {
         cinemaTimeList?[index].isSelected = true;
       } else {
         cinemaTimeList?[index].isSelected = false;
       }
-    });
+    });*/
     cinemaVO?.timeSlots?.forEachIndexed((index1, element) {
       if (element.timeSlotId == slot?.timeSlotId) {
         cinemaVO.timeSlots?[index1].isSelected = true;
@@ -94,6 +85,15 @@ class ChooseTimeBloc extends ChangeNotifier {
         cinemaVO.timeSlots?[index1].isSelected = false;
       }
     });
+    List<CinemaVO>? cinemaList = cinemaTimeList?.map((element) {
+      if (element.cinemaId == cinemaVO?.cinemaId) {
+        element.isSelected = true;
+      } else {
+        element.isSelected = false;
+      }
+      return element;
+    }).toList();
+    cinemaTimeList = cinemaList;
     notifyListeners();
   }
 

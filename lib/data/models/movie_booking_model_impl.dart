@@ -194,7 +194,7 @@ class MovieBookingModelImpl extends MovieBookingModel {
         seat.isSelected = false;
         return seat;
       }).toList();
-      print("seat plan api response: ${seatList.toString()}");
+     // print("seat plan api response: ${seatList.toString()}");
       return Future.value(seatList);
     });
   }

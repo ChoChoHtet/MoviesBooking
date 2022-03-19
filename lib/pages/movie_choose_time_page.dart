@@ -135,13 +135,13 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
               children: [
                 Selector <ChooseTimeBloc,List<DateVO>>(
                   selector: (context,bloc ) => bloc.dateTime,
+                  shouldRebuild: (previous,next)=> previous != next,
                   builder: (BuildContext context, dateList, Widget? child) {
                     ChooseTimeBloc timeBloc = Provider.of<ChooseTimeBloc>(context,listen: false);
                     return MovieChooseDateView(
                       dateTime: dateList,
                       onTapDate: (date) {
-                        print("Time Slot Selected Date: $date, ${dateList.toString()}");
-                        //_getCinemaTimeSlots(date);
+                       // print("Time Slot Selected Date: $date, ${dateList.toString()}");
                         timeBloc.getCinemaTimeSlot(date);
                       },
                     );
@@ -149,6 +149,7 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
                 ),
                 Selector<ChooseTimeBloc,List<CinemaVO>?>(
                   selector: (context ,bloc ) => bloc.cinemaTimeList,
+                  shouldRebuild: (previous,next)=> previous != next,
                   builder: (BuildContext context, cinemaList, Widget? child) {
                     return  ChooseItemGridSectionView(
                       cinemaList: cinemaList,
@@ -163,22 +164,23 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
                 SizedBox(
                   height: MARGIN_LARGE,
                 ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
-                  child: ElevatedButtonView("Next", () {
-                    ChooseTimeBloc bloc = Provider.of(context, listen: false);
-                    if (bloc.validateTimeSlot()) {
-                      _navigateMovieSeatPage(context,
-                          bloc.timeSlotId,
-                          bloc.bookingDate,
-                          bloc.startTime,
-                          bloc.cinemaName,
-                          bloc.cinemaId);
-                    } else {
-                      _showAlertDialog(context);
-                    }
-                  }),
+                Builder(
+                  builder: (context) =>  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
+                    child: ElevatedButtonView("Next", () {
+                      ChooseTimeBloc bloc = Provider.of<ChooseTimeBloc>(context, listen: false);
+                      if (bloc.validateTimeSlot()) {
+                        _navigateMovieSeatPage(context,
+                            bloc.timeSlotId,
+                            bloc.bookingDate,
+                            bloc.startTime,
+                            bloc.cinemaName,
+                            bloc.cinemaId);
+                      } else {
+                        _showAlertDialog(context);
+                      }
+                    }),
+                  ),
                 ),
                 SizedBox(
                   height: MARGIN_LARGE,
