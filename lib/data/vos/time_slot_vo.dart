@@ -26,6 +26,20 @@ class TimeSlotVO{
     return 'TimeSlotVO{timeSlotId: $timeSlotId, startTime: $startTime, isSelected: $isSelected}';
   }
 
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TimeSlotVO &&
+          runtimeType == other.runtimeType &&
+          timeSlotId == other.timeSlotId &&
+          startTime == other.startTime &&
+          isSelected == other.isSelected;
+
+  @override
+  int get hashCode =>
+      timeSlotId.hashCode ^ startTime.hashCode ^ isSelected.hashCode;
+
   factory TimeSlotVO.fromJson(Map<String,dynamic>json) => _$TimeSlotVOFromJson(json);
   Map<String,dynamic> toJson() => _$TimeSlotVOToJson(this);
 }

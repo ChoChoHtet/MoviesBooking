@@ -33,6 +33,24 @@ class CinemaVO{
     return 'CinemaVO{cinemaId: $cinemaId, cinema: $cinema, timeSlots: $timeSlots}';
   }
 
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CinemaVO &&
+          runtimeType == other.runtimeType &&
+          cinemaId == other.cinemaId &&
+          cinema == other.cinema &&
+          timeSlots == other.timeSlots &&
+          isSelected == other.isSelected;
+
+  @override
+  int get hashCode =>
+      cinemaId.hashCode ^
+      cinema.hashCode ^
+      timeSlots.hashCode ^
+      isSelected.hashCode;
+
   factory CinemaVO.fromJson(Map<String,dynamic>json) => _$CinemaVOFromJson(json);
   Map<String,dynamic> toJson() => _$CinemaVOToJson(this);
 }

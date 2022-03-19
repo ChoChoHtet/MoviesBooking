@@ -152,7 +152,7 @@ class MovieBookingModelImpl extends MovieBookingModel {
   @override
   void getCinemaTimeSlots(String date) {
     var token = userDao.getUserInfo()?.getToken() ?? "";
-    debugPrint("cinema Token: ${ userDao.getUserInfo().toString()}");
+   // debugPrint("cinema Token: ${ userDao.getUserInfo().toString()}");
     _dataAgent.getCinemaTimeSlots(date, token).then((timeSlot) async {
       List<CinemaVO> cinemaList = timeSlot?.map((time) {
             time.isSelected = false;
