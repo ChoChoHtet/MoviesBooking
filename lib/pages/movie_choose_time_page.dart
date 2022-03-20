@@ -1,11 +1,6 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:movies_booking/bloc/choose_time_bloc.dart';
-import 'package:movies_booking/data/models/movie_booking_model.dart';
-import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
 import 'package:movies_booking/data/vos/cinema_vo.dart';
 import 'package:movies_booking/data/vos/date_vo.dart';
 import 'package:movies_booking/data/vos/time_slot_vo.dart';
@@ -16,10 +11,9 @@ import 'package:movies_booking/widgets/back_button_view.dart';
 import 'package:movies_booking/widgets/elevated_button_view.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
-import 'package:collection/collection.dart';
 import 'package:provider/provider.dart';
 
-class MovieChooseTimePage extends StatefulWidget {
+class MovieChooseTimePage extends StatelessWidget {
   final String movieName;
   final int movieID;
   final String moviePath;
@@ -27,16 +21,6 @@ class MovieChooseTimePage extends StatefulWidget {
       {required this.movieID,
       required this.movieName,
       required this.moviePath});
- /* final List<DateVO> dateTime =
-      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((numOfDays) {
-    return DateTime.now().add(Duration(days: numOfDays));
-  }).map((dateTime) {
-    return DateVO(
-        DateFormat("yyyy-MM-dd").format(dateTime),
-        DateFormat("E").format(dateTime),
-        DateFormat("dd").format(dateTime),
-        DateTime.now() == dateTime ? true : false);
-  }).toList();*/
 
   final CinemaVO available = CinemaVO(1, "Available In", [
     TimeSlotVO(1, "2D", false),
@@ -44,79 +28,7 @@ class MovieChooseTimePage extends StatefulWidget {
     TimeSlotVO(3, "IMAX", false),
   ]);
   @override
-  State<MovieChooseTimePage> createState() => _MovieChooseTimePageState();
-}
-
-class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
-  /* MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
-  List<CinemaVO>? cinemaTimeList;
-  int timeSlotId = 0;
-  String bookingDate = "";
-  String startTime = "";
-  String cinemaName = "";
-  int cinemaId = 0;*/
-/*  List<DateVO> dateList = [];
-
-  @override
-  void initState() {
-    // _getCinemaTimeSlots(widget.dateTime.first.date);
-    ChooseTimeBloc bloc = Provider.of(context, listen: false);
-    bloc.getTwoWeekDate().then((value) {
-      dateList = value;
-    }).catchError((error){
-      debugPrint("Date Time Error: $error");
-    });
-
-    super.initState();
-  }*/
-/*
-  void _getCinemaTimeSlots(String date) {
-    widget.dateTime.forEachIndexed((index, element) {
-      if (element.date == date) {
-        widget.dateTime[index].isSelected = true;
-      } else {
-        widget.dateTime[index].isSelected = false;
-      }
-    });
-
-    _movieBookingModel.getCinemaTimeSlotDB(date).listen((cinemas) {
-      // print("cinema slot ${cinemas.toString()}");
-      setState(() {
-        this.bookingDate = date;
-        this.cinemaTimeList = cinemas;
-      });
-    }).onError((error) {
-      debugPrint("Cinema Time Slot Error");
-    });
-  }
-
-  void _setTimeSlotSelected(CinemaVO? cinemaVO, TimeSlotVO? slot) {
-    this.cinemaTimeList?.forEachIndexed((index, element) {
-      if (element.cinemaId == cinemaVO?.cinemaId) {
-        this.cinemaTimeList?[index].isSelected = true;
-      } else {
-        this.cinemaTimeList?[index].isSelected = false;
-      }
-    });
-    cinemaVO?.timeSlots?.forEachIndexed((index1, element) {
-      if (element.timeSlotId == slot?.timeSlotId) {
-        cinemaVO.timeSlots?[index1].isSelected = true;
-      } else {
-        cinemaVO.timeSlots?[index1].isSelected = false;
-      }
-    });
-  }
-
-  bool _validateTimeSlot() {
-    List<CinemaVO>? list =
-        cinemaTimeList?.where((element) => element.isSelected == true).toList();
-    // print("cinemaVO: ${list.toString()}");
-    return list != null && list.isNotEmpty;
-  }*/
-
-  @override
   Widget build(BuildContext context) {
-   // ChooseTimeBloc timeBloc = Provider.of<ChooseTimeBloc>(context);
     return ChangeNotifierProvider(
       create: (context) => ChooseTimeBloc(),
       child: Scaffold(
@@ -133,29 +45,31 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
             color: Colors.white,
             child: Column(
               children: [
-                Selector <ChooseTimeBloc,List<DateVO>>(
-                  selector: (context,bloc ) => bloc.dateTime,
-                  shouldRebuild: (previous,next)=> previous != next,
+                Selector<ChooseTimeBloc, List<DateVO>>(
+                  selector: (context, bloc) => bloc.dateTime,
+                  shouldRebuild: (previous, next) => previous != next,
                   builder: (BuildContext context, dateList, Widget? child) {
-                    ChooseTimeBloc timeBloc = Provider.of<ChooseTimeBloc>(context,listen: false);
+                    ChooseTimeBloc timeBloc =
+                        Provider.of<ChooseTimeBloc>(context, listen: false);
                     return MovieChooseDateView(
                       dateTime: dateList,
                       onTapDate: (date) {
-                       // print("Time Slot Selected Date: $date, ${dateList.toString()}");
+                        // print("Time Slot Selected Date: $date, ${dateList.toString()}");
                         timeBloc.getCinemaTimeSlot(date);
                       },
                     );
                   },
                 ),
-                Selector<ChooseTimeBloc,List<CinemaVO>?>(
-                  selector: (context ,bloc ) => bloc.cinemaTimeList,
-                  shouldRebuild: (previous,next)=> previous != next,
+                Selector<ChooseTimeBloc, List<CinemaVO>?>(
+                  selector: (context, bloc) => bloc.cinemaTimeList,
+                  shouldRebuild: (previous, next) => previous != next,
                   builder: (BuildContext context, cinemaList, Widget? child) {
-                    return  ChooseItemGridSectionView(
+                    return ChooseItemGridSectionView(
                       cinemaList: cinemaList,
-                      available: widget.available,
+                      available: available,
                       onTapTime: (cinemaVO, index) {
-                        ChooseTimeBloc bloc = Provider.of(context, listen: false);
+                        ChooseTimeBloc bloc =
+                            Provider.of(context, listen: false);
                         bloc.setTimeSlotSelected(cinemaVO, index);
                       },
                     );
@@ -165,12 +79,15 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
                   height: MARGIN_LARGE,
                 ),
                 Builder(
-                  builder: (context) =>  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
+                  builder: (context) => Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
                     child: ElevatedButtonView("Next", () {
-                      ChooseTimeBloc bloc = Provider.of<ChooseTimeBloc>(context, listen: false);
+                      ChooseTimeBloc bloc =
+                          Provider.of<ChooseTimeBloc>(context, listen: false);
                       if (bloc.validateTimeSlot()) {
-                        _navigateMovieSeatPage(context,
+                        _navigateMovieSeatPage(
+                            context,
                             bloc.timeSlotId,
                             bloc.bookingDate,
                             bloc.startTime,
@@ -218,9 +135,9 @@ class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
       context,
       MaterialPageRoute(
         builder: (context) => MovieSeatPage(
-            movieId: widget.movieID,
-            movieName: widget.movieName,
-            moviePath: widget.moviePath,
+            movieId: movieID,
+            movieName: movieName,
+            moviePath: moviePath,
             timeSlotId: slotId,
             bookingDate: bookingDate,
             cinemaName: cinemaName,

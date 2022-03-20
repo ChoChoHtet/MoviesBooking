@@ -14,15 +14,9 @@ import 'package:movies_booking/widgets/elevated_button_view.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
 import 'package:provider/provider.dart';
-
-import '../data/models/movie_booking_model.dart';
-import '../data/models/movie_booking_model_impl.dart';
 import '../data/vos/card_vo.dart';
 
-class PaymentPage extends StatefulWidget {
-  @override
-  State<PaymentPage> createState() => _PaymentPageState();
-
+class PaymentPage extends StatelessWidget {
   final int movieId;
   final int cinemaId;
   final int timeSlotId;
@@ -42,32 +36,6 @@ class PaymentPage extends StatefulWidget {
       required this.moviePath,
       required this.cinemaName,
       required this.snacks});
-}
-
-class _PaymentPageState extends State<PaymentPage> {
-/*  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
-  List<CardVO>? cardList;
-  int selectCardId = 0;
-  CheckoutVO? checkoutVO;
-
-  void _getUserProfile() {
-    _movieBookingModel.getUserInfoDB().listen((response) {
-      debugPrint("Profile CARD: ${response?.cards?.length}");
-      setState(() {
-        this.cardList = response?.cards;
-        selectCardId =  cardList != null && cardList!.isNotEmpty ? cardList![0].id ?? 0 : 0;
-      });
-    }).onError((error) {
-      debugPrint("Profile Error: $error");
-    });
-  }
-
-  @override
-  void initState() {
-    _getUserProfile();
-    super.initState();
-  }*/
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -85,7 +53,7 @@ class _PaymentPageState extends State<PaymentPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               PaymentAmoutSection(
-                totalPrice: widget.totalPrice,
+                totalPrice: totalPrice,
               ),
               SizedBox(
                 height: MARGIN_MEDIUM,
@@ -128,15 +96,8 @@ class _PaymentPageState extends State<PaymentPage> {
 
   void _checkoutTicket(BuildContext context) {
     PaymentBloc bloc = Provider.of(context, listen: false);
-    CheckOutRequest checkOutRequest = CheckOutRequest(
-        widget.timeSlotId,
-        widget.seatNumbers,
-        widget.bookingDate,
-        widget.movieId,
-        bloc.selectCardId,
-        widget.cinemaId,
-        widget.totalPrice,
-        widget.snacks);
+    CheckOutRequest checkOutRequest = CheckOutRequest(timeSlotId, seatNumbers,
+        bookingDate, movieId, bloc.selectCardId, cinemaId, totalPrice, snacks);
 
     print("CheckOutReq-> ${checkOutRequest.toString()}");
     bloc.checkoutTicket(checkOutRequest).then((response) {
@@ -152,8 +113,8 @@ class _PaymentPageState extends State<PaymentPage> {
       MaterialPageRoute(
         builder: (context) => MovieTicketPage(
           checkoutVO: checkoutVO,
-          cinemaName: widget.cinemaName,
-          moviePoster: widget.moviePath,
+          cinemaName: cinemaName,
+          moviePoster: moviePath,
         ),
       ),
     );

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:movies_booking/bloc/item_order_bloc.dart';
-import 'package:movies_booking/data/models/movie_booking_model.dart';
-import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
-import 'package:movies_booking/data/request/snack_request.dart';
 import 'package:movies_booking/data/vos/payment_vo.dart';
 import 'package:movies_booking/data/vos/snack_vo.dart';
 import 'package:movies_booking/pages/payment_page.dart';
@@ -18,7 +15,7 @@ import 'package:movies_booking/widgets/title_and_description_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
 import 'package:provider/provider.dart';
 
-class ItemOrderPage extends StatefulWidget {
+class ItemOrderPage extends StatelessWidget {
   final int movieId;
   final String moviePath;
   final int cinemaId;
@@ -38,52 +35,6 @@ class ItemOrderPage extends StatefulWidget {
       required this.totalPrice,
       required this.seatNumbers});
 
-  @override
-  State<ItemOrderPage> createState() => _ItemOrderPageState();
-}
-
-class _ItemOrderPageState extends State<ItemOrderPage> {
-  /* MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
-  List<SnackVO>? snacksList;
-  List<PaymentVO>? paymentList;
-  List<SnackRequest> snackRequest= [];
-  int totalPrice = 0;
-  @override
-  void initState() {
-    _getSnacks();
-    _getPaymentMethods();
-    super.initState();
-  }
-
-  void _getPaymentMethods() {
-    _movieBookingModel.getPaymentMethodFromDB().listen((paymentResponse) {
-      setState(() {
-        this.paymentList = paymentResponse;
-      });
-    }).onError((error) {
-      debugPrint("Payment Error: $error");
-    });
-  }
-  void _getSnacks() {
-    _movieBookingModel.getSnackFromDB().listen((snackResponse) {
-      setState(() {
-        this.snacksList = snackResponse;
-      });
-    }).onError((error) {
-      debugPrint("Snack Error: $error");
-    });
-  }
-  void _setPaymentSelected(PaymentVO? payment){
-    paymentList?.forEach((element) {
-      if(element.id == payment?.id){
-        element.isSelected = true ;
-      }else{
-        element.isSelected = false ;
-      }
-    });
-
-  }
-*/
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -146,7 +97,7 @@ class _ItemOrderPageState extends State<ItemOrderPage> {
                         paymentList: paymentList,
                         onTapPayment: (payment) {
                           ItemOrderBloc bloc =
-                              Provider.of(context, listen: false);
+                          Provider.of(context, listen: false);
                           bloc.setPaymentSelected(payment);
                         },
                       );
@@ -156,17 +107,17 @@ class _ItemOrderPageState extends State<ItemOrderPage> {
                     height: MARGIN_LARGE,
                   ),
                   Builder(
-                    builder: (context) {
-                      ItemOrderBloc bloc =
-                      Provider.of(context, listen: false);
-                      return ElevatedButtonView(
-                        "Pay \$${bloc.totalPrice + widget.totalPrice}",
-                        () {
-                          bloc.addSnackRequest();
-                          _navigateToPaymentScreen(context,bloc);
-                        },
-                      );
-                    }
+                      builder: (context) {
+                        ItemOrderBloc bloc =
+                        Provider.of(context, listen: false);
+                        return ElevatedButtonView(
+                          "Pay \$${bloc.totalPrice + totalPrice}",
+                              () {
+                            bloc.addSnackRequest();
+                            _navigateToPaymentScreen(context,bloc);
+                          },
+                        );
+                      }
                   ),
                   SizedBox(
                     height: MARGIN_LARGE,
@@ -179,32 +130,27 @@ class _ItemOrderPageState extends State<ItemOrderPage> {
   }
 
   void _navigateToPaymentScreen(BuildContext context,ItemOrderBloc bloc) {
-  //  snackRequest = [];
-    /*this.snacksList?.forEach((element) {
-      if (element.quantity != null && element.quantity != 0) {
-        snackRequest.add(SnackRequest(element.id, element.quantity));
-      }
-    });*/
     bloc.addSnackRequest();
     print("snack List: ${bloc.snackRequest.toString()}");
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PaymentPage(
-          movieId: widget.movieId,
-          cinemaId: widget.cinemaId,
-          timeSlotId: widget.timeSlotId,
-          bookingDate: widget.bookingDate,
+          movieId: movieId,
+          cinemaId: cinemaId,
+          timeSlotId: timeSlotId,
+          bookingDate: bookingDate,
           totalPrice: bloc.totalPrice,
-          seatNumbers: widget.seatNumbers,
-          cinemaName: widget.cinemaName,
-          moviePath: widget.moviePath,
+          seatNumbers: seatNumbers,
+          cinemaName: cinemaName,
+          moviePath: moviePath,
           snacks: bloc.snackRequest,
         ),
       ),
     );
   }
 }
+
 
 class PaymentMethodSection extends StatelessWidget {
   final List<PaymentVO>? paymentList;

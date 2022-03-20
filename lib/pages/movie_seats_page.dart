@@ -2,10 +2,7 @@ import 'package:dotted_line/dotted_line.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:movies_booking/bloc/movie_seat_bloc.dart';
-import 'package:movies_booking/data/models/movie_booking_model.dart';
-import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
 import 'package:movies_booking/data/vos/cinema_seat_vo.dart';
-import 'package:movies_booking/dummy/dummy_data.dart';
 import 'package:movies_booking/pages/item_order_page.dart';
 import 'package:movies_booking/resources/dimen.dart';
 import 'package:movies_booking/viewItems/movie_seat_item_view.dart';
@@ -15,9 +12,7 @@ import 'package:movies_booking/widgets/large_title_text.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:provider/provider.dart';
 
-import '../data/vos/movie_seat_vo.dart';
-
-class MovieSeatPage extends StatefulWidget {
+class MovieSeatPage extends StatelessWidget {
   final int movieId;
   final String movieName;
   final String moviePath;
@@ -38,33 +33,9 @@ class MovieSeatPage extends StatefulWidget {
       required this.cinemaId});
 
   @override
-  State<MovieSeatPage> createState() => _MovieSeatPageState();
-}
-
-class _MovieSeatPageState extends State<MovieSeatPage> {
-  /* MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
-  List<CinemaSeatVO>? cinemaSeats;
-  int seatCount = 0;
-  int totalPrice = 0;
-  String seatRows = "";
-  List<String> seatRowList = [];
-
-  @override
-  void initState() {
-    _movieBookingModel
-        .getCinemaSeats(widget.timeSlotId, widget.bookingDate)
-        .then((seatResponse) {
-      setState(() {
-        this.cinemaSeats = seatResponse;
-      });
-    });
-    super.initState();
-  }*/
-
-  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => MovieSeatBloc(widget.timeSlotId, widget.bookingDate),
+      create: (context) => MovieSeatBloc(timeSlotId, bookingDate),
       child: Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
@@ -76,22 +47,23 @@ class _MovieSeatPageState extends State<MovieSeatPage> {
             child: Column(
               children: [
                 MovieNameTimeAndCinemaSection(
-                  movieName: widget.movieName,
-                  cinemaName: widget.cinemaName,
-                  date: widget.bookingDate,
-                  startTime: widget.startTime,
+                  movieName: movieName,
+                  cinemaName: cinemaName,
+                  date: bookingDate,
+                  startTime: startTime,
                 ),
                 SizedBox(
                   height: MARGIN_LARGE,
                 ),
                 Selector<MovieSeatBloc, List<CinemaSeatVO>?>(
                   selector: (context, bloc) => bloc.cinemaSeatList,
-                  shouldRebuild: (previous,next) => previous != next,
+                  shouldRebuild: (previous, next) => previous != next,
                   builder: (BuildContext context, cinemaSeats, Widget? child) {
                     return MovieSeatSection(
                       movieSeats: cinemaSeats,
                       onTapSeat: (seatVO, index) {
-                        MovieSeatBloc bloc = Provider.of(context, listen: false);
+                        MovieSeatBloc bloc =
+                            Provider.of(context, listen: false);
                         bloc.setSeatSelected(seatVO, index);
                       },
                     );
@@ -140,9 +112,11 @@ class _MovieSeatPageState extends State<MovieSeatPage> {
                   child: Selector<MovieSeatBloc, int>(
                     selector: (context, bloc) => bloc.totalPrice,
                     builder: (BuildContext context, totalPrice, Widget? child) {
-                      MovieSeatBloc bloc = Provider.of(context,listen: false);
-                      return ElevatedButtonView("Buy Ticket for \$$totalPrice",
-                          () => _navigateToItemOrderScreen(context,totalPrice,bloc.seatRows));
+                      MovieSeatBloc bloc = Provider.of(context, listen: false);
+                      return ElevatedButtonView(
+                          "Buy Ticket for \$$totalPrice",
+                          () => _navigateToItemOrderScreen(
+                              context, totalPrice, bloc.seatRows));
                     },
                   ),
                 ),
@@ -155,19 +129,20 @@ class _MovieSeatPageState extends State<MovieSeatPage> {
     );
   }
 
-  void _navigateToItemOrderScreen(BuildContext context,int totalPrice,String seatRows) {
+  void _navigateToItemOrderScreen(
+      BuildContext context, int totalPrice, String seatRows) {
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => ItemOrderPage(
-                  movieId: widget.movieId,
-                  cinemaId: widget.cinemaId,
-                  timeSlotId: widget.timeSlotId,
-                  bookingDate: widget.bookingDate,
+                  movieId: movieId,
+                  cinemaId: cinemaId,
+                  timeSlotId: timeSlotId,
+                  bookingDate: bookingDate,
                   totalPrice: totalPrice,
                   seatNumbers: seatRows,
-                  moviePath: widget.moviePath,
-                  cinemaName: widget.cinemaName,
+                  moviePath: moviePath,
+                  cinemaName: cinemaName,
                 )));
   }
 }
