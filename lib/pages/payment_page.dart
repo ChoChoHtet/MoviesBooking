@@ -1,7 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:movies_booking/bloc/payment_bloc.dart';
-import 'package:movies_booking/data/request/check_out_request.dart';
 import 'package:movies_booking/data/request/snack_request.dart';
 import 'package:movies_booking/data/vos/checkout_vo.dart';
 import 'package:movies_booking/pages/add_card_info_page.dart';
@@ -84,7 +83,15 @@ class PaymentPage extends StatelessWidget {
               ),
               Builder(builder: (context) {
                 return ElevatedButtonView("Confirm", () {
-                  _checkoutTicket(context);
+                  PaymentBloc bloc = Provider.of(context, listen: false);
+                  bloc
+                      .checkoutTicket(timeSlotId, seatNumbers, bookingDate,
+                          movieId, cinemaId, totalPrice, snacks)
+                      .then((response) {
+                    _navigateToTicketScreen(context, response);
+                  }).catchError((error) {
+                    debugPrint("Checkout Error: $error");
+                  });
                 });
               }),
             ],
@@ -94,18 +101,6 @@ class PaymentPage extends StatelessWidget {
     );
   }
 
-  void _checkoutTicket(BuildContext context) {
-    PaymentBloc bloc = Provider.of(context, listen: false);
-    CheckOutRequest checkOutRequest = CheckOutRequest(timeSlotId, seatNumbers,
-        bookingDate, movieId, bloc.selectCardId, cinemaId, totalPrice, snacks);
-
-    print("CheckOutReq-> ${checkOutRequest.toString()}");
-    bloc.checkoutTicket(checkOutRequest).then((response) {
-      _navigateToTicketScreen(context, response);
-    }).catchError((error) {
-      debugPrint("Checkout Error: $error");
-    });
-  }
 
   void _navigateToTicketScreen(BuildContext context, CheckoutVO? checkoutVO) {
     Navigator.push(
