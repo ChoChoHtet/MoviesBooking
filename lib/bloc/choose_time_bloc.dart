@@ -19,7 +19,11 @@ class ChooseTimeBloc extends ChangeNotifier {
   int cinemaId = 0;
   List<DateVO> dateTime = [];
 
-  ChooseTimeBloc() {
+  ChooseTimeBloc({MovieBookingModel? modelImp}) {
+    if(modelImp !=null){
+      _model = modelImp;
+    }
+
     getTwoWeekDate().then((dateTime) {
       getCinemaTimeSlot(dateTime.first.date);
     }).catchError((error) {

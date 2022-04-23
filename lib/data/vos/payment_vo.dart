@@ -43,6 +43,12 @@ class PaymentVO {
   int get hashCode =>
       id.hashCode ^ name.hashCode ^ description.hashCode ^ isSelected.hashCode;
 
+
+  @override
+  String toString() {
+    return 'PaymentVO{id: $id, name: $name, description: $description, isSelected: $isSelected}';
+  }
+
   factory PaymentVO.fromJson(Map<String, dynamic> json) =>
       _$PaymentVOFromJson(json);
 

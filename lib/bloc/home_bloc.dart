@@ -14,7 +14,10 @@ class HomeBloc extends ChangeNotifier {
 
   MovieBookingModel _model = MovieBookingModelImpl();
 
-  HomeBloc() {
+  HomeBloc({MovieBookingModel? model}) {
+    if(model !=null){
+      _model = model ;
+    }
     //User Profile
     _model.getUserInfoDB().listen((userProfile) {
       user = userProfile;

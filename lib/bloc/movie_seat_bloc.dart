@@ -23,12 +23,16 @@ class MovieSeatBloc extends ChangeNotifier {
   List<String> _seatRowList = [];
  // List<String> get seatRowList => _seatRowList;
 
-  MovieSeatBloc(int timeSlotId, String bookingDate) {
+  MovieSeatBloc(int timeSlotId, String bookingDate,{MovieBookingModel? modelImpl}) {
+    if(modelImpl !=null){
+      _model = modelImpl ;
+    }
     _model.getCinemaSeats(timeSlotId, bookingDate).then((seatList) {
       _cinemaSeats = seatList;
       notifyListeners();
     });
   }
+
   void setSeatSelected(CinemaSeatVO? seatVO, int index) {
     if (seatVO?.isSelected == false && seatVO?.isSeatTypeAvailable() == true) {
       List<CinemaSeatVO>? seatList =_cinemaSeats?.mapIndexed((curIndex, element) {

@@ -16,7 +16,11 @@ class PaymentBloc extends ChangeNotifier {
   List<CardVO>? get cardList => _cardList;
   int get selectCardId => _selectCardId;
 
-  PaymentBloc() {
+  PaymentBloc({MovieBookingModel? modelImpl}) {
+
+    if(modelImpl !=null){
+      _model = modelImpl;
+    }
     _model.getUserInfoDB().listen((userResponse) {
       _cardList = userResponse?.cards;
       _selectCardId =

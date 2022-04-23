@@ -18,13 +18,17 @@ class ItemOrderBloc extends ChangeNotifier {
 
   List<SnackVO>? get snacksList => _snackList;
   List<PaymentVO>? get paymentList => _paymentList;
+
   int get totalPrice => _totalPrice;
   bool get isRefresh => _isRefresh;
 
   SnackVO? snackVO;
   List<SnackRequest> snackRequest = [];
 
-  ItemOrderBloc() {
+  ItemOrderBloc({MovieBookingModel? modelImpl}) {
+    if(modelImpl != null){
+      _model = modelImpl ;
+    }
     // Get Snack from DB
     _model.getSnackFromDB().listen((snackResponse) {
       _snackList = snackResponse;
@@ -51,7 +55,7 @@ class ItemOrderBloc extends ChangeNotifier {
     notifyListeners();
   }
 
-  void increaseOrDecreaseQty(String action,int quantity,int index){
+ /* void increaseOrDecreaseQty(String action,int quantity,int index){
     SnackVO? snack = _snackList?[index];
     if(ACTION_INCREASE == action){
       _totalPrice += snack?.price ?? 0 * quantity;
@@ -60,7 +64,7 @@ class ItemOrderBloc extends ChangeNotifier {
     }
     _isRefresh = !_isRefresh;
     notifyListeners();
-  }
+  }*/
   void addSnackRequest(){
     snackRequest.clear();
     _snackList?.forEach((element) {
@@ -71,12 +75,14 @@ class ItemOrderBloc extends ChangeNotifier {
     notifyListeners();
   }
   void incrementQty(int curIndex){
+   // debugPrint("Snack List Size: ${_snackList?.length}");
    List<SnackVO>? snacks = _snackList?.mapIndexed((index,element){
       if(curIndex == index){
         int _count = element.quantity ?? 0;
         element.quantity= ++_count;
         _totalPrice += element.price ?? 0 * _count;
         //snackRequest.add(SnackRequest(element.id, element.quantity));
+       // debugPrint("Total price:$_totalPrice, quantity: ${element.price}, $_count}");
       }
       return element;
     }).toList();

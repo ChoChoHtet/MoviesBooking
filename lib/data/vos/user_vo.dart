@@ -59,8 +59,9 @@ class UserVO {
           phone == other.phone &&
           totalExpense == other.totalExpense &&
           profileImage == other.profileImage &&
-          token == other.token &&
-          cards == other.cards;
+        //  cards == other.cards  &&
+          token == other.token ;
+
 
   @override
   int get hashCode =>
@@ -70,8 +71,9 @@ class UserVO {
       phone.hashCode ^
       totalExpense.hashCode ^
       profileImage.hashCode ^
-      token.hashCode ^
-      cards.hashCode;
+     // cards.hashCode ^
+      token.hashCode ;
+
 
   UserVO({
     this.id,

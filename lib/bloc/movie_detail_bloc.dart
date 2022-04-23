@@ -11,7 +11,10 @@ class MovieDetailBloc extends ChangeNotifier{
   MovieVO? movie;
   List<CreditVO>? castList;
 
-  MovieDetailBloc(int movieId){
+  MovieDetailBloc(int movieId, {MovieBookingModel? modelImpl}){
+    if(modelImpl != null){
+      model = modelImpl ;
+    }
     //Movie detail
     model.getMovieDetailDB(movieId).listen((movieDetail) {
       movie= movieDetail;

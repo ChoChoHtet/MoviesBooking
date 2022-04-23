@@ -21,7 +21,8 @@ UserVO getMockUser() => UserVO(
     email: "tester@gmail.com",
     phone: "9591234",
     totalExpense: 10,
-    token: "abcdefg");
+    token: "abcdefg",
+    cards: getMockCardVO());
 
 List<MovieVO> getMockMovies() => [
       MovieVO(
@@ -56,18 +57,18 @@ List<SnackVO> getMockSnacks() => [
           id: 1,
           name: "Popcorn",
           description: "Hello Popcorn",
-          price: 2,
+          price: 5,
           image: "https://tmba.padc.com.mm/img/snack.jpg",
-          quantity: 0),
+          quantity: 2),
       SnackVO(
-          id: 1,
+          id: 2,
           name: "Carrots",
           description: "Hello Carrots",
           price: 4,
           image: "https://tmba.padc.com.mm/img/snack.jpg",
           quantity: 1),
       SnackVO(
-          id: 1,
+          id: 3,
           name: "Smoothies",
           description: "Hello Smoothies",
           price: 6,
@@ -77,10 +78,20 @@ List<SnackVO> getMockSnacks() => [
 
 List<PaymentVO> getMockPaymentMethod() => [
       PaymentVO(
-          id: 1, name: "Credit Card", description: "Visa, Master Card, JCB"),
-      PaymentVO(id: 2, name: "ATM Card", description: "Visa, Master Card, JCB"),
+          id: 1,
+          name: "Credit Card",
+          description: "Visa, Master Card, JCB",
+          isSelected: true),
       PaymentVO(
-          id: 3, name: "E-Wallet", description: "AyaPay, KbzPay, WavePay"),
+          id: 2,
+          name: "ATM Card",
+          description: "Visa, Master Card, JCB",
+          isSelected: false),
+      PaymentVO(
+          id: 3,
+          name: "E-Wallet",
+          description: "AyaPay, KbzPay, WavePay",
+          isSelected: false),
     ];
 
 List<CardVO> getMockCardVO() => [
@@ -102,24 +113,89 @@ GetCardResponse getMockCardResponse() =>
     GetCardResponse(200, "Success", getMockCardVO());
 
 List<CinemaSeatVO> getMockSeats() => [
-      CinemaSeatVO(id: 1, type: "text", seatName: "", symbol: "A", price: 0,isSelected: false),
-      CinemaSeatVO(id: 2, type: "space", seatName: "", symbol: "A", price: 0,isSelected: false),
-      CinemaSeatVO(id: 3, type: "available", seatName: "A-2", symbol: "A", price: 2,isSelected: false),
-      CinemaSeatVO(id: 3, type: "taken", seatName: "B-2", symbol: "B", price: 4,isSelected: false),
+      CinemaSeatVO(
+          id: 1,
+          type: "text",
+          seatName: "",
+          symbol: "A",
+          price: 0,
+          isSelected: false),
+      CinemaSeatVO(
+          id: 2,
+          type: "space",
+          seatName: "",
+          symbol: "A",
+          price: 0,
+          isSelected: false),
+      CinemaSeatVO(
+          id: 3,
+          type: "available",
+          seatName: "A-2",
+          symbol: "A",
+          price: 2,
+          isSelected: false),
+      CinemaSeatVO(
+          id: 4,
+          type: "available",
+          seatName: "A-3",
+          symbol: "A",
+          price: 2,
+          isSelected: true),
+      CinemaSeatVO(
+          id: 5,
+          type: "taken",
+          seatName: "B-2",
+          symbol: "B",
+          price: 4,
+          isSelected: false)
+    ];
+
+List<CinemaSeatVO> getMockAvailableSeats() => [
+      CinemaSeatVO(
+          id: 1,
+          type: "text",
+          seatName: "",
+          symbol: "A",
+          price: 0,
+          isSelected: false),
+      CinemaSeatVO(
+          id: 2,
+          type: "space",
+          seatName: "",
+          symbol: "A",
+          price: 0,
+          isSelected: false),
+      CinemaSeatVO(
+          id: 3,
+          type: "available",
+          seatName: "A-2",
+          symbol: "A",
+          price: 2,
+          isSelected: true),
+      CinemaSeatVO(
+          id: 4,
+          type: "available",
+          seatName: "A-3",
+          symbol: "A",
+          price: 2,
+          isSelected: true),
+      CinemaSeatVO(
+          id: 5,
+          type: "taken",
+          seatName: "B-2",
+          symbol: "B",
+          price: 4,
+          isSelected: false),
     ];
 
 List<CinemaVO> getMockCinemaTime() => [
-  CinemaVO(
-    cinemaId: 1,
-    cinema: "Cinema A",
-    timeSlots: getMockTimeSlot(),
-  ),
-  CinemaVO(
-      cinemaId: 2,
-      cinema: "Cinema B",
-      timeSlots: getMockTimeSlot()
-  )
-];
+      CinemaVO(
+        cinemaId: 1,
+        cinema: "Cinema A",
+        timeSlots: getMockTimeSlot(),
+      ),
+      CinemaVO(cinemaId: 2, cinema: "Cinema B", timeSlots: getMockTimeSlot())
+    ];
 
 List<TimeSlotVO> getMockTimeSlot() => [
       TimeSlotVO(timeSlotId: 11, startTime: "9:30 AM"),
@@ -128,21 +204,18 @@ List<TimeSlotVO> getMockTimeSlot() => [
     ];
 
 CheckoutVO getMockTicketCheckout() => CheckoutVO(
-  id: 1,
-  bookingNo: "22",
-  bookingDate: "2/3/2022",
-  row: "A",
-  seat: "A-2,B-2",
-  totalSeat: 2,
-  total: "22",
-  movieId: 1,
-  cinemaId: 1,
-  username: "Tester",
-  timeSlot: getMockTimeSlot().first,
-  snacks: getMockSnacks(),
-  qrCode: "hello Qr code"
+    id: 1,
+    bookingNo: "22",
+    bookingDate: "2/3/2022",
+    row: "A",
+    seat: "A-2,B-2",
+    totalSeat: 2,
+    total: "22",
+    movieId: 1,
+    cinemaId: 1,
+    username: "Tester",
+    timeSlot: getMockTimeSlot().first,
+    snacks: getMockSnacks(),
+    qrCode: "hello Qr code");
 
-
-);
 CommonResponse getMockCommonResponse() => CommonResponse(200, "Successful");
-
