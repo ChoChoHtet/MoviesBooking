@@ -5,29 +5,13 @@ import 'package:movies_booking/persistence/hive_constants.dart';
 
 
 
-class CinemaTimeSlotDao{
-  CinemaTimeSlotDao._internal();
-  static final CinemaTimeSlotDao _singleton = CinemaTimeSlotDao._internal();
-  factory CinemaTimeSlotDao(){
-    return _singleton;
-  }
-  void saveDateTime(String date,CinemaTimeHiveVO cinemaVO) async {
-    print("dao cinema list size: ${cinemaVO.cinemaTime?.length}");
-    await getCinemaBox().put(date,cinemaVO);
-  }
+abstract class CinemaTimeSlotDao {
+  void saveDateTime(String date,CinemaTimeHiveVO cinemaVO) ;
 
-  List<CinemaVO> getCinemaVO(String date){
-    return getCinemaBox().get(date)?.cinemaTime ?? [];
-  }
-  Box<CinemaTimeHiveVO> getCinemaBox(){
-    return Hive.box<CinemaTimeHiveVO>(BOX_NAMES_DATE_TIME_VO);
-  }
+  List<CinemaVO> getCinemaVO(String date);
 
-  Stream<void> getCinemaEventStream(){
-    return getCinemaBox().watch();
-  }
+  Stream<void> getCinemaEventStream();
 
-  Stream<List<CinemaVO>> getCinemaStream(String date){
-    return Stream.value(getCinemaVO(date));
-  }
+  Stream<List<CinemaVO>> getCinemaStream(String date);
+
 }

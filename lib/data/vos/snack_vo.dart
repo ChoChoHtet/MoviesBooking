@@ -1,11 +1,12 @@
-
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:movies_booking/persistence/hive_constants.dart';
+
 part 'snack_vo.g.dart';
+
 @JsonSerializable()
-@HiveType(typeId: HIVE_SNACK_LIST,adapterName:"SnackVOAdapter" )
-class SnackVO{
+@HiveType(typeId: HIVE_SNACK_LIST, adapterName: "SnackVOAdapter")
+class SnackVO {
   @JsonKey(name: "id")
   @HiveField(0)
   int? id;
@@ -27,12 +28,16 @@ class SnackVO{
   String? image;
 
   @HiveField(5)
-  int? quantity ;
+  int? quantity;
 
-
-  SnackVO(this.id, this.name, this.description, this.price, this.image,
-      this.quantity);
-
+  SnackVO({
+    this.id,
+    this.name,
+    this.description,
+    this.price,
+    this.image,
+    this.quantity,
+  });
 
   @override
   bool operator ==(Object other) =>
@@ -55,7 +60,8 @@ class SnackVO{
       image.hashCode ^
       quantity.hashCode;
 
-  factory SnackVO.fromJson(Map<String,dynamic>json) => _$SnackVOFromJson(json);
-  Map<String,dynamic> toJson() => _$SnackVOToJson(this);
+  factory SnackVO.fromJson(Map<String, dynamic> json) =>
+      _$SnackVOFromJson(json);
 
+  Map<String, dynamic> toJson() => _$SnackVOToJson(this);
 }

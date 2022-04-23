@@ -1,5 +1,4 @@
-import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 import 'package:movies_booking/data/models/movie_booking_model.dart';
 import 'package:movies_booking/data/request/check_out_request.dart';
 import 'package:movies_booking/data/vos/checkout_vo.dart';
@@ -17,22 +16,27 @@ import 'package:movies_booking/network/response/common_response.dart';
 import 'package:movies_booking/pages/get_card_response.dart';
 import 'package:movies_booking/persistence/daos/cinema_time_slot_dao.dart';
 import 'package:movies_booking/persistence/daos/credit_dao.dart';
+import 'package:movies_booking/persistence/daos/impl/cinema_time_slot_dao_impl.dart';
+import 'package:movies_booking/persistence/daos/impl/credit_dao_impl.dart';
+import 'package:movies_booking/persistence/daos/impl/movie_dao_impl.dart';
+import 'package:movies_booking/persistence/daos/impl/payment_dao_impl.dart';
+import 'package:movies_booking/persistence/daos/impl/snack_dao_impl.dart';
+import 'package:movies_booking/persistence/daos/impl/user_dao_impl.dart';
 import 'package:movies_booking/persistence/daos/movie_dao.dart';
 import 'package:movies_booking/persistence/daos/payment_dao.dart';
 import 'package:movies_booking/persistence/daos/snack_dao.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 import '../../persistence/daos/user_dao.dart';
-import '../vos/date_vo.dart';
 
 class MovieBookingModelImpl extends MovieBookingModel {
   MovieBookingAgent _dataAgent = RetrofitMovieDataAgentImpl();
-  UserDao userDao = UserDao();
-  MovieDao movieDao = MovieDao();
-  CreditDao creditDao = CreditDao();
-  CinemaTimeSlotDao cinemaDao = CinemaTimeSlotDao();
-  SnackDao snackDao = SnackDao();
-  PaymentDao paymentDao = PaymentDao();
+  UserDao userDao = UserDaoImpl();
+  MovieDao movieDao = MovieDaoImpl();
+  CreditDao creditDao = CreditDaoImpl();
+  CinemaTimeSlotDao cinemaDao = CinemaTimeSlotDaoImpl();
+  SnackDao snackDao = SnackDaoImpl();
+  PaymentDao paymentDao = PaymentDaoImpl();
 
   MovieBookingModelImpl._internal();
 
@@ -40,6 +44,25 @@ class MovieBookingModelImpl extends MovieBookingModel {
 
   factory MovieBookingModelImpl() {
     return _singleton;
+  }
+
+  @visibleForTesting
+  void setDaoAndAgentTest(
+    MovieBookingAgent agent,
+    UserDao _userDao,
+    MovieDao _movieDao,
+    CreditDao _creditDao,
+    CinemaTimeSlotDao _cinemaDao,
+    SnackDao _snackDao,
+    PaymentDao _paymentDao,
+  ) {
+    _dataAgent = agent;
+    userDao = _userDao;
+    movieDao = _movieDao;
+    creditDao = _creditDao;
+    cinemaDao = _cinemaDao;
+    snackDao = _snackDao;
+    paymentDao = _paymentDao;
   }
 
   @override
@@ -152,7 +175,7 @@ class MovieBookingModelImpl extends MovieBookingModel {
   @override
   void getCinemaTimeSlots(String date) {
     var token = userDao.getUserInfo()?.getToken() ?? "";
-   // debugPrint("cinema Token: ${ userDao.getUserInfo().toString()}");
+    // debugPrint("cinema Token: ${ userDao.getUserInfo().toString()}");
     _dataAgent.getCinemaTimeSlots(date, token).then((timeSlot) async {
       List<CinemaVO> cinemaList = timeSlot?.map((time) {
             time.isSelected = false;
@@ -181,7 +204,6 @@ class MovieBookingModelImpl extends MovieBookingModel {
     });
   }
 
-
   @override
   Future<List<CinemaSeatVO>?> getCinemaSeats(
       int timeSlotId, String bookingDate) {
@@ -194,7 +216,7 @@ class MovieBookingModelImpl extends MovieBookingModel {
         seat.isSelected = false;
         return seat;
       }).toList();
-     // print("seat plan api response: ${seatList.toString()}");
+      // print("seat plan api response: ${seatList.toString()}");
       return Future.value(seatList);
     });
   }
@@ -231,15 +253,16 @@ class MovieBookingModelImpl extends MovieBookingModel {
   @override
   void getUserProfile() {
     var token = userDao.getUserInfo()?.getToken() ?? "";
-    _dataAgent.getUserProfile(token).then((user){
-     // debugPrint("profile token: ${user.toString()}");
-      if(user != null){
-        var userVO = user.data ;
+    _dataAgent.getUserProfile(token).then((user) {
+      // debugPrint("profile token: ${user.toString()}");
+      if (user != null) {
+        var userVO = user.data;
         userVO?.token = userDao.getUserInfo()?.token;
         userDao.saveUserInfo(userVO!);
       }
     });
   }
+
   @override
   void clearUserData() {
     userDao.deleteUser();
@@ -247,7 +270,7 @@ class MovieBookingModelImpl extends MovieBookingModel {
 
   @override
   Future<UserVO?> getUserInfo() {
-   return Future.value(userDao.getUserInfo());
+    return Future.value(userDao.getUserInfo());
   }
 
   @override
@@ -273,7 +296,7 @@ class MovieBookingModelImpl extends MovieBookingModel {
     return movieDao
         .getAllMovieEventStream()
         .startWith(movieDao.getNowShowingMovieStream())
-       .map((event) => movieDao.getNowShowingMovies());
+        .map((event) => movieDao.getNowShowingMovies());
   }
 
   Stream<UserVO?> getUserInfoDB() {
@@ -310,7 +333,6 @@ class MovieBookingModelImpl extends MovieBookingModel {
         .getCinemaEventStream()
         .startWith(cinemaDao.getCinemaStream(date))
         .map((event) => cinemaDao.getCinemaVO(date));
-
   }
 
   @override
@@ -329,5 +351,4 @@ class MovieBookingModelImpl extends MovieBookingModel {
         .startWith(paymentDao.getPaymentMethodStream())
         .map((event) => paymentDao.getPaymentMethods());
   }
-
 }

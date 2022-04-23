@@ -2,33 +2,13 @@ import 'package:hive/hive.dart';
 import 'package:movies_booking/data/vos/payment_vo.dart';
 import 'package:movies_booking/persistence/hive_constants.dart';
 
-class PaymentDao{
-  PaymentDao._internal();
-  static final PaymentDao _singleton = PaymentDao._internal();
+abstract class PaymentDao{
 
-  factory PaymentDao() {
-    return _singleton;
-  }
+  void savePaymentMethod(List<PaymentVO> paymentList) ;
 
-  void savePaymentMethod(List<PaymentVO> paymentList) async {
-    Map<int, PaymentVO> movieMap = Map.fromIterable(paymentList,
-        key: (method) => method.id, value: (method) => method);
-    await getPaymentBox().putAll(movieMap);
-  }
+  List<PaymentVO> getPaymentMethods();
 
-  Box<PaymentVO> getPaymentBox(){
-    return Hive.box<PaymentVO>(BOX_NAMES_PAYMENT_VO);
-  }
+  Stream<void> getPaymentWatchStream();
 
-  List<PaymentVO> getPaymentMethods() {
-    return getPaymentBox().values.toList();
-  }
-
-  Stream<void> getPaymentWatchStream(){
-    return getPaymentBox().watch();
-  }
-
-  Stream<List<PaymentVO>> getPaymentMethodStream(){
-    return Stream.value(getPaymentMethods());
-  }
+  Stream<List<PaymentVO>> getPaymentMethodStream();
 }

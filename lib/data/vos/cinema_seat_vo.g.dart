@@ -7,12 +7,12 @@ part of 'cinema_seat_vo.dart';
 // **************************************************************************
 
 CinemaSeatVO _$CinemaSeatVOFromJson(Map<String, dynamic> json) => CinemaSeatVO(
-      json['id'] as int?,
-      json['type'] as String?,
-      json['seat_name'] as String?,
-      json['symbol'] as String?,
-      json['price'] as int?,
-      json['isSelected'] as bool?,
+      id: json['id'] as int?,
+      type: json['type'] as String?,
+      seatName: json['seat_name'] as String?,
+      symbol: json['symbol'] as String?,
+      price: json['price'] as int?,
+      isSelected: json['isSelected'] as bool?,
     );
 
 Map<String, dynamic> _$CinemaSeatVOToJson(CinemaSeatVO instance) =>

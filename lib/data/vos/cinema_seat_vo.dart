@@ -1,8 +1,9 @@
 import 'package:json_annotation/json_annotation.dart';
 
 part 'cinema_seat_vo.g.dart';
+
 @JsonSerializable()
-class CinemaSeatVO{
+class CinemaSeatVO {
   @JsonKey(name: "id")
   int? id;
 
@@ -18,25 +19,29 @@ class CinemaSeatVO{
   @JsonKey(name: "price")
   int? price;
 
-  bool? isSelected =false;
+  bool? isSelected = false;
 
-
-  CinemaSeatVO(this.id, this.type, this.seatName, this.symbol, this.price,
-      this.isSelected);
+  CinemaSeatVO({
+    this.id,
+    this.type,
+    this.seatName,
+    this.symbol,
+    this.price,
+    this.isSelected,
+  });
 
   bool isSeatTypeAvailable() => this.type == "available";
+
   bool isSeatTypeText() => this.type == "text";
 
-  bool isSeatTypeSpace()=> this.type =="space";
+  bool isSeatTypeSpace() => this.type == "space";
 
-  bool isSeatTypeTaken()=> this.type == "taken";
-
+  bool isSeatTypeTaken() => this.type == "taken";
 
   @override
   String toString() {
     return 'CinemaSeatVO{id: $id, type: $type, seatName: $seatName, symbol: $symbol, price: $price, isSelected: $isSelected}';
   }
-
 
   @override
   bool operator ==(Object other) =>
@@ -59,7 +64,8 @@ class CinemaSeatVO{
       price.hashCode ^
       isSelected.hashCode;
 
-  factory CinemaSeatVO.fromJson(Map<String,dynamic>json) => _$CinemaSeatVOFromJson(json);
-  Map<String,dynamic> toJson() => _$CinemaSeatVOToJson(this);
+  factory CinemaSeatVO.fromJson(Map<String, dynamic> json) =>
+      _$CinemaSeatVOFromJson(json);
 
+  Map<String, dynamic> toJson() => _$CinemaSeatVOToJson(this);
 }

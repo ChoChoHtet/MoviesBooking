@@ -17,10 +17,10 @@ class PaymentVOAdapter extends TypeAdapter<PaymentVO> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return PaymentVO(
-      fields[0] as int?,
-      fields[1] as String?,
-      fields[2] as String?,
-      fields[3] as bool?,
+      id: fields[0] as int?,
+      name: fields[1] as String?,
+      description: fields[2] as String?,
+      isSelected: fields[3] as bool?,
     );
   }
 
@@ -54,10 +54,10 @@ class PaymentVOAdapter extends TypeAdapter<PaymentVO> {
 // **************************************************************************
 
 PaymentVO _$PaymentVOFromJson(Map<String, dynamic> json) => PaymentVO(
-      json['id'] as int?,
-      json['name'] as String?,
-      json['description'] as String?,
-      json['isSelected'] as bool?,
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      description: json['description'] as String?,
+      isSelected: json['isSelected'] as bool?,
     );
 
 Map<String, dynamic> _$PaymentVOToJson(PaymentVO instance) => <String, dynamic>{

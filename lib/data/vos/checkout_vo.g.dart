@@ -7,23 +7,23 @@ part of 'checkout_vo.dart';
 // **************************************************************************
 
 CheckoutVO _$CheckoutVOFromJson(Map<String, dynamic> json) => CheckoutVO(
-      json['id'] as int?,
-      json['booking_no'] as String?,
-      json['booking_date'] as String?,
-      json['row'] as String?,
-      json['seat'] as String?,
-      json['total_seat'] as int?,
-      json['total'] as String?,
-      json['movie_id'] as int?,
-      json['cinema_id'] as int?,
-      json['username'] as String?,
-      json['timeslot'] == null
+      id: json['id'] as int?,
+      bookingNo: json['booking_no'] as String?,
+      bookingDate: json['booking_date'] as String?,
+      row: json['row'] as String?,
+      seat: json['seat'] as String?,
+      totalSeat: json['total_seat'] as int?,
+      total: json['total'] as String?,
+      movieId: json['movie_id'] as int?,
+      cinemaId: json['cinema_id'] as int?,
+      username: json['username'] as String?,
+      timeSlot: json['timeslot'] == null
           ? null
           : TimeSlotVO.fromJson(json['timeslot'] as Map<String, dynamic>),
-      (json['snacks'] as List<dynamic>?)
+      snacks: (json['snacks'] as List<dynamic>?)
           ?.map((e) => SnackVO.fromJson(e as Map<String, dynamic>))
           .toList(),
-      json['qr_code'] as String?,
+      qrCode: json['qr_code'] as String?,
     );
 
 Map<String, dynamic> _$CheckoutVOToJson(CheckoutVO instance) =>

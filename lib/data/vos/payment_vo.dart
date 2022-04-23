@@ -1,11 +1,12 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:movies_booking/persistence/hive_constants.dart';
+
 part 'payment_vo.g.dart';
 
 @JsonSerializable()
-@HiveType(typeId: HIVE_PAYMENT_ID,adapterName:"PaymentVOAdapter" )
-class PaymentVO{
+@HiveType(typeId: HIVE_PAYMENT_ID, adapterName: "PaymentVOAdapter")
+class PaymentVO {
   @JsonKey(name: "id")
   @HiveField(0)
   int? id;
@@ -21,9 +22,12 @@ class PaymentVO{
   @HiveField(3)
   bool? isSelected;
 
-
-  PaymentVO(this.id, this.name, this.description,this.isSelected);
-
+  PaymentVO({
+    this.id,
+    this.name,
+    this.description,
+    this.isSelected,
+  });
 
   @override
   bool operator ==(Object other) =>
@@ -39,6 +43,8 @@ class PaymentVO{
   int get hashCode =>
       id.hashCode ^ name.hashCode ^ description.hashCode ^ isSelected.hashCode;
 
-  factory PaymentVO.fromJson(Map<String,dynamic>json) => _$PaymentVOFromJson(json);
-  Map<String,dynamic> toJson() => _$PaymentVOToJson(this);
+  factory PaymentVO.fromJson(Map<String, dynamic> json) =>
+      _$PaymentVOFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PaymentVOToJson(this);
 }

@@ -22,10 +22,10 @@ class MovieChooseTimePage extends StatelessWidget {
       required this.movieName,
       required this.moviePath});
 
-  final CinemaVO available = CinemaVO(1, "Available In", [
-    TimeSlotVO(1, "2D", false),
-    TimeSlotVO(2, "3D", false),
-    TimeSlotVO(3, "IMAX", false),
+  final CinemaVO available = CinemaVO(cinemaId:1, cinema:"Available In", timeSlots:[
+    TimeSlotVO(timeSlotId:1, startTime: "2D", isSelected: false),
+    TimeSlotVO(timeSlotId:2, startTime: "3D", isSelected: false),
+    TimeSlotVO(timeSlotId:3, startTime: "IMAX", isSelected:false),
   ]);
   @override
   Widget build(BuildContext context) {

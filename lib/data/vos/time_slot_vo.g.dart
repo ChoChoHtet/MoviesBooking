@@ -17,9 +17,9 @@ class TimeSlotVOAdapter extends TypeAdapter<TimeSlotVO> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return TimeSlotVO(
-      fields[0] as int?,
-      fields[1] as String?,
-      fields[2] as bool?,
+      timeSlotId: fields[0] as int?,
+      startTime: fields[1] as String?,
+      isSelected: fields[2] as bool?,
     );
   }
 
@@ -51,9 +51,9 @@ class TimeSlotVOAdapter extends TypeAdapter<TimeSlotVO> {
 // **************************************************************************
 
 TimeSlotVO _$TimeSlotVOFromJson(Map<String, dynamic> json) => TimeSlotVO(
-      json['cinema_day_timeslot_id'] as int?,
-      json['start_time'] as String?,
-      json['isSelected'] as bool?,
+      timeSlotId: json['cinema_day_timeslot_id'] as int?,
+      startTime: json['start_time'] as String?,
+      isSelected: json['isSelected'] as bool?,
     );
 
 Map<String, dynamic> _$TimeSlotVOToJson(TimeSlotVO instance) =>

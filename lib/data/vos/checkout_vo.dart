@@ -5,8 +5,7 @@ import 'package:movies_booking/data/vos/time_slot_vo.dart';
 part 'checkout_vo.g.dart';
 
 @JsonSerializable()
-class CheckoutVO{
-
+class CheckoutVO {
   @JsonKey(name: "id")
   int? id;
 
@@ -46,21 +45,21 @@ class CheckoutVO{
   @JsonKey(name: "qr_code")
   String? qrCode;
 
-  CheckoutVO(
-      this.id,
-      this.bookingNo,
-      this.bookingDate,
-      this.row,
-      this.seat,
-      this.totalSeat,
-      this.total,
-      this.movieId,
-      this.cinemaId,
-      this.username,
-      this.timeSlot,
-      this.snacks,
-      this.qrCode);
-
+  CheckoutVO({
+    this.id,
+    this.bookingNo,
+    this.bookingDate,
+    this.row,
+    this.seat,
+    this.totalSeat,
+    this.total,
+    this.movieId,
+    this.cinemaId,
+    this.username,
+    this.timeSlot,
+    this.snacks,
+    this.qrCode,
+  });
 
   @override
   bool operator ==(Object other) =>
@@ -78,7 +77,7 @@ class CheckoutVO{
           cinemaId == other.cinemaId &&
           username == other.username &&
           timeSlot == other.timeSlot &&
-          snacks == other.snacks &&
+         // snacks == other.snacks &&
           qrCode == other.qrCode;
 
   @override
@@ -94,9 +93,11 @@ class CheckoutVO{
       cinemaId.hashCode ^
       username.hashCode ^
       timeSlot.hashCode ^
-      snacks.hashCode ^
+      //snacks.hashCode ^
       qrCode.hashCode;
 
-  factory CheckoutVO.fromJson(Map<String,dynamic>json) => _$CheckoutVOFromJson(json);
-  Map<String,dynamic> toJson() => _$CheckoutVOToJson(this);
+  factory CheckoutVO.fromJson(Map<String, dynamic> json) =>
+      _$CheckoutVOFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CheckoutVOToJson(this);
 }

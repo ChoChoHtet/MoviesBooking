@@ -17,12 +17,12 @@ class SnackVOAdapter extends TypeAdapter<SnackVO> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return SnackVO(
-      fields[0] as int?,
-      fields[1] as String?,
-      fields[2] as String?,
-      fields[3] as int?,
-      fields[4] as String?,
-      fields[5] as int?,
+      id: fields[0] as int?,
+      name: fields[1] as String?,
+      description: fields[2] as String?,
+      price: fields[3] as int?,
+      image: fields[4] as String?,
+      quantity: fields[5] as int?,
     );
   }
 
@@ -60,12 +60,12 @@ class SnackVOAdapter extends TypeAdapter<SnackVO> {
 // **************************************************************************
 
 SnackVO _$SnackVOFromJson(Map<String, dynamic> json) => SnackVO(
-      json['id'] as int?,
-      json['name'] as String?,
-      json['description'] as String?,
-      json['price'] as int?,
-      json['image'] as String?,
-      json['quantity'] as int?,
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      description: json['description'] as String?,
+      price: json['price'] as int?,
+      image: json['image'] as String?,
+      quantity: json['quantity'] as int?,
     );
 
 Map<String, dynamic> _$SnackVOToJson(SnackVO instance) => <String, dynamic>{

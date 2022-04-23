@@ -17,9 +17,9 @@ class CinemaVOAdapter extends TypeAdapter<CinemaVO> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return CinemaVO(
-      fields[0] as int?,
-      fields[1] as String?,
-      (fields[2] as List?)?.cast<TimeSlotVO>(),
+      cinemaId: fields[0] as int?,
+      cinema: fields[1] as String?,
+      timeSlots: (fields[2] as List?)?.cast<TimeSlotVO>(),
     )..isSelected = fields[3] as bool?;
   }
 
@@ -53,9 +53,9 @@ class CinemaVOAdapter extends TypeAdapter<CinemaVO> {
 // **************************************************************************
 
 CinemaVO _$CinemaVOFromJson(Map<String, dynamic> json) => CinemaVO(
-      json['cinema_id'] as int?,
-      json['cinema'] as String?,
-      (json['timeslots'] as List<dynamic>?)
+      cinemaId: json['cinema_id'] as int?,
+      cinema: json['cinema'] as String?,
+      timeSlots: (json['timeslots'] as List<dynamic>?)
           ?.map((e) => TimeSlotVO.fromJson(e as Map<String, dynamic>))
           .toList(),
     )..isSelected = json['isSelected'] as bool?;

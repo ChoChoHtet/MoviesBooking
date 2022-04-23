@@ -11,101 +11,91 @@ import 'package:movies_booking/network/response/common_response.dart';
 import 'package:movies_booking/network/response/get_user_response.dart';
 import 'package:movies_booking/pages/get_card_response.dart';
 
-class MovieDataAgentImpl extends MovieBookingAgent{
+import '../mock_data/mock_data.dart';
+
+class MovieDataAgentImplMock extends MovieBookingAgent {
   @override
-  Future<CheckoutVO?> checkoutTicket(String token, CheckOutRequest checkOutRequest) {
-    // TODO: implement checkoutTicket
-    throw UnimplementedError();
+  Future<CheckoutVO?> checkoutTicket(
+      String token, CheckOutRequest checkOutRequest) {
+    return Future.value(getMockTicketCheckout());
   }
 
   @override
-  Future<GetCardResponse> createCard(String token, String cardNumber, String cardHolder, String expirationDate, String cvc) {
-    // TODO: implement createCard
-    throw UnimplementedError();
+  Future<GetCardResponse> createCard(String token, String cardNumber,
+      String cardHolder, String expirationDate, String cvc) {
+    return Future.value(getMockCardResponse());
   }
 
   @override
   Future<GetUserResponse> emailLogin(String email, String password) {
-    // TODO: implement emailLogin
-    throw UnimplementedError();
+    return Future.value(getMockUserResponse());
   }
 
   @override
-  Future<GetUserResponse> emailRegister(String name, String email, String phone, String password) {
-    // TODO: implement emailRegister
-    throw UnimplementedError();
+  Future<GetUserResponse> emailRegister(
+      String name, String email, String phone, String password) {
+    return Future.value(getMockUserResponse());
   }
 
   @override
-  Future<List<List<CinemaSeatVO>>?> getCinemaSeatPlans(String token, int timeSlotId, String bookingDate) {
-    // TODO: implement getCinemaSeatPlans
-    throw UnimplementedError();
+  Future<List<List<CinemaSeatVO>>?> getCinemaSeatPlans(
+      String token, int timeSlotId, String bookingDate) {
+    return Future.value([getMockSeats()]);
   }
 
   @override
   Future<List<CinemaVO>?> getCinemaTimeSlots(String date, String token) {
-    // TODO: implement getCinemaTimeSlots
-    throw UnimplementedError();
+    return Future.value(getMockCinemaTime());
   }
 
   @override
   Future<List<MovieVO>?> getComingSoonMovie() {
-    // TODO: implement getComingSoonMovie
-    throw UnimplementedError();
+    return Future.value(getMockMovies());
   }
 
   @override
   Future<List<CreditVO>?> getMovieCredit(int movieId) {
-    // TODO: implement getMovieCredit
-    throw UnimplementedError();
+    return Future.value(getMockCredits());
   }
 
   @override
   Future<MovieVO?> getMovieDetail(int movieId) {
-    // TODO: implement getMovieDetail
-    throw UnimplementedError();
+    return Future.value(getMockMovies().first);
   }
 
   @override
   Future<List<MovieVO>?> getNowShowingMovie() {
-    // TODO: implement getNowShowingMovie
-    throw UnimplementedError();
+    return Future.value(getMockMovies());
   }
 
   @override
   Future<List<PaymentVO>?> getPaymentMethod(String token) {
-    // TODO: implement getPaymentMethod
-    throw UnimplementedError();
+    return Future.value(getMockPaymentMethod());
   }
 
   @override
   Future<List<SnackVO>?> getSnacks(String token) {
-    // TODO: implement getSnacks
-    throw UnimplementedError();
+    return Future.value(getMockSnacks());
   }
 
   @override
   Future<GetUserResponse?> getUserProfile(String token) {
-    // TODO: implement getUserProfile
-    throw UnimplementedError();
+    return Future.value(getMockUserResponse());
   }
 
   @override
-  Future<GetUserResponse> googleRegister(String name, String email, String phone, String password, String googleToken) {
-    // TODO: implement googleRegister
-    throw UnimplementedError();
+  Future<GetUserResponse> googleRegister(String name, String email,
+      String phone, String password, String googleToken) {
+    return Future.value(getMockUserResponse());
   }
 
   @override
   Future<GetUserResponse> loginGoogle(String accessToken) {
-    // TODO: implement loginGoogle
-    throw UnimplementedError();
+    return Future.value(getMockUserResponse());
   }
 
   @override
   Future<CommonResponse> logout(String token) {
-    // TODO: implement logout
-    throw UnimplementedError();
+    return Future.value(getMockCommonResponse());
   }
-  
 }

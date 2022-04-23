@@ -7,15 +7,12 @@ import 'package:movies_booking/data/vos/credit_vo.dart';
 import 'package:movies_booking/data/vos/movie_vo.dart';
 import 'package:movies_booking/data/vos/payment_vo.dart';
 import 'package:movies_booking/data/vos/snack_vo.dart';
-import 'package:movies_booking/data/vos/user_vo.dart';
 import 'package:movies_booking/network/api_constants.dart';
 import 'package:movies_booking/network/dataagents/movie_booking_agents.dart';
 import 'package:movies_booking/network/movie_api.dart';
 import 'package:movies_booking/network/movie_booking_api.dart';
 import 'package:movies_booking/network/response/checkout_reponse.dart';
 import 'package:movies_booking/network/response/common_response.dart';
-import 'package:movies_booking/network/response/get_credit_response.dart';
-import 'package:movies_booking/network/response/get_movie_response.dart';
 import 'package:movies_booking/network/response/get_user_response.dart';
 import 'package:movies_booking/pages/get_card_response.dart';
 

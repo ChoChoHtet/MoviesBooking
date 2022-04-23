@@ -22,11 +22,9 @@ class GetCardResponse{
       other is GetCardResponse &&
           runtimeType == other.runtimeType &&
           code == other.code &&
-          message == other.message &&
-          data == other.data;
-
+          message == other.message;
   @override
-  int get hashCode => code.hashCode ^ message.hashCode ^ data.hashCode;
+  int get hashCode => code.hashCode ^ message.hashCode;
 
   factory GetCardResponse.fromJson(Map<String,dynamic>json) => _$GetCardResponseFromJson(json);
   Map<String,dynamic> toJson() => _$GetCardResponseToJson(this);
