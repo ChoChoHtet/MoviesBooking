@@ -140,7 +140,7 @@ List<CinemaSeatVO> getMockSeats() => [
           seatName: "A-3",
           symbol: "A",
           price: 2,
-          isSelected: true),
+          isSelected: false),
       CinemaSeatVO(
           id: 5,
           type: "taken",

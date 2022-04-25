@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:movies_booking/bloc/choose_time_bloc.dart';
 
@@ -9,6 +10,7 @@ void main(){
     ChooseTimeBloc? bloc ;
     setUp((){
       bloc = ChooseTimeBloc(modelImp: MovieBookingModelImplMock());
+      debugPrint("${bloc?.cinemaTimeList.toString()}");
     });
 
     test("Get Cinema Movie Time",(){

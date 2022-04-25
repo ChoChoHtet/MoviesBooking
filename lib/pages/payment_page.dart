@@ -190,21 +190,24 @@ class AddNewCardSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTapAddNew,
-      child: Row(
-        children: [
-          Icon(
-            Icons.add_circle_outline_outlined,
-            color: Colors.green,
-            size: 24,
+      child: Container(
+        key: Key(KEY_ADD_NEW_CARD),
+        child:  Row(
+            children: [
+              Icon(
+                Icons.add_circle_outline_outlined,
+                color: Colors.green,
+                size: 24,
+              ),
+              SizedBox(
+                width: MARGIN_SMALL_2,
+              ),
+              NormalTextView(
+                "Add New Card",
+                textColor: Colors.green,
+              ),
+            ],
           ),
-          SizedBox(
-            width: MARGIN_SMALL_2,
-          ),
-          NormalTextView(
-            "Add New Card",
-            textColor: Colors.green,
-          ),
-        ],
       ),
     );
   }

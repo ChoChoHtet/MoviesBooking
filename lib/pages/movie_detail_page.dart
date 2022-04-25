@@ -73,6 +73,7 @@ class MovieDetailPage extends StatelessWidget {
                           Provider.of<MovieDetailBloc>(context, listen: false);
                       _navigateToChooseTimePage(context, bloc.movie);
                     },
+                    keyName:KEY_MOVIE_DETAIL_GET_TICKET ,
                   ),
                 ),
               ),
@@ -278,10 +279,10 @@ class MoviesPosterView extends StatelessWidget {
     return Stack(
       children: [
         Positioned.fill(
-          child: Image.network(
+          child: posterPath.isNotEmpty ? Image.network(
             "$MOVIE_IMAGE_URL$posterPath",
             fit: BoxFit.cover,
-          ),
+          ): Image.asset("assets/movie_illustration.png"),
         ),
         Align(
           alignment: Alignment.topLeft,

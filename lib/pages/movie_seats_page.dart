@@ -5,6 +5,7 @@ import 'package:movies_booking/bloc/movie_seat_bloc.dart';
 import 'package:movies_booking/data/vos/cinema_seat_vo.dart';
 import 'package:movies_booking/pages/item_order_page.dart';
 import 'package:movies_booking/resources/dimen.dart';
+import 'package:movies_booking/resources/strings.dart';
 import 'package:movies_booking/viewItems/movie_seat_item_view.dart';
 import 'package:movies_booking/widgets/back_button_view.dart';
 import 'package:movies_booking/widgets/elevated_button_view.dart';
@@ -44,6 +45,7 @@ class MovieSeatPage extends StatelessWidget {
             leading: BackButtonView(() => Navigator.pop(context)),
           ),
           body: SingleChildScrollView(
+            key: Key(KEY_SEAT_PAGE_SCROLL),
             child: Column(
               children: [
                 MovieNameTimeAndCinemaSection(
@@ -114,9 +116,11 @@ class MovieSeatPage extends StatelessWidget {
                     builder: (BuildContext context, totalPrice, Widget? child) {
                       MovieSeatBloc bloc = Provider.of(context, listen: false);
                       return ElevatedButtonView(
-                          "Buy Ticket for \$$totalPrice",
-                          () => _navigateToItemOrderScreen(
-                              context, totalPrice, bloc.seatRows));
+                        "Buy Ticket for \$$totalPrice",
+                        () => _navigateToItemOrderScreen(
+                            context, totalPrice, bloc.seatRows),
+                        keyName: KEY_SEAT_BUY_TICKET,
+                      );
                     },
                   ),
                 ),
@@ -150,7 +154,9 @@ class MovieSeatPage extends StatelessWidget {
 class MovieSeatAndTicketSection extends StatelessWidget {
   final String seatCount;
   final String seatRow;
+
   MovieSeatAndTicketSection({required this.seatCount, required this.seatRow});
+
   @override
   Widget build(BuildContext context) {
     return Padding(

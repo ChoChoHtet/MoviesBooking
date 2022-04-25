@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:movies_booking/bloc/add_card_bloc.dart';
 import 'package:movies_booking/resources/dimen.dart';
+import 'package:movies_booking/resources/strings.dart';
 import 'package:movies_booking/widgets/close_button_view.dart';
 import 'package:movies_booking/widgets/elevated_button_view.dart';
 import 'package:movies_booking/widgets/input_field_view.dart';
@@ -48,6 +49,7 @@ class _AddCardInfoPageState extends State<AddCardInfoPage> {
                 InputFieldView(
                   "Card Number",
                   textController: _cardNumberTextController,
+                  keyName:"Card Number" ,
                 ),
                 SizedBox(
                   height: MARGIN_MEDIUM_2,
@@ -55,6 +57,7 @@ class _AddCardInfoPageState extends State<AddCardInfoPage> {
                 InputFieldView(
                   "Card holder",
                   textController: _cardHolderTextController,
+                  keyName: "Card holder" ,
                 ),
                 SizedBox(
                   height: MARGIN_MEDIUM_2,
@@ -66,6 +69,7 @@ class _AddCardInfoPageState extends State<AddCardInfoPage> {
                       child: InputFieldView(
                         "Expiration Date",
                         textController: _expireTextController,
+                        keyName:"Expiration Date" ,
                       ),
                     ),
                     SizedBox(
@@ -75,6 +79,7 @@ class _AddCardInfoPageState extends State<AddCardInfoPage> {
                       child: InputFieldView(
                         "CVC",
                         textController: _cvcTextController,
+                        keyName: "CVC",
                       ),
                     ),
                   ],
@@ -95,8 +100,11 @@ class _AddCardInfoPageState extends State<AddCardInfoPage> {
                       if (response.code == 200) {
                         Navigator.pop(context);
                       }
-                    });
-                  });
+                    },
+                    );
+                  },
+                    keyName: KEY_CREATE_CARD_CONFIRM_BUTTON,
+                  );
                 }),
               ],
             ),

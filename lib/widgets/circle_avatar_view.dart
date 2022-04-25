@@ -12,10 +12,11 @@ class CircleAvatarView extends StatelessWidget {
         Container(
           height: AVATAR_SIZE,
           width: AVATAR_SIZE,
-          child: CircleAvatar(
-            backgroundImage: url.isNotEmpty ? NetworkImage("$MOVIE_IMAGE_URL$url"):
-            NetworkImage(AVATAR_IMAGE_URL)
-          ),
+          child: url.isNotEmpty ? CircleAvatar(
+              backgroundImage:NetworkImage("$MOVIE_IMAGE_URL$url")
+          ):CircleAvatar(
+              backgroundImage:AssetImage("assets/avatar.png")
+          )
         ),
         SizedBox(
           width: MARGIN_SMALL_2,

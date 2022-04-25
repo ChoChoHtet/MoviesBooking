@@ -49,15 +49,17 @@ class ItemOrderPage extends StatelessWidget {
           body: Container(
             padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
             child: SingleChildScrollView(
+              key: Key(KEY_ITEM_ORDER_PAGE_SCROLL),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Selector<ItemOrderBloc, List<SnackVO>?>(
                       selector: (context, bloc) => bloc.snacksList,
-                      shouldRebuild: (previous,next)=> previous != next,
-                      builder: (BuildContext context, snacksList, Widget? child){
+                      shouldRebuild: (previous, next) => previous != next,
+                      builder:
+                          (BuildContext context, snacksList, Widget? child) {
                         ItemOrderBloc bloc =
-                        Provider.of(context, listen: false);
+                            Provider.of(context, listen: false);
                         return Container(
                           child: ListView.builder(
                             physics: NeverScrollableScrollPhysics(),
@@ -65,14 +67,14 @@ class ItemOrderPage extends StatelessWidget {
                             itemCount: snacksList?.length ?? 0,
                             itemBuilder: (BuildContext context, int index) =>
                                 ComboSetView(
-                                  snackVO: snacksList?[index],
-                                  onTapIncrease: () => bloc.incrementQty(index),
-                                  onTapDecrease: () => bloc.decreaseQty(index),
-                                ),
+                              snackIndex: index,
+                              snackVO: snacksList?[index],
+                              onTapIncrease: () => bloc.incrementQty(index),
+                              onTapDecrease: () => bloc.decreaseQty(index),
+                            ),
                           ),
                         );
-                      }
-                  ),
+                      }),
                   PromoCodeSection(),
                   SizedBox(
                     height: MARGIN_MEDIUM,
@@ -91,13 +93,14 @@ class ItemOrderPage extends StatelessWidget {
                   ),
                   Selector<ItemOrderBloc, List<PaymentVO>?>(
                     selector: (context, bloc) => bloc.paymentList,
-                    shouldRebuild: (previous,next)=> previous != next,
-                    builder: (BuildContext context, paymentList, Widget? child) {
+                    shouldRebuild: (previous, next) => previous != next,
+                    builder:
+                        (BuildContext context, paymentList, Widget? child) {
                       return PaymentMethodSection(
                         paymentList: paymentList,
                         onTapPayment: (payment) {
                           ItemOrderBloc bloc =
-                          Provider.of(context, listen: false);
+                              Provider.of(context, listen: false);
                           bloc.setPaymentSelected(payment);
                         },
                       );
@@ -106,19 +109,17 @@ class ItemOrderPage extends StatelessWidget {
                   SizedBox(
                     height: MARGIN_LARGE,
                   ),
-                  Builder(
-                      builder: (context) {
-                        ItemOrderBloc bloc =
-                        Provider.of(context, listen: false);
-                        return ElevatedButtonView(
-                          "Pay \$${bloc.totalPrice + totalPrice}",
-                              () {
-                            bloc.addSnackRequest();
-                            _navigateToPaymentScreen(context,bloc);
-                          },
-                        );
-                      }
-                  ),
+                  Builder(builder: (context) {
+                    ItemOrderBloc bloc = Provider.of(context, listen: false);
+                    return ElevatedButtonView(
+                      "Pay \$${bloc.totalPrice + totalPrice}",
+                      () {
+                        bloc.addSnackRequest();
+                        _navigateToPaymentScreen(context, bloc);
+                      },
+                      keyName: KEY_ITEM_ORDER_PAY_BUTTON,
+                    );
+                  }),
                   SizedBox(
                     height: MARGIN_LARGE,
                   ),
@@ -129,7 +130,7 @@ class ItemOrderPage extends StatelessWidget {
     );
   }
 
-  void _navigateToPaymentScreen(BuildContext context,ItemOrderBloc bloc) {
+  void _navigateToPaymentScreen(BuildContext context, ItemOrderBloc bloc) {
     bloc.addSnackRequest();
     print("snack List: ${bloc.snackRequest.toString()}");
     Navigator.push(
@@ -151,11 +152,12 @@ class ItemOrderPage extends StatelessWidget {
   }
 }
 
-
 class PaymentMethodSection extends StatelessWidget {
   final List<PaymentVO>? paymentList;
   final Function(PaymentVO?) onTapPayment;
+
   PaymentMethodSection({required this.paymentList, required this.onTapPayment});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -172,6 +174,7 @@ class PaymentMethodSection extends StatelessWidget {
             return InkWell(
               onTap: () => onTapPayment(paymentList?[index]),
               child: PaymentOptionView(
+                id: paymentList?[index].id ?? -1,
                 title: paymentList?[index].name ?? "",
                 description: paymentList?[index].name ?? "",
                 isSelected: paymentList?[index].isSelected ?? false,
@@ -184,20 +187,21 @@ class PaymentMethodSection extends StatelessWidget {
             );
           },
         ),
-
       ],
     );
   }
 }
 
 class PaymentOptionView extends StatelessWidget {
+  final int id;
   final String title;
   final String description;
   final bool isSelected;
   final Image paymentIcon;
 
   const PaymentOptionView(
-      {required this.title,
+      {required this.id,
+      required this.title,
       required this.description,
       required this.paymentIcon,
       required this.isSelected});
@@ -207,6 +211,7 @@ class PaymentOptionView extends StatelessWidget {
     return Column(
       children: [
         Container(
+          key: Key("Payment_Method_$id"),
           height: 50,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,

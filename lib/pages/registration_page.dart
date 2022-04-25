@@ -279,12 +279,14 @@ class LoginView extends StatelessWidget {
           REGISTRATION_EMAIL,
           inputType: TextInputType.emailAddress,
           textController: _emailController,
+          keyName:KEY_LOGIN_EMAIL,
         ),
         SizedBox(height: MARGIN_LARGE),
         InputFieldView(
           REGISTRATION_PASSWORD,
           obscureText: true,
           textController: _passwordController,
+          keyName:KEY_LOGIN_PASSWORD,
         ),
         SizedBox(height: MARGIN_XLARGE),
         Align(
@@ -307,6 +309,7 @@ class LoginView extends StatelessWidget {
             _emailController.text,
             _passwordController.text,
           ),
+          keyName: KEY_LOGIN_CONFIRM,
         )
       ],
     );

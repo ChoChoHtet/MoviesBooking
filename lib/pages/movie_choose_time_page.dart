@@ -7,6 +7,7 @@ import 'package:movies_booking/data/vos/time_slot_vo.dart';
 import 'package:movies_booking/pages/movie_seats_page.dart';
 import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
+import 'package:movies_booking/resources/strings.dart';
 import 'package:movies_booking/widgets/back_button_view.dart';
 import 'package:movies_booking/widgets/elevated_button_view.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
@@ -96,7 +97,7 @@ class MovieChooseTimePage extends StatelessWidget {
                       } else {
                         _showAlertDialog(context);
                       }
-                    }),
+                    }, keyName: KEY_CINEMA_TIME_NEXT_BUTTON,),
                   ),
                 ),
                 SizedBox(
@@ -121,7 +122,7 @@ class MovieChooseTimePage extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text("OK"),
+            child: Text("OK",key: Key(KEY_CINEMA_TIME_DIALOG_OKAY),),
           ),
         ],
       ),
@@ -234,6 +235,7 @@ class CustomRadioView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: Key(id.toString()),
       margin: EdgeInsets.only(
           left: MARGIN_SMALL, right: MARGIN_SMALL, top: MARGIN_SMALL),
       decoration: BoxDecoration(

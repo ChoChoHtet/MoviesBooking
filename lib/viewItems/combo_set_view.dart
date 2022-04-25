@@ -9,22 +9,33 @@ import '../data/vos/snack_vo.dart';
 
 class ComboSetView extends StatelessWidget {
   final SnackVO? snackVO;
+
   // final Function(int quantity, String action) onTapCount;
   final VoidCallback onTapIncrease;
   final VoidCallback onTapDecrease;
-  ComboSetView(
-      {required this.snackVO,
-      required this.onTapIncrease,
-      required this.onTapDecrease});
+  final int snackIndex;
+
+  ComboSetView({
+    required this.snackIndex,
+    required this.snackVO,
+    required this.onTapIncrease,
+    required this.onTapDecrease,
+
+  });
+
   @override
   Widget build(BuildContext context) {
     return Container(
+      key:Key("Snack_$snackIndex"),
       height: 90,
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
           Container(
-            width: MediaQuery.of(context).size.width / 2,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width / 2,
             child: TitleAndDescriptionView(
               snackVO?.name ?? "",
               snackVO?.description ?? "",
@@ -32,6 +43,7 @@ class ComboSetView extends StatelessWidget {
           ),
           Spacer(),
           ComboPricerAndNumbersView(
+            snackIndex: snackIndex,
             snackVO: snackVO,
             onTapDecrease: onTapDecrease,
             onTapIncrease: onTapIncrease,
@@ -44,13 +56,18 @@ class ComboSetView extends StatelessWidget {
 
 class ComboPricerAndNumbersView extends StatelessWidget {
   final SnackVO? snackVO;
+
   //final Function(int quantity,String action) onTapCount;
   final VoidCallback onTapIncrease;
   final VoidCallback onTapDecrease;
-  ComboPricerAndNumbersView(
-      {required this.snackVO,
-      required this.onTapIncrease,
-      required this.onTapDecrease});
+  final int snackIndex;
+
+  ComboPricerAndNumbersView({
+    required this.snackIndex,
+    required this.snackVO,
+    required this.onTapIncrease,
+    required this.onTapDecrease});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -60,6 +77,7 @@ class ComboPricerAndNumbersView extends StatelessWidget {
           height: 4,
         ),
         NumberPickerView(
+          snackIndex: snackIndex,
           snackVO: snackVO,
           onTapDecrease: onTapDecrease,
           onTapIncrease: onTapIncrease,
@@ -74,13 +92,16 @@ class NumberPickerView extends StatelessWidget {
   final VoidCallback onTapIncrease;
   final VoidCallback onTapDecrease;
   final SnackVO? snackVO;
-  NumberPickerView(
-      {required this.snackVO,
-      required this.onTapIncrease,
-      required this.onTapDecrease});
+  final int snackIndex;
+
+  NumberPickerView({
+    required this.snackIndex,
+    required this.snackVO,
+    required this.onTapIncrease,
+    required this.onTapDecrease});
+
   @override
   Widget build(BuildContext context) {
-    int count = snackVO?.quantity ?? 0;
     return Container(
       height: 40,
       decoration: BoxDecoration(
@@ -89,6 +110,7 @@ class NumberPickerView extends StatelessWidget {
       child: Row(
         children: [
           InkWell(
+            key: Key("Decrease_$snackIndex"),
             onTap: () {
               // onTapCount(--count,ACTION_DECREASE);
               onTapDecrease();
@@ -116,6 +138,7 @@ class NumberPickerView extends StatelessWidget {
             thickness: 1,
           ),
           InkWell(
+            key: Key("Increase_$snackIndex"),
             onTap: () => onTapIncrease(),
             child: Padding(
               padding: const EdgeInsets.only(
