@@ -10,6 +10,7 @@ import 'package:movies_booking/resources/dimen.dart';
 import 'package:movies_booking/resources/strings.dart';
 import 'package:movies_booking/widgets/welcome_view.dart';
 
+import '../data/models/movie_booking_model.dart';
 import '../data/models/movie_booking_model_impl.dart';
 
 class WelcomePage extends StatefulWidget {
@@ -18,7 +19,7 @@ class WelcomePage extends StatefulWidget {
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  MovieBookingModelImpl _movieBookingModel = MovieBookingModelImpl();
+  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
   UserVO? user;
 
   void _navigateToNextScreen(UserVO? user) {
@@ -33,13 +34,21 @@ class _WelcomePageState extends State<WelcomePage> {
 
   void _getUserInfo() {
     _movieBookingModel.getUserInfo().then((userResponse) {
-      print("User Info -> ${user.toString()}");
+      print("User Info -> ${userResponse.toString()}");
       setState(() {
         this.user = userResponse;
       });
     }).catchError((error) {
       debugPrint("Get User Info DB error: $error");
     });
+   /* _movieBookingModel.getUserInfoDB().then((userResponse) {
+      print("User Info -> ${user.toString()}");
+      setState(() {
+        this.user = userResponse;
+      });
+    }).catchError((error) {
+      debugPrint("Get User Info DB error: $error");
+    });*/
   }
 
   @override

@@ -7,10 +7,7 @@ import 'package:movies_booking/data/vos/credit_vo.dart';
 import 'package:movies_booking/data/vos/movie_vo.dart';
 import 'package:movies_booking/data/vos/payment_vo.dart';
 import 'package:movies_booking/data/vos/snack_vo.dart';
-import 'package:movies_booking/data/vos/user_vo.dart';
 import 'package:movies_booking/network/response/common_response.dart';
-import 'package:movies_booking/network/response/get_credit_response.dart';
-import 'package:movies_booking/network/response/get_movie_response.dart';
 import 'package:movies_booking/pages/get_card_response.dart';
 
 import '../response/get_user_response.dart';
@@ -45,7 +42,7 @@ abstract class MovieBookingAgent {
 
   Future<List<PaymentVO>?> getPaymentMethod(String token);
 
-  Future<UserVO?> getUserProfile(String token);
+  Future<GetUserResponse?> getUserProfile(String token);
 
   Future<GetCardResponse> createCard(String token, String cardNumber,
       String cardHolder, String expirationDate, String cvc);

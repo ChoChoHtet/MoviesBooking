@@ -1,10 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:movies_booking/data/request/check_out_request.dart';
+import 'package:movies_booking/bloc/payment_bloc.dart';
 import 'package:movies_booking/data/request/snack_request.dart';
 import 'package:movies_booking/data/vos/checkout_vo.dart';
 import 'package:movies_booking/pages/add_card_info_page.dart';
-import 'package:movies_booking/pages/item_order_page.dart';
 import 'package:movies_booking/pages/movie_ticket_page.dart';
 import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
@@ -13,15 +12,10 @@ import 'package:movies_booking/widgets/back_button_view.dart';
 import 'package:movies_booking/widgets/elevated_button_view.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
-
-import '../data/models/movie_booking_model.dart';
-import '../data/models/movie_booking_model_impl.dart';
+import 'package:provider/provider.dart';
 import '../data/vos/card_vo.dart';
 
-class PaymentPage extends StatefulWidget {
-  @override
-  State<PaymentPage> createState() => _PaymentPageState();
-
+class PaymentPage extends StatelessWidget {
   final int movieId;
   final int cinemaId;
   final int timeSlotId;
@@ -41,95 +35,72 @@ class PaymentPage extends StatefulWidget {
       required this.moviePath,
       required this.cinemaName,
       required this.snacks});
-}
-
-class _PaymentPageState extends State<PaymentPage> {
-  List<CardVO>? cardList;
-  int selectCardId = 0;
-  CheckoutVO? checkoutVO;
-
-  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
-
-  void _getUserProfile() {
-    _movieBookingModel.getUserProfile().then((response) {
-      setState(() {
-        this.cardList = response?.cards;
-      });
-    }).catchError((error) {
-      debugPrint("Profile Error: $error");
-    });
-  }
-
-  @override
-  void initState() {
-    _getUserProfile();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return ChangeNotifierProvider(
+      create: (context) => PaymentBloc(),
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: BackButtonView(() => Navigator.pop(context)),
-      ),
-      body: Container(
-        padding: EdgeInsets.all(MARGIN_MEDIUM),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            PaymentAmoutSection(totalPrice: widget.totalPrice,),
-            SizedBox(
-              height: MARGIN_MEDIUM,
-            ),
-            Visibility(
-              visible: this.cardList?.isNotEmpty ?? false,
-              child: PaymentCardOptionSection(
-                cardList: this.cardList,
-                onSelectCard: (index) {
-                  selectCardId = this.cardList?[index].id ?? 0;
-                  print("Select Card -> index: $index, $selectCardId");
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: BackButtonView(() => Navigator.pop(context)),
+        ),
+        body: Container(
+          padding: EdgeInsets.all(MARGIN_MEDIUM),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PaymentAmoutSection(
+                totalPrice: totalPrice,
+              ),
+              SizedBox(
+                height: MARGIN_MEDIUM,
+              ),
+              Selector<PaymentBloc, List<CardVO>?>(
+                selector: (context, bloc) => bloc.cardList,
+                builder: (BuildContext context, cardList, Widget? child) {
+                  return Visibility(
+                    visible: cardList?.isNotEmpty ?? false,
+                    child: PaymentCardOptionSection(
+                      cardList: cardList,
+                      onSelectCard: (index) {
+                        PaymentBloc bloc = Provider.of(context, listen: false);
+                        bloc.setSelectedCard(index);
+                      },
+                    ),
+                  );
                 },
               ),
-            ),
-            SizedBox(
-              height: MARGIN_XLARGE,
-            ),
-            AddNewCardSection(
-              onTapAddNew: () => _navigateToAddNewCardScreen(context),
-            ),
-            SizedBox(
-              height: MARGIN_XXLARGE,
-            ),
-            ElevatedButtonView("Confirm", () => _checkoutTicket()),
-          ],
+              SizedBox(
+                height: MARGIN_XLARGE,
+              ),
+              AddNewCardSection(
+                onTapAddNew: () => _navigateToAddNewCardScreen(context),
+              ),
+              SizedBox(
+                height: MARGIN_XXLARGE,
+              ),
+              Builder(builder: (context) {
+                return ElevatedButtonView("Confirm", () {
+                  PaymentBloc bloc = Provider.of(context, listen: false);
+                  bloc
+                      .checkoutTicket(timeSlotId, seatNumbers, bookingDate,
+                          movieId, cinemaId, totalPrice, snacks)
+                      .then((response) {
+                    _navigateToTicketScreen(context, response);
+                  }).catchError((error) {
+                    debugPrint("Checkout Error: $error");
+                  });
+                });
+              }),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _checkoutTicket() {
-     CheckOutRequest checkOutRequest = CheckOutRequest(
-       widget.timeSlotId,
-       widget.seatNumbers,
-       widget.bookingDate,
-       widget.movieId,
-       selectCardId,
-       widget.cinemaId,
-       widget.totalPrice,
-       widget.snacks
-      );
-
-
-    print("CheckOutReq-> ${checkOutRequest.toString()}");
-    _movieBookingModel.checkoutTicket(checkOutRequest).then((response) {
-      _navigateToTicketScreen(context, response);
-    }).catchError((error) {
-      debugPrint("Checkout Error: $error");
-    });
-  }
 
   void _navigateToTicketScreen(BuildContext context, CheckoutVO? checkoutVO) {
     Navigator.push(
@@ -137,8 +108,8 @@ class _PaymentPageState extends State<PaymentPage> {
       MaterialPageRoute(
         builder: (context) => MovieTicketPage(
           checkoutVO: checkoutVO,
-          cinemaName: widget.cinemaName,
-          moviePoster: widget.moviePath,
+          cinemaName: cinemaName,
+          moviePoster: moviePath,
         ),
       ),
     );
@@ -150,11 +121,13 @@ class _PaymentPageState extends State<PaymentPage> {
         context,
         MaterialPageRoute(
           builder: (context) => AddCardInfoPage(),
-        )).then((value) {
+        ));
+
+    /* .then((value) {
       if (value == true) {
         _getUserProfile();
       }
-    });
+    });*/
   }
 }
 
@@ -186,21 +159,24 @@ class PaymentCardOptionSection extends StatelessWidget {
   final List<CardVO>? cardList;
   final Function(int) onSelectCard;
 
+  //CarouselController carouselController = CarouselController();
+
   @override
   Widget build(BuildContext context) {
+    debugPrint("Card List length: ${cardList?.length ?? 0}");
     return CarouselSlider.builder(
-      itemCount: cardList?.length ?? 0,
+      itemCount: this.cardList?.length ?? 0,
       options: CarouselOptions(
           aspectRatio: 2,
           viewportFraction: 0.8,
           enlargeCenterPage: true,
           autoPlayCurve: Curves.fastOutSlowIn,
           initialPage: 0,
+          enableInfiniteScroll: false,
           onPageChanged: (index, value) => onSelectCard(index)),
-      itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex){
+      itemBuilder: (BuildContext context, int itemIndex, int pageViewIndex) {
         return PaymentCardView(cardVO: cardList?[itemIndex]);
       },
-
     );
   }
 }
@@ -214,21 +190,24 @@ class AddNewCardSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTapAddNew,
-      child: Row(
-        children: [
-          Icon(
-            Icons.add_circle_outline_outlined,
-            color: Colors.green,
-            size: 24,
+      child: Container(
+        key: Key(KEY_ADD_NEW_CARD),
+        child:  Row(
+            children: [
+              Icon(
+                Icons.add_circle_outline_outlined,
+                color: Colors.green,
+                size: 24,
+              ),
+              SizedBox(
+                width: MARGIN_SMALL_2,
+              ),
+              NormalTextView(
+                "Add New Card",
+                textColor: Colors.green,
+              ),
+            ],
           ),
-          SizedBox(
-            width: MARGIN_SMALL_2,
-          ),
-          NormalTextView(
-            "Add New Card",
-            textColor: Colors.green,
-          ),
-        ],
       ),
     );
   }

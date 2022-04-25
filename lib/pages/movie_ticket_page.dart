@@ -1,5 +1,6 @@
 import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:movies_booking/bloc/ticket_bloc.dart';
 import 'package:movies_booking/data/vos/checkout_vo.dart';
 import 'package:movies_booking/network/api_constants.dart';
 import 'package:movies_booking/resources/dimen.dart';
@@ -8,6 +9,9 @@ import 'package:movies_booking/widgets/close_button_view.dart';
 import 'package:movies_booking/widgets/large_title_text.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
+import 'package:provider/provider.dart';
+
+import 'home_page.dart';
 
 class MovieTicketPage extends StatelessWidget {
   final CheckoutVO? checkoutVO;
@@ -20,39 +24,57 @@ class MovieTicketPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: CloseButtonView(
-          () {
-            Navigator.pop(context);
-          },
+    return ChangeNotifierProvider(
+      create: (context) => TicketBloc(checkoutVO, cinemaName, moviePoster),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: CloseButtonView(
+            () {
+              //Navigator.pop(context);
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => HomePage()));
+            },
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            LargeTitleText(TICKET_AWESOME),
-            SizedBox(
-              height: MARGIN_SMALL,
-            ),
-            NormalTextView(
-              YOUR_TICKET,
-              textColor: Colors.black26,
-            ),
-            SizedBox(
-              height: MARGIN_LARGE,
-            ),
-            TicketSection(
-              checkoutVO: checkoutVO,
-              cinemaName: this.cinemaName,
-              moviePoster: this.moviePoster,
-            ),
-            SizedBox(
-              height: MARGIN_LARGE,
-            ),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              LargeTitleText(TICKET_AWESOME),
+              SizedBox(
+                height: MARGIN_SMALL,
+              ),
+              NormalTextView(
+                YOUR_TICKET,
+                textColor: Colors.black26,
+              ),
+              SizedBox(
+                height: MARGIN_LARGE,
+              ),
+              Selector<TicketBloc, CheckoutVO?>(
+                selector: (context, bloc) => bloc.checkoutVO,
+                builder: (context, checkoutVO, _) {
+                  return Selector<TicketBloc, String>(
+                      selector: (context, bloc) => bloc.cinemaName,
+                      builder: (context, cinemaName, _) {
+                        return Selector<TicketBloc, String>(
+                            selector: (context, bloc) => bloc.moviePoster,
+                            builder: (context, moviePoster, _) {
+                              return TicketSection(
+                                checkoutVO: checkoutVO,
+                                cinemaName: cinemaName,
+                                moviePoster: moviePoster,
+                              );
+                            });
+                      });
+                },
+              ),
+              SizedBox(
+                height: MARGIN_LARGE,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -91,7 +113,9 @@ class TicketSection extends StatelessWidget {
             SizedBox(
               height: MARGIN_LARGE,
             ),
-            GenerateBarCodeView(qrCode: checkoutVO?.qrCode ?? "",),
+            GenerateBarCodeView(
+              qrCode: checkoutVO?.qrCode ?? "",
+            ),
           ],
         ),
       ),
@@ -214,8 +238,8 @@ class MovieTicketPosterView extends StatelessWidget {
           ),
           child: Image.network(
             "$MOVIE_IMAGE_URL$moviePoster",
-            fit: BoxFit.cover,
-            width: double.maxFinite,
+            fit: BoxFit.fill,
+            width: double.infinity,
             height: 200,
           ),
         ),

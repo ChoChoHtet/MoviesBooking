@@ -1,187 +1,161 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:movies_booking/data/models/movie_booking_model.dart';
-import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
+import 'package:movies_booking/bloc/choose_time_bloc.dart';
 import 'package:movies_booking/data/vos/cinema_vo.dart';
 import 'package:movies_booking/data/vos/date_vo.dart';
 import 'package:movies_booking/data/vos/time_slot_vo.dart';
 import 'package:movies_booking/pages/movie_seats_page.dart';
 import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
+import 'package:movies_booking/resources/strings.dart';
 import 'package:movies_booking/widgets/back_button_view.dart';
 import 'package:movies_booking/widgets/elevated_button_view.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
-import 'package:collection/collection.dart';
+import 'package:provider/provider.dart';
 
-class MovieChooseTimePage extends StatefulWidget {
+class MovieChooseTimePage extends StatelessWidget {
   final String movieName;
   final int movieID;
   final String moviePath;
-  MovieChooseTimePage({required this.movieID,required this.movieName,required this.moviePath});
-  final List<DateVO> dateTime =
-      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14].map((numOfDays) {
-    return DateTime.now().add(Duration(days: numOfDays));
-  }).map((dateTime) {
-    return DateVO(
-        DateFormat("yyyy-MM-dd").format(dateTime),
-        DateFormat("E").format(dateTime),
-        DateFormat("dd").format(dateTime),
-        DateTime.now() == dateTime ? true : false);
-  }).toList();
 
-  final CinemaVO available = CinemaVO(1, "Available In", [
-    TimeSlotVO(1, "2D", false),
-    TimeSlotVO(2, "3D", false),
-    TimeSlotVO(3, "IMAX", false),
+  MovieChooseTimePage(
+      {required this.movieID,
+      required this.movieName,
+      required this.moviePath});
+
+  final CinemaVO available =
+      CinemaVO(cinemaId: 1, cinema: "Available In", timeSlots: [
+    TimeSlotVO(timeSlotId: 1, startTime: "2D", isSelected: false),
+    TimeSlotVO(timeSlotId: 2, startTime: "3D", isSelected: false),
+    TimeSlotVO(timeSlotId: 3, startTime: "IMAX", isSelected: false),
   ]);
-  @override
-  State<MovieChooseTimePage> createState() => _MovieChooseTimePageState();
-}
-
-class _MovieChooseTimePageState extends State<MovieChooseTimePage> {
-  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
-  List<CinemaVO>? cinemaTimeList;
-  int timeSlotId = 0;
-  String bookingDate = "";
-  String startTime = "";
-  String cinemaName="";
-  int cinemaId = 0 ;
-
-  @override
-  void initState() {
-    _getCinemaTimeSlots(widget.dateTime.first.date);
-    super.initState();
-  }
-
-  void _getCinemaTimeSlots(String date) {
-    widget.dateTime.forEachIndexed((index, element) {
-      if (element.date == date) {
-        widget.dateTime[index].isSelected = true;
-      } else {
-        widget.dateTime[index].isSelected = false;
-      }
-    });
-    _movieBookingModel.getCinemaTimeSlots(date).then((cinemas) {
-      print("cinema slot ${cinemas.toString()}");
-      setState(() {
-        this.bookingDate = date;
-        this.cinemaTimeList = cinemas;
-      });
-    }).catchError((error) {
-      debugPrint("Cinema Time Slot Error");
-    });
-  }
-
-  void _setTimeSlotSelected(CinemaVO? cinemaVO, TimeSlotVO? slot) {
-
-    this.cinemaTimeList?.forEachIndexed((index, element) {
-      if (element.cinemaId == cinemaVO?.cinemaId) {
-        this.cinemaTimeList?[index].isSelected = true;
-      } else {
-        this.cinemaTimeList?[index].isSelected = false;
-      }
-    });
-    cinemaVO?.timeSlots?.forEachIndexed((index1, element) {
-      if (element.timeSlotId == slot?.timeSlotId) {
-        cinemaVO.timeSlots?[index1].isSelected = true;
-      } else {
-        cinemaVO.timeSlots?[index1].isSelected = false;
-      }
-    });
-  }
-
-  bool _validateTimeSlot() {
-    List<CinemaVO>? list = cinemaTimeList?.where((element) => element.isSelected == true).toList();
-    print("cinemaVO: ${list.toString()}");
-    return  list !=null && list.isNotEmpty ;
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: WELCOME_SCREEN_BACKGROUND_COLOR,
-        elevation: 0,
-        leading: BackButtonView(
-          () => Navigator.pop(context),
-          color: Colors.white,
+    return ChangeNotifierProvider(
+      create: (context) => ChooseTimeBloc(),
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: WELCOME_SCREEN_BACKGROUND_COLOR,
+          elevation: 0,
+          leading: BackButtonView(
+            () => Navigator.pop(context),
+            color: Colors.white,
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          color: Colors.white,
-          child: Column(
-            children: [
-              MovieChooseDateView(
-                dateTime: widget.dateTime,
-                onTapDate: (date) {
-                  print("Time Slot Selected Date: $date");
-                  _getCinemaTimeSlots(date);
-                },
-              ),
-              ChooseItemGridSectionView(
-                cinemaList: this.cinemaTimeList,
-                available: widget.available,
-                onTapTime: (cinemaVO, index) {
-                  setState(() {
-                    TimeSlotVO? slot = cinemaVO?.timeSlots?[index];
-                    this.timeSlotId = slot?.timeSlotId ?? 0;
-                    this.startTime = slot?.startTime ?? "";
-                    this.cinemaName = cinemaVO?.cinema ?? "";
-                    this.cinemaId = cinemaVO?.cinemaId ?? 0;
-                    _setTimeSlotSelected(cinemaVO, slot);
-                  });
-                },
-              ),
-              SizedBox(
-                height: MARGIN_LARGE,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
-                child: ElevatedButtonView("Next", () {
-                  _navigateMovieSeatPage(
-                      context, timeSlotId, bookingDate, startTime,cinemaName,cinemaId);
-
-                }),
-              ),
-              SizedBox(
-                height: MARGIN_LARGE,
-              ),
-            ],
+        body: SingleChildScrollView(
+          child: Container(
+            color: Colors.white,
+            child: Column(
+              children: [
+                Selector<ChooseTimeBloc, List<DateVO>>(
+                  selector: (context, bloc) => bloc.dateTime,
+                  shouldRebuild: (previous, next) => previous != next,
+                  builder: (BuildContext context, dateList, Widget? child) {
+                    ChooseTimeBloc timeBloc =
+                        Provider.of<ChooseTimeBloc>(context, listen: false);
+                    return MovieChooseDateView(
+                      dateTime: dateList,
+                      onTapDate: (date) {
+                        // print("Time Slot Selected Date: $date, ${dateList.toString()}");
+                        timeBloc.getCinemaTimeSlot(date);
+                      },
+                    );
+                  },
+                ),
+                Selector<ChooseTimeBloc, List<CinemaVO>?>(
+                  selector: (context, bloc) => bloc.cinemaTimeList,
+                  shouldRebuild: (previous, next) => previous != next,
+                  builder: (BuildContext context, cinemaList, Widget? child) {
+                    return ChooseItemGridSectionView(
+                      cinemaList: cinemaList,
+                      available: available,
+                      onTapTime: (cinemaVO, index) {
+                        ChooseTimeBloc bloc =
+                            Provider.of(context, listen: false);
+                        bloc.setTimeSlotSelected(cinemaVO, index);
+                      },
+                    );
+                  },
+                ),
+                SizedBox(
+                  height: MARGIN_LARGE,
+                ),
+                Builder(
+                  builder: (context) => Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
+                    child: ElevatedButtonView(
+                      "Next",
+                      () {
+                        ChooseTimeBloc bloc =
+                            Provider.of<ChooseTimeBloc>(context, listen: false);
+                        if (bloc.validateTimeSlot()) {
+                          _navigateMovieSeatPage(
+                              context,
+                              bloc.timeSlotId,
+                              bloc.bookingDate,
+                              bloc.startTime,
+                              bloc.cinemaName,
+                              bloc.cinemaId);
+                        } else {
+                          _showAlertDialog(context);
+                        }
+                      },
+                      keyName: KEY_CINEMA_TIME_NEXT_BUTTON,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: MARGIN_LARGE,
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  void _navigateMovieSeatPage(
-      BuildContext context,
-      int slotId,
-      String bookingDate,
-      String startTime,
-      String cinemaName,
-      int cinemaID
-      ) {
-    print("choose time -> id:$timeSlotId,date:$bookingDate");
-    if(_validateTimeSlot()){
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MovieSeatPage(
-            movieId: widget.movieID,
-            movieName: widget.movieName,
-            moviePath:widget.moviePath ,
+  void _showAlertDialog(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (ctx) => CupertinoAlertDialog(
+        title: Text("Movie Show Time"),
+        content: Text("Please Select Movie Time"),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              "OK",
+              key: Key(KEY_CINEMA_TIME_DIALOG_OKAY),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _navigateMovieSeatPage(BuildContext context, int slotId,
+      String bookingDate, String startTime, String cinemaName, int cinemaID) {
+    print("choose time -> id:$slotId,date:$bookingDate");
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MovieSeatPage(
+            movieId: movieID,
+            movieName: movieName,
+            moviePath: moviePath,
             timeSlotId: slotId,
             bookingDate: bookingDate,
-            cinemaName:cinemaName ,
+            cinemaName: cinemaName,
             startTime: startTime,
-            cinemaId: cinemaID
-          ),
-        ),
-      );
-    }
-
+            cinemaId: cinemaID),
+      ),
+    );
   }
 }
 
@@ -189,10 +163,12 @@ class ChooseItemGridSectionView extends StatelessWidget {
   final List<CinemaVO>? cinemaList;
   final Function(CinemaVO? cinemaVO, int index) onTapTime;
   final CinemaVO? available;
+
   ChooseItemGridSectionView(
       {required this.cinemaList,
       required this.available,
       required this.onTapTime});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -217,7 +193,9 @@ class ChooseItemGridSectionView extends StatelessWidget {
 class ChooseItemGridView extends StatelessWidget {
   final CinemaVO? cinemaVO;
   final Function(CinemaVO? cinemaVO, int index) onTapTime;
+
   ChooseItemGridView({required this.cinemaVO, required this.onTapTime});
+
   bool _getTimeSlotSelected(CinemaVO? cinema, int index) {
     if (cinema?.isSelected ?? false) {
       return cinema?.timeSlots?[index].isSelected ?? false;
@@ -266,11 +244,14 @@ class CustomRadioView extends StatelessWidget {
   final int id;
   final String startTime;
   final bool isSelected;
+
   CustomRadioView(
       {required this.id, required this.startTime, required this.isSelected});
+
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: Key(id.toString()),
       margin: EdgeInsets.only(
           left: MARGIN_SMALL, right: MARGIN_SMALL, top: MARGIN_SMALL),
       decoration: BoxDecoration(
@@ -281,7 +262,7 @@ class CustomRadioView extends StatelessWidget {
               : Border.all(color: Colors.grey, width: 1)),
       child: Center(
         child: NormalTextView(
-          "$startTime,$id",
+          "$startTime",
           textColor: this.isSelected ? Colors.white : Colors.grey,
         ),
       ),
@@ -292,10 +273,12 @@ class CustomRadioView extends StatelessWidget {
 class MovieChooseDateView extends StatelessWidget {
   final List<DateVO>? dateTime;
   final Function(String) onTapDate;
+
   const MovieChooseDateView({required this.dateTime, required this.onTapDate});
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("Movie Choose Date Widget build");
     return Container(
       color: WELCOME_SCREEN_BACKGROUND_COLOR,
       height: 100,
@@ -311,7 +294,6 @@ class MovieChooseDateView extends StatelessWidget {
           itemBuilder: (context, index) {
             return GestureDetector(
               onTap: () {
-                // dateTime?[index].isSelected = true ;
                 onTapDate(dateTime?[index].date ?? "");
               },
               child: DateTimeView(

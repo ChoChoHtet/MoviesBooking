@@ -5,8 +5,7 @@ import 'package:movies_booking/data/vos/time_slot_vo.dart';
 part 'checkout_vo.g.dart';
 
 @JsonSerializable()
-class CheckoutVO{
-
+class CheckoutVO {
   @JsonKey(name: "id")
   int? id;
 
@@ -46,21 +45,59 @@ class CheckoutVO{
   @JsonKey(name: "qr_code")
   String? qrCode;
 
-  CheckoutVO(
-      this.id,
-      this.bookingNo,
-      this.bookingDate,
-      this.row,
-      this.seat,
-      this.totalSeat,
-      this.total,
-      this.movieId,
-      this.cinemaId,
-      this.username,
-      this.timeSlot,
-      this.snacks,
-      this.qrCode);
+  CheckoutVO({
+    this.id,
+    this.bookingNo,
+    this.bookingDate,
+    this.row,
+    this.seat,
+    this.totalSeat,
+    this.total,
+    this.movieId,
+    this.cinemaId,
+    this.username,
+    this.timeSlot,
+    this.snacks,
+    this.qrCode,
+  });
 
-  factory CheckoutVO.fromJson(Map<String,dynamic>json) => _$CheckoutVOFromJson(json);
-  Map<String,dynamic> toJson() => _$CheckoutVOToJson(this);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CheckoutVO &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          bookingNo == other.bookingNo &&
+          bookingDate == other.bookingDate &&
+          row == other.row &&
+          seat == other.seat &&
+          totalSeat == other.totalSeat &&
+          total == other.total &&
+          movieId == other.movieId &&
+          cinemaId == other.cinemaId &&
+          username == other.username &&
+          timeSlot == other.timeSlot &&
+         // snacks == other.snacks &&
+          qrCode == other.qrCode;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      bookingNo.hashCode ^
+      bookingDate.hashCode ^
+      row.hashCode ^
+      seat.hashCode ^
+      totalSeat.hashCode ^
+      total.hashCode ^
+      movieId.hashCode ^
+      cinemaId.hashCode ^
+      username.hashCode ^
+      timeSlot.hashCode ^
+      //snacks.hashCode ^
+      qrCode.hashCode;
+
+  factory CheckoutVO.fromJson(Map<String, dynamic> json) =>
+      _$CheckoutVOFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CheckoutVOToJson(this);
 }

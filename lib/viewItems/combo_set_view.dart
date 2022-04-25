@@ -9,27 +9,45 @@ import '../data/vos/snack_vo.dart';
 
 class ComboSetView extends StatelessWidget {
   final SnackVO? snackVO;
-  final Function(int quantity,String action) onTapCount;
-  ComboSetView({required this.snackVO,required this.onTapCount});
+
+  // final Function(int quantity, String action) onTapCount;
+  final VoidCallback onTapIncrease;
+  final VoidCallback onTapDecrease;
+  final int snackIndex;
+
+  ComboSetView({
+    required this.snackIndex,
+    required this.snackVO,
+    required this.onTapIncrease,
+    required this.onTapDecrease,
+
+  });
+
   @override
   Widget build(BuildContext context) {
     return Container(
+      key:Key("Snack_$snackIndex"),
       height: 90,
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
           Container(
-            width: MediaQuery.of(context).size.width / 2,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width / 2,
             child: TitleAndDescriptionView(
               snackVO?.name ?? "",
               snackVO?.description ?? "",
             ),
           ),
           Spacer(),
-          ComboPricerAndNumbersView(snackVO: snackVO,onTapCount: (quantity,action){
-           // print("Snack : $quantity");
-            onTapCount(quantity,action);
-          },),
+          ComboPricerAndNumbersView(
+            snackIndex: snackIndex,
+            snackVO: snackVO,
+            onTapDecrease: onTapDecrease,
+            onTapIncrease: onTapIncrease,
+          ),
         ],
       ),
     );
@@ -38,8 +56,18 @@ class ComboSetView extends StatelessWidget {
 
 class ComboPricerAndNumbersView extends StatelessWidget {
   final SnackVO? snackVO;
-  final Function(int quantity,String action) onTapCount;
-  ComboPricerAndNumbersView({required this.snackVO, required this.onTapCount});
+
+  //final Function(int quantity,String action) onTapCount;
+  final VoidCallback onTapIncrease;
+  final VoidCallback onTapDecrease;
+  final int snackIndex;
+
+  ComboPricerAndNumbersView({
+    required this.snackIndex,
+    required this.snackVO,
+    required this.onTapIncrease,
+    required this.onTapDecrease});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -49,8 +77,10 @@ class ComboPricerAndNumbersView extends StatelessWidget {
           height: 4,
         ),
         NumberPickerView(
+          snackIndex: snackIndex,
           snackVO: snackVO,
-          onTapCount: onTapCount,
+          onTapDecrease: onTapDecrease,
+          onTapIncrease: onTapIncrease,
         )
       ],
     );
@@ -58,14 +88,20 @@ class ComboPricerAndNumbersView extends StatelessWidget {
 }
 
 class NumberPickerView extends StatelessWidget {
-  final Function(int quantity,String action) onTapCount;
+  //final Function(int quantity,String action) onTapCount;
+  final VoidCallback onTapIncrease;
+  final VoidCallback onTapDecrease;
   final SnackVO? snackVO;
-  NumberPickerView(
-      {required this.snackVO,
-      required this.onTapCount});
+  final int snackIndex;
+
+  NumberPickerView({
+    required this.snackIndex,
+    required this.snackVO,
+    required this.onTapIncrease,
+    required this.onTapDecrease});
+
   @override
   Widget build(BuildContext context) {
-    int count = snackVO?.quantity ?? 0 ;
     return Container(
       height: 40,
       decoration: BoxDecoration(
@@ -74,8 +110,10 @@ class NumberPickerView extends StatelessWidget {
       child: Row(
         children: [
           InkWell(
+            key: Key("Decrease_$snackIndex"),
             onTap: () {
-              onTapCount(--count,ACTION_DECREASE);
+              // onTapCount(--count,ACTION_DECREASE);
+              onTapDecrease();
             },
             child: Padding(
               padding: const EdgeInsets.only(
@@ -100,7 +138,8 @@ class NumberPickerView extends StatelessWidget {
             thickness: 1,
           ),
           InkWell(
-            onTap: () => onTapCount(++count,ACTION_INCREASE),
+            key: Key("Increase_$snackIndex"),
+            onTap: () => onTapIncrease(),
             child: Padding(
               padding: const EdgeInsets.only(
                   left: MARGIN_CARD_SMALL, right: MARGIN_SMALL_2),

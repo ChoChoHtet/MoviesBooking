@@ -17,15 +17,15 @@ class MovieVOAdapter extends TypeAdapter<MovieVO> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return MovieVO(
-      fields[0] as int?,
-      fields[1] as String?,
-      fields[2] as String?,
-      fields[3] as String?,
-      fields[4] as double?,
-      fields[5] as String?,
-      (fields[6] as List?)?.cast<GenreVO>(),
-      fields[7] as bool?,
-      fields[8] as bool?,
+      id: fields[0] as int?,
+      title: fields[1] as String?,
+      overview: fields[2] as String?,
+      posterPath: fields[3] as String?,
+      voteAverage: fields[4] as double?,
+      imdbId: fields[5] as String?,
+      genres: (fields[6] as List?)?.cast<GenreVO>(),
+      isNowShowing: fields[7] as bool?,
+      isComingSoon: fields[8] as bool?,
     );
   }
 
@@ -69,17 +69,17 @@ class MovieVOAdapter extends TypeAdapter<MovieVO> {
 // **************************************************************************
 
 MovieVO _$MovieVOFromJson(Map<String, dynamic> json) => MovieVO(
-      json['id'] as int?,
-      json['title'] as String?,
-      json['overview'] as String?,
-      json['poster_path'] as String?,
-      (json['vote_average'] as num?)?.toDouble(),
-      json['imdb_id'] as String?,
-      (json['genres'] as List<dynamic>?)
+      id: json['id'] as int?,
+      title: json['title'] as String?,
+      overview: json['overview'] as String?,
+      posterPath: json['poster_path'] as String?,
+      voteAverage: (json['vote_average'] as num?)?.toDouble(),
+      imdbId: json['imdb_id'] as String?,
+      genres: (json['genres'] as List<dynamic>?)
           ?.map((e) => GenreVO.fromJson(e as Map<String, dynamic>))
           .toList(),
-      json['isNowShowing'] as bool?,
-      json['isComingSoon'] as bool?,
+      isNowShowing: json['isNowShowing'] as bool?,
+      isComingSoon: json['isComingSoon'] as bool?,
     );
 
 Map<String, dynamic> _$MovieVOToJson(MovieVO instance) => <String, dynamic>{

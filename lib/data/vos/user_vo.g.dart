@@ -17,14 +17,14 @@ class UserVOAdapter extends TypeAdapter<UserVO> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return UserVO(
-      fields[0] as int?,
-      fields[1] as String?,
-      fields[2] as String?,
-      fields[3] as String?,
-      fields[4] as int?,
-      fields[5] as String?,
-      fields[6] as String?,
-      (fields[7] as List?)?.cast<CardVO>(),
+      id: fields[0] as int?,
+      name: fields[1] as String?,
+      email: fields[2] as String?,
+      phone: fields[3] as String?,
+      totalExpense: fields[4] as int?,
+      profileImage: fields[5] as String?,
+      token: fields[6] as String?,
+      cards: (fields[7] as List?)?.cast<CardVO>(),
     );
   }
 
@@ -66,14 +66,14 @@ class UserVOAdapter extends TypeAdapter<UserVO> {
 // **************************************************************************
 
 UserVO _$UserVOFromJson(Map<String, dynamic> json) => UserVO(
-      json['id'] as int?,
-      json['name'] as String?,
-      json['email'] as String?,
-      json['phone'] as String?,
-      json['total_expense'] as int?,
-      json['profile_image'] as String?,
-      json['token'] as String?,
-      (json['cards'] as List<dynamic>?)
+      id: json['id'] as int?,
+      name: json['name'] as String?,
+      email: json['email'] as String?,
+      phone: json['phone'] as String?,
+      totalExpense: json['total_expense'] as int?,
+      profileImage: json['profile_image'] as String?,
+      token: json['token'] as String?,
+      cards: (json['cards'] as List<dynamic>?)
           ?.map((e) => CardVO.fromJson(e as Map<String, dynamic>))
           .toList(),
     );

@@ -7,13 +7,15 @@ import 'package:movies_booking/resources/dimen.dart';
 class ElevatedButtonView extends StatelessWidget {
   final String text;
   final VoidCallback onPressConfirm;
-  ElevatedButtonView(this.text,this.onPressConfirm);
+  final String keyName;
+  ElevatedButtonView(this.text,this.onPressConfirm,{this.keyName = ""});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
+        key: Key(keyName),
         onPressed: onPressConfirm,
         style: ButtonStyle(
             padding: MaterialStateProperty.all(

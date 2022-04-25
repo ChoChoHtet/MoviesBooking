@@ -1,8 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:movies_booking/data/models/movie_booking_model.dart';
-import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
+import 'package:movies_booking/bloc/registration_bloc.dart';
+//import 'package:google_sign_in/google_sign_in.dart';
 import 'package:movies_booking/data/vos/user_vo.dart';
 import 'package:movies_booking/pages/home_page.dart';
 import 'package:movies_booking/resources/colors.dart';
@@ -12,6 +11,7 @@ import 'package:movies_booking/widgets/elevated_button_view.dart';
 import 'package:movies_booking/widgets/input_field_view.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/welcome_view.dart';
+import 'package:provider/provider.dart';
 
 class RegistrationPage extends StatelessWidget {
   final List<String> tabList = ["Login", "Sign in"];
@@ -53,14 +53,12 @@ class RegistrationTabView extends StatefulWidget {
 
 class _RegistrationTabViewState extends State<RegistrationTabView>
     with TickerProviderStateMixin {
-  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
-  UserVO? user;
   @override
   void initState() {
     super.initState();
   }
 
-  void _registerUser(String name, String email, String phone, String password) {
+/*  void _registerUser(String name, String email, String phone, String password) {
     print("clicked register user-> $name,$email,$phone,$password");
     _movieBookingModel
         .emailRegister(name, email, phone, password)
@@ -83,8 +81,9 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
       _navigateToHomeScreen(context);
     }).catchError((error) {
       debugPrint("Login Error -> $error");
+      _showCommonErrorDialog(context, error);
     });
-  }
+  }*/
 
   void _navigateToHomeScreen(BuildContext context) {
     Navigator.push(
@@ -95,10 +94,23 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
     );
     print("confirm clicked");
   }
-
+  void _showCommonErrorDialog(BuildContext context, String message) {
+    showCupertinoDialog(
+        context: context,
+        builder: (builder) => CupertinoAlertDialog(
+          title: Text("Error"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("OKay"),
+            )
+          ],
+        ));
+  }
   void _googleLogin() {
     print("google login");
-    GoogleSignIn _googleSignIn = GoogleSignIn(
+   /* GoogleSignIn _googleSignIn = GoogleSignIn(
       scopes: [
         'email',
         'https://www.googleapis.com/auth/contacts.readonly',
@@ -118,7 +130,7 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
           debugPrint("Google Login Error: $error");
         });
       });
-    });
+    });*/
   }
 
   void _facebookLogin() {
@@ -128,7 +140,7 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
   void _registerGoogle(
       String name, String email, String phone, String password) {
     print("google register");
-    GoogleSignIn _googleSignIn = GoogleSignIn(
+   /* GoogleSignIn _googleSignIn = GoogleSignIn(
       scopes: [
         'email',
         'https://www.googleapis.com/auth/contacts.readonly',
@@ -149,7 +161,7 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
           debugPrint("Google Register Error: $error");
         });
       });
-    });
+    });*/
   }
 
   void _registerFacebook() async {
@@ -166,54 +178,83 @@ class _RegistrationTabViewState extends State<RegistrationTabView>
   @override
   Widget build(BuildContext context) {
     TabController _tabController = TabController(length: 2, vsync: this);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        Container(
-          child: TabBar(
-            controller: _tabController,
-            labelColor: WELCOME_SCREEN_BACKGROUND_COLOR,
-            unselectedLabelColor: Colors.black87,
-            indicatorColor: WELCOME_SCREEN_BACKGROUND_COLOR,
-            indicatorWeight: 4,
-            tabs: widget.tabList
-                .map(
-                  (desc) => Tab(
-                    child: Text(
-                      desc,
-                      style: TextStyle(
-                        fontSize: TEXT_REGULAR,
+    return ChangeNotifierProvider(
+      create: (context) => RegistrationBloc(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Container(
+            child: TabBar(
+              controller: _tabController,
+              labelColor: WELCOME_SCREEN_BACKGROUND_COLOR,
+              unselectedLabelColor: Colors.black87,
+              indicatorColor: WELCOME_SCREEN_BACKGROUND_COLOR,
+              indicatorWeight: 4,
+              tabs: widget.tabList
+                  .map(
+                    (desc) => Tab(
+                      child: Text(
+                        desc,
+                        style: TextStyle(
+                          fontSize: TEXT_REGULAR,
+                        ),
                       ),
                     ),
-                  ),
-                )
-                .toList(),
+                  )
+                  .toList(),
+            ),
           ),
-        ),
-        Container(
-          height: MediaQuery.of(context).size.height / 1.3,
-          padding: EdgeInsets.symmetric(vertical: MARGIN_LARGE_2),
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              LoginView(
-                onClickConfirm: (email, password) =>
-                    _emailLogin(email, password),
-                onTapGoogle: () => _googleLogin(),
-                onTapFacebook: () => _facebookLogin(),
-              ),
-              SignInView(
-                onClickConfirm: (name, email, phone, password) =>
-                    _registerUser(name, email, phone, password),
-                onTapFacebook:()=> _registerFacebook(),
-                onTapGoogle: (name, email, phone, password) =>
-                    _registerGoogle(name, email, phone, password),
-              ),
-            ],
-          ),
-        )
-      ],
+          Container(
+            height: MediaQuery.of(context).size.height / 1.3,
+            padding: EdgeInsets.symmetric(vertical: MARGIN_LARGE_2),
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                Selector<RegistrationBloc,UserVO?>(
+                  selector: (context , bloc) => bloc.user,
+                  builder: (BuildContext context, value, Widget? child) {
+                    return LoginView(
+                      onClickConfirm: (email, password){
+                        RegistrationBloc bloc = Provider.of<RegistrationBloc>(context,
+                            listen: false);
+                        bloc.loginWithEmail(email, password).then((user){
+                          _navigateToHomeScreen(context);
+                        }).catchError((error){
+                          _showCommonErrorDialog(context, error);
+                        });
+                      },
+                      onTapGoogle: () => _googleLogin(),
+                      onTapFacebook: () => _facebookLogin(),
+                    );
+                  },
+
+                ),
+                Selector<RegistrationBloc,UserVO?>(
+                  selector: (context,bloc ) => bloc.user,
+                  builder: (BuildContext context, value, Widget? child) {
+                    return SignInView(
+                      onClickConfirm: (name, email, phone, password) {
+                        RegistrationBloc bloc = Provider.of<RegistrationBloc>(context,
+                            listen: false);
+                        bloc.registerWithEmail(name, email, phone, password).then((response){
+                          _navigateToHomeScreen(context);
+                        }).catchError((error){
+                          _showCommonErrorDialog(context, error);
+                        });
+
+                      },
+                      onTapFacebook:()=> _registerFacebook(),
+                      onTapGoogle: (name, email, phone, password) =>
+                          _registerGoogle(name, email, phone, password),
+                    );
+                  },
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
@@ -222,8 +263,8 @@ class LoginView extends StatelessWidget {
   final Function(String email, String password) onClickConfirm;
   final VoidCallback onTapGoogle;
   final VoidCallback onTapFacebook;
-  var _emailController = TextEditingController();
-  var _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   LoginView(
       {required this.onClickConfirm,
       required this.onTapGoogle,
@@ -238,12 +279,14 @@ class LoginView extends StatelessWidget {
           REGISTRATION_EMAIL,
           inputType: TextInputType.emailAddress,
           textController: _emailController,
+          keyName:KEY_LOGIN_EMAIL,
         ),
         SizedBox(height: MARGIN_LARGE),
         InputFieldView(
           REGISTRATION_PASSWORD,
           obscureText: true,
           textController: _passwordController,
+          keyName:KEY_LOGIN_PASSWORD,
         ),
         SizedBox(height: MARGIN_XLARGE),
         Align(
@@ -266,6 +309,7 @@ class LoginView extends StatelessWidget {
             _emailController.text,
             _passwordController.text,
           ),
+          keyName: KEY_LOGIN_CONFIRM,
         )
       ],
     );
@@ -282,14 +326,14 @@ class SignInView extends StatelessWidget {
       {required this.onClickConfirm,
       required this.onTapGoogle,
       required this.onTapFacebook});
-  String name = "";
-  String email = "";
-  String password = "";
-  String phone = "";
-  var _emailController = TextEditingController();
-  var _phoneController = TextEditingController();
-  var _nameController = TextEditingController();
-  var _passwordController = TextEditingController();
+  final String name = "";
+  final String email = "";
+  final String password = "";
+  final String phone = "";
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -345,14 +389,6 @@ class SignInView extends StatelessWidget {
     );
   }
 
-  void _navigateToHomeScreen(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomePage(),
-      ),
-    );
-  }
 }
 
 class SocialMediaView extends StatelessWidget {

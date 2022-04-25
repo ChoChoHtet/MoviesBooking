@@ -17,11 +17,11 @@ class CardVOAdapter extends TypeAdapter<CardVO> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return CardVO(
-      fields[0] as int?,
-      fields[1] as String?,
-      fields[2] as String?,
-      fields[3] as String?,
-      fields[4] as String?,
+      id: fields[0] as int?,
+      cardHolder: fields[1] as String?,
+      cardNumber: fields[2] as String?,
+      expirationDate: fields[3] as String?,
+      cardType: fields[4] as String?,
     );
   }
 
@@ -57,11 +57,11 @@ class CardVOAdapter extends TypeAdapter<CardVO> {
 // **************************************************************************
 
 CardVO _$CardVOFromJson(Map<String, dynamic> json) => CardVO(
-      json['id'] as int?,
-      json['card_holder'] as String?,
-      json['card_number'] as String?,
-      json['expiration_date'] as String?,
-      json['card_type'] as String?,
+      id: json['id'] as int?,
+      cardHolder: json['card_holder'] as String?,
+      cardNumber: json['card_number'] as String?,
+      expirationDate: json['expiration_date'] as String?,
+      cardType: json['card_type'] as String?,
     );
 
 Map<String, dynamic> _$CardVOToJson(CardVO instance) => <String, dynamic>{

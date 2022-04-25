@@ -1,13 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:movies_booking/data/models/movie_booking_model.dart';
-import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
-import 'package:movies_booking/data/request/snack_request.dart';
+import 'package:movies_booking/bloc/item_order_bloc.dart';
 import 'package:movies_booking/data/vos/payment_vo.dart';
 import 'package:movies_booking/data/vos/snack_vo.dart';
-import 'package:movies_booking/pages/add_card_info_page.dart';
-import 'package:movies_booking/pages/movie_ticket_page.dart';
 import 'package:movies_booking/pages/payment_page.dart';
 import 'package:movies_booking/resources/colors.dart';
 import 'package:movies_booking/resources/dimen.dart';
@@ -15,13 +9,13 @@ import 'package:movies_booking/resources/strings.dart';
 import 'package:movies_booking/viewItems/combo_set_view.dart';
 import 'package:movies_booking/widgets/back_button_view.dart';
 import 'package:movies_booking/widgets/elevated_button_view.dart';
-import 'package:movies_booking/widgets/input_field_view.dart';
 import 'package:movies_booking/widgets/large_title_text.dart';
 import 'package:movies_booking/widgets/normal_text_view.dart';
 import 'package:movies_booking/widgets/title_and_description_view.dart';
 import 'package:movies_booking/widgets/title_text.dart';
+import 'package:provider/provider.dart';
 
-class ItemOrderPage extends StatefulWidget {
+class ItemOrderPage extends StatelessWidget {
   final int movieId;
   final String moviePath;
   final int cinemaId;
@@ -31,161 +25,127 @@ class ItemOrderPage extends StatefulWidget {
   final int totalPrice;
   final String seatNumbers;
 
-  ItemOrderPage({
-    required this.movieId,
-    required this.moviePath,
-    required this.cinemaId,
-    required this.cinemaName,
-    required this.timeSlotId,
-    required this.bookingDate,
-    required this.totalPrice,
-    required this.seatNumbers
-});
-
-  @override
-  State<ItemOrderPage> createState() => _ItemOrderPageState();
-}
-
-class _ItemOrderPageState extends State<ItemOrderPage> {
-  MovieBookingModel _movieBookingModel = MovieBookingModelImpl();
-  // final List<String> snackList = ["1", "2", "3"];
-
-  List<SnackVO>? snacksList;
-  List<PaymentVO>? paymentList;
-  List<SnackRequest> snackRequest= [];
-  int totalPrice = 0;
-  @override
-  void initState() {
-    _getSnacks();
-    _getPaymentMethods();
-    super.initState();
-  }
-
-  void _getPaymentMethods() {
-    _movieBookingModel.getPaymentMethod().then((paymentResponse) {
-      setState(() {
-        this.paymentList = paymentResponse;
-      });
-    }).catchError((error) {
-      debugPrint("Payment Error: $error");
-    });
-  }
-
-  void _getSnacks() {
-    _movieBookingModel.getSnacks().then((snackResponse) {
-      setState(() {
-        this.snacksList = snackResponse;
-      });
-    }).catchError((error) {
-      debugPrint("Snack Error: $error");
-    });
-  }
-  void _setPaymentSelected(PaymentVO? payment){
-    paymentList?.forEach((element) {
-      if(element.id == payment?.id){
-        element.isSelected = true ;
-      }else{
-        element.isSelected = false ;
-      }
-    });
-
-  }
+  ItemOrderPage(
+      {required this.movieId,
+      required this.moviePath,
+      required this.cinemaId,
+      required this.cinemaName,
+      required this.timeSlotId,
+      required this.bookingDate,
+      required this.totalPrice,
+      required this.seatNumbers});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: BackButtonView(() => Navigator.pop(context)),
-        ),
-        body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  // height: MediaQuery.of(context).size.height * 0.6,
-                  child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: this.snacksList?.length ?? 0,
-                    itemBuilder: (BuildContext context, int index) =>
-                        ComboSetView(
-                      snackVO: this.snacksList?[index],
-                      onTapCount: (quantity, action) {
-                        print("quantity: $quantity,action: $action");
-                        setState(() {
-                          SnackVO? snack = this.snacksList?[index];
-                          snack?.quantity = quantity;
-                          if (ACTION_INCREASE == action) {
-                            this.totalPrice += snack?.price ?? 0 * quantity;
-                          } else {
-                            this.totalPrice -= snack?.price ?? 0 * quantity;
-                          }
-                        });
-                      },
-                    ),
-                  ),
-                ),
-                PromoCodeSection(),
-                SizedBox(
-                  height: MARGIN_MEDIUM,
-                ),
-                TitleText(
-                  "Sub Total : $totalPrice\$",
-                  textColor: Colors.green,
-                ),
-                SizedBox(
-                  height: MARGIN_LARGE,
-                ),
-                PaymentMethodSection(
-                  paymentList: this.paymentList,
-                  onTapPayment: (payment){
-                    setState(() {
-                      _setPaymentSelected(payment);
-                    });
-                  },
-                ),
-                SizedBox(
-                  height: MARGIN_LARGE,
-                ),
-                ElevatedButtonView(
-                  "Pay \$${totalPrice + widget.totalPrice}",
-                  () => _navigateToPaymentScreen(context),
-                ),
-                SizedBox(
-                  height: MARGIN_LARGE,
-                ),
-              ],
-            ),
+    return ChangeNotifierProvider(
+      create: (context) => ItemOrderBloc(),
+      child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            leading: BackButtonView(() => Navigator.pop(context)),
           ),
-        ));
+          body: Container(
+            padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
+            child: SingleChildScrollView(
+              key: Key(KEY_ITEM_ORDER_PAGE_SCROLL),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Selector<ItemOrderBloc, List<SnackVO>?>(
+                      selector: (context, bloc) => bloc.snacksList,
+                      shouldRebuild: (previous, next) => previous != next,
+                      builder:
+                          (BuildContext context, snacksList, Widget? child) {
+                        ItemOrderBloc bloc =
+                            Provider.of(context, listen: false);
+                        return Container(
+                          child: ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: snacksList?.length ?? 0,
+                            itemBuilder: (BuildContext context, int index) =>
+                                ComboSetView(
+                              snackIndex: index,
+                              snackVO: snacksList?[index],
+                              onTapIncrease: () => bloc.incrementQty(index),
+                              onTapDecrease: () => bloc.decreaseQty(index),
+                            ),
+                          ),
+                        );
+                      }),
+                  PromoCodeSection(),
+                  SizedBox(
+                    height: MARGIN_MEDIUM,
+                  ),
+                  Selector<ItemOrderBloc, int>(
+                    selector: (context, bloc) => bloc.totalPrice,
+                    builder: (BuildContext context, totalPrice, Widget? child) {
+                      return TitleText(
+                        "Sub Total : $totalPrice\$",
+                        textColor: Colors.green,
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    height: MARGIN_LARGE,
+                  ),
+                  Selector<ItemOrderBloc, List<PaymentVO>?>(
+                    selector: (context, bloc) => bloc.paymentList,
+                    shouldRebuild: (previous, next) => previous != next,
+                    builder:
+                        (BuildContext context, paymentList, Widget? child) {
+                      return PaymentMethodSection(
+                        paymentList: paymentList,
+                        onTapPayment: (payment) {
+                          ItemOrderBloc bloc =
+                              Provider.of(context, listen: false);
+                          bloc.setPaymentSelected(payment);
+                        },
+                      );
+                    },
+                  ),
+                  SizedBox(
+                    height: MARGIN_LARGE,
+                  ),
+                  Builder(builder: (context) {
+                    ItemOrderBloc bloc = Provider.of(context, listen: false);
+                    return ElevatedButtonView(
+                      "Pay \$${bloc.totalPrice + totalPrice}",
+                      () {
+                        bloc.addSnackRequest();
+                        _navigateToPaymentScreen(context, bloc);
+                      },
+                      keyName: KEY_ITEM_ORDER_PAY_BUTTON,
+                    );
+                  }),
+                  SizedBox(
+                    height: MARGIN_LARGE,
+                  ),
+                ],
+              ),
+            ),
+          )),
+    );
   }
 
-  void _navigateToPaymentScreen(BuildContext context) {
-    snackRequest = [];
-    this.snacksList?.forEach((element) {
-      if(element.quantity !=null && element.quantity != 0){
-        snackRequest.add(SnackRequest(element.id, element.quantity));
-      }
-    });
-    print("snack List: ${snackRequest.toString()}");
+  void _navigateToPaymentScreen(BuildContext context, ItemOrderBloc bloc) {
+    bloc.addSnackRequest();
+    print("snack List: ${bloc.snackRequest.toString()}");
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => PaymentPage(
-          movieId: widget.movieId,
-          cinemaId: widget.cinemaId,
-          timeSlotId: widget.timeSlotId,
-          bookingDate: widget.bookingDate,
-          totalPrice: totalPrice,
-          seatNumbers: widget.seatNumbers,
-          cinemaName: widget.cinemaName,
-          moviePath: widget.moviePath,
-          snacks: this.snackRequest,
+          movieId: movieId,
+          cinemaId: cinemaId,
+          timeSlotId: timeSlotId,
+          bookingDate: bookingDate,
+          totalPrice: bloc.totalPrice,
+          seatNumbers: seatNumbers,
+          cinemaName: cinemaName,
+          moviePath: moviePath,
+          snacks: bloc.snackRequest,
         ),
       ),
     );
@@ -195,7 +155,9 @@ class _ItemOrderPageState extends State<ItemOrderPage> {
 class PaymentMethodSection extends StatelessWidget {
   final List<PaymentVO>? paymentList;
   final Function(PaymentVO?) onTapPayment;
+
   PaymentMethodSection({required this.paymentList, required this.onTapPayment});
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -212,6 +174,7 @@ class PaymentMethodSection extends StatelessWidget {
             return InkWell(
               onTap: () => onTapPayment(paymentList?[index]),
               child: PaymentOptionView(
+                id: paymentList?[index].id ?? -1,
                 title: paymentList?[index].name ?? "",
                 description: paymentList?[index].name ?? "",
                 isSelected: paymentList?[index].isSelected ?? false,
@@ -224,53 +187,21 @@ class PaymentMethodSection extends StatelessWidget {
             );
           },
         ),
-
-        // PaymentOptionView(
-        //   title: paymentList?[0].name ?? "",
-        //   description: paymentList?[0].description ?? "",
-        //   paymentIcon: Image.asset(
-        //     "assets/ic_credit_card.png",
-        //     width: 28,
-        //     height: 28,
-        //   ),
-        // ),
-        // SizedBox(
-        //   height: MARGIN_SMALL,
-        // ),
-        // PaymentOptionView(
-        //   title: paymentList?[1].name ?? "",
-        //   description: paymentList?[0].description ?? "",
-        //   paymentIcon: Image.asset(
-        //     "assets/ic_atm_card.png",
-        //     width: 28,
-        //     height: 28,
-        //   ),
-        // ),
-        // SizedBox(
-        //   height: MARGIN_SMALL,
-        // ),
-        // PaymentOptionView(
-        //   title: paymentList?[2].name ?? "",
-        //   description: paymentList?[2].description ?? "",
-        //   paymentIcon: Image.asset(
-        //     "assets/ic_wallet.png",
-        //     width: 28,
-        //     height: 28,
-        //   ),
-        // ),
       ],
     );
   }
 }
 
 class PaymentOptionView extends StatelessWidget {
+  final int id;
   final String title;
   final String description;
   final bool isSelected;
   final Image paymentIcon;
 
   const PaymentOptionView(
-      {required this.title,
+      {required this.id,
+      required this.title,
       required this.description,
       required this.paymentIcon,
       required this.isSelected});
@@ -280,6 +211,7 @@ class PaymentOptionView extends StatelessWidget {
     return Column(
       children: [
         Container(
+          key: Key("Payment_Method_$id"),
           height: 50,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -294,13 +226,16 @@ class PaymentOptionView extends StatelessWidget {
               TitleAndDescriptionView(
                 title,
                 description,
-                textColor:
-                    isSelected == true ? DATE_NONE_SELECT_COLOR : Colors.black26,
+                textColor: isSelected == true
+                    ? DATE_NONE_SELECT_COLOR
+                    : Colors.black26,
               ),
             ],
           ),
         ),
-        SizedBox(height: MARGIN_SMALL,),
+        SizedBox(
+          height: MARGIN_SMALL,
+        ),
       ],
     );
   }
@@ -340,86 +275,3 @@ class PromoCodeSection extends StatelessWidget {
     );
   }
 }
-
-/*class ComboSetSection extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 90,
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Container(
-            width: MediaQuery.of(context).size.width / 2,
-            child: TitleAndDescriptionView(
-              "Combo Set M",
-              "Combo size  220z Coke (X1) and medium popcorn(X1)",
-            ),
-          ),
-          Spacer(),
-          ComboPricerAndNumbersView(),
-        ],
-      ),
-    );
-  }
-}
-
-class ComboPricerAndNumbersView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        TitleText("15\$"),
-        SizedBox(
-          height: 4,
-        ),
-        NumberPickerView()
-      ],
-    );
-  }
-}
-
-class NumberPickerView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 40,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.black26)),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(
-                left: MARGIN_SMALL_2, right: MARGIN_CARD_SMALL),
-            child: Icon(
-              Icons.remove,
-              size: 18,
-            ),
-          ),
-          VerticalDivider(
-            thickness: 1,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: MARGIN_SMALL),
-            child: NormalTextView(
-              "0",
-              textColor: Colors.black26,
-            ),
-          ),
-          VerticalDivider(
-            thickness: 1,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-                left: MARGIN_CARD_SMALL, right: MARGIN_SMALL_2),
-            child: Icon(
-              Icons.add,
-              size: 18,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}*/

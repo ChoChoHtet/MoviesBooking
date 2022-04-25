@@ -21,8 +21,12 @@ class MoviesView extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(MARGIN_SMALL),
-            child: Image.network(
+            child: movies?.posterPath !=null ? Image.network(
               "$MOVIE_IMAGE_URL${movies?.posterPath}",
+              fit: BoxFit.cover,
+              height: MOVIES_IMAGE_HEIGHT,
+            ): Image.asset(
+              "assets/avatar.png",
               fit: BoxFit.cover,
               height: MOVIES_IMAGE_HEIGHT,
             ),
