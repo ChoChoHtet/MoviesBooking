@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:integration_test/integration_test.dart';
@@ -31,7 +32,7 @@ import 'package:movies_booking/resources/strings.dart';
 
 import 'test_data/test_data.dart';
 
-void main() async{
+void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(UserVOAdapter());
@@ -55,7 +56,7 @@ void main() async{
   await Hive.openBox<SnackVO>(BOX_NAMES_SNACK_VO);
   await Hive.openBox<CardVO>(BOX_NAMES_CARD_VO);
   await Hive.openBox<PaymentVO>(BOX_NAMES_PAYMENT_VO);
-  testWidgets("Movie Booking UI Test", (WidgetTester tester) async{
+  testWidgets("Movie Booking UI Test", (WidgetTester tester) async {
     await tester.pumpWidget(MyApp());
     await Future.delayed(Duration(seconds: 2));
     await tester.pumpAndSettle(Duration(seconds: 5));
@@ -79,6 +80,22 @@ void main() async{
 
     // Home Page
     expect(find.byType(HomePage), findsOneWidget);
+
+    // Open drawer
+    var menuIcon = find.byIcon(Icons.menu);
+    expect(menuIcon, findsOneWidget);
+    await tester.tap(menuIcon);
+    await tester.pump(Duration(seconds: 5));
+    // confirm username and email
+    expect(find.text(test_username), findsWidgets);
+    expect(find.text(test_email), findsOneWidget);
+
+    // close drawer
+    await tester.dragFrom(
+        tester.getTopRight(find.byType(Drawer)), Offset(-300, 0));
+    await tester.pumpAndSettle(Duration(seconds: 4));
+
+    // tap on movies
     var movieText = find.text(TAP_MOVIE_NAME);
     expect(movieText, findsOneWidget);
     await tester.tap(movieText);
@@ -93,7 +110,7 @@ void main() async{
 
     // movie choose time
     expect(find.byType(MovieChooseTimePage), findsOneWidget);
-    expect(find.byKey(Key(KEY_CINEMA_TIME_NEXT_BUTTON)),findsOneWidget);
+    expect(find.byKey(Key(KEY_CINEMA_TIME_NEXT_BUTTON)), findsOneWidget);
     await tester.tap(find.byKey(Key(KEY_CINEMA_TIME_NEXT_BUTTON)));
     await tester.pumpAndSettle(Duration(seconds: 3));
 
@@ -103,12 +120,12 @@ void main() async{
     await tester.pumpAndSettle(Duration(seconds: 5));
 
     // Select Booking Date
-    expect(find.text("26"),findsOneWidget);
+    expect(find.text("26"), findsOneWidget);
     await tester.tap(find.text("26"));
     await tester.pumpAndSettle(Duration(seconds: 5));
 
     //Select Cinema Movie Time
-    expect(find.byKey(Key("18")),findsOneWidget);
+    expect(find.byKey(Key("18")), findsOneWidget);
     await tester.tap(find.byKey(Key("18")));
     await tester.pumpAndSettle(Duration(seconds: 6));
     //Tap Next button
@@ -117,6 +134,24 @@ void main() async{
 
     //cinema seat
     expect(find.byType(MovieSeatPage), findsOneWidget);
+    //scroll to bottom
+    expect(find.byKey(Key(KEY_SEAT_PAGE_SCROLL)), findsOneWidget);
+    await tester.drag(find.byKey(Key(KEY_SEAT_PAGE_SCROLL)), Offset(0, -200));
+    await tester.pumpAndSettle(Duration(seconds: 3));
+    // click buy seat ticket
+    expect(find.byKey(Key(KEY_SEAT_BUY_TICKET)), findsOneWidget);
+    await tester.tap(find.byKey(Key(KEY_SEAT_BUY_TICKET)));
+    await tester.pumpAndSettle(Duration(seconds: 3));
+
+    // click dialog okay button
+    expect(find.byKey(Key(KEY_CINEMA_SEAT_DIALOG_OKAY)), findsOneWidget);
+    await tester.tap(find.byKey(Key(KEY_CINEMA_SEAT_DIALOG_OKAY)));
+    await tester.pumpAndSettle(Duration(seconds: 5));
+
+    //scroll to top
+    expect(find.byKey(Key(KEY_SEAT_PAGE_SCROLL)), findsOneWidget);
+    await tester.drag(find.byKey(Key(KEY_SEAT_PAGE_SCROLL)), Offset(0, 200));
+    await tester.pumpAndSettle(Duration(seconds: 3));
 
     //select first seat
     expect(find.byKey(Key(TEST_FIRST_SEAT)), findsOneWidget);
@@ -128,10 +163,16 @@ void main() async{
     await tester.tap(find.byKey(Key(TEST_SECOND_SEAT)));
     await tester.pump();
 
+    //scroll to bottom
     expect(find.byKey(Key(KEY_SEAT_PAGE_SCROLL)), findsOneWidget);
-    await tester.drag(find.byKey(Key(KEY_SEAT_PAGE_SCROLL)), Offset(0,-100));
+    await tester.drag(find.byKey(Key(KEY_SEAT_PAGE_SCROLL)), Offset(0, -200));
     await tester.pumpAndSettle(Duration(seconds: 3));
 
+    //check ticket and selected seats
+    expect(find.text("2"), findsOneWidget);
+    expect(find.text("$TEST_FIRST_SEAT,$TEST_SECOND_SEAT"), findsOneWidget);
+
+    // click buy seat ticket
     expect(find.byKey(Key(KEY_SEAT_BUY_TICKET)), findsOneWidget);
     await tester.tap(find.byKey(Key(KEY_SEAT_BUY_TICKET)));
     await tester.pumpAndSettle(Duration(seconds: 5));
@@ -139,63 +180,63 @@ void main() async{
     // Item Order page
     expect(find.byType(ItemOrderPage), findsOneWidget);
     //Pop corn
-    expect(find.byKey(Key("Snack_0")),findsOneWidget);
+    expect(find.byKey(Key("Snack_0")), findsOneWidget);
     await tester.tap(find.byKey(Key("Increase_0")));
     await tester.pumpAndSettle(Duration(seconds: 3));
     await tester.tap(find.byKey(Key("Increase_0")));
     await tester.pumpAndSettle(Duration(seconds: 3));
 
     //Smoothies
-    expect(find.byKey(Key("Snack_1")),findsOneWidget);
+    expect(find.byKey(Key("Snack_1")), findsOneWidget);
     await tester.tap(find.byKey(Key("Increase_1")));
     await tester.pumpAndSettle(Duration(seconds: 3));
 
     // Decrease Pop Corn Count
-    expect(find.byKey(Key("Decrease_0")),findsOneWidget);
+    expect(find.byKey(Key("Decrease_0")), findsOneWidget);
     await tester.tap(find.byKey(Key("Decrease_0")));
     await tester.pumpAndSettle(Duration(seconds: 3));
 
-  /*  // Scroll order screen
+    /*  // Scroll order screen
     expect(find.byKey(Key(KEY_ITEM_ORDER_PAGE_SCROLL)), findsOneWidget);
     await tester.drag(find.byKey(Key(KEY_ITEM_ORDER_PAGE_SCROLL)), Offset(0,-100));
     await tester.pumpAndSettle(Duration(seconds: 4));*/
-    
+
     await tester.dragUntilVisible(find.byKey(Key("Payment_Method_1")),
-        find.byType(SingleChildScrollView), Offset(0,-300));
+        find.byType(SingleChildScrollView), Offset(0, -200));
 
     // Choose Payment Method
     //set payment id as Key
     await tester.ensureVisible(find.byKey(Key("Payment_Method_1")));
-    expect(find.byKey(Key("Payment_Method_1")),findsOneWidget);
+    expect(find.byKey(Key("Payment_Method_1")), findsOneWidget);
     await tester.tap(find.byKey(Key("Payment_Method_1")));
     await tester.pumpAndSettle(Duration(seconds: 4));
 
     //Click Pay Button
-    expect(find.byKey(Key(KEY_ITEM_ORDER_PAY_BUTTON)),findsOneWidget);
+    expect(find.byKey(Key(KEY_ITEM_ORDER_PAY_BUTTON)), findsOneWidget);
     await tester.tap(find.byKey(Key(KEY_ITEM_ORDER_PAY_BUTTON)));
     await tester.pumpAndSettle(Duration(seconds: 5));
 
     // Payment Page
     expect(find.byType(PaymentPage), findsOneWidget);
     // Click create new card
-    expect(find.text( "Add New Card"),findsOneWidget);
+    expect(find.text("Add New Card"), findsOneWidget);
     await tester.tap(find.text("Add New Card"));
     await tester.pumpAndSettle(Duration(seconds: 4));
-    
+
     //TODO Please Change Card Info Data
     // Add Card Info
-    expect(find.byType(AddCardInfoPage),findsOneWidget);
+    expect(find.byType(AddCardInfoPage), findsOneWidget);
 
     var cardNumber = find.byKey(Key("Card Number"));
     expect(cardNumber, findsOneWidget);
     await tester.enterText(cardNumber, "0010");
-   // await tester.pumpAndSettle(Duration(seconds: 2));
+    // await tester.pumpAndSettle(Duration(seconds: 2));
     await tester.pump();
 
     var cardHolder = find.byKey(Key("Card holder"));
     expect(cardHolder, findsOneWidget);
     await tester.enterText(cardHolder, TEST_CARD_HOLDER);
-   // await tester.pumpAndSettle(Duration(seconds: 2));
+    // await tester.pumpAndSettle(Duration(seconds: 2));
     await tester.pump();
 
     var expireDate = find.byKey(Key("Expiration Date"));
@@ -209,21 +250,20 @@ void main() async{
     await tester.enterText(cvc, "225");
     await tester.pumpAndSettle(Duration(seconds: 2));
 
-    expect(find.byKey(Key(KEY_CREATE_CARD_CONFIRM_BUTTON)),findsOneWidget);
+    expect(find.byKey(Key(KEY_CREATE_CARD_CONFIRM_BUTTON)), findsOneWidget);
     await tester.tap(find.byKey(Key(KEY_CREATE_CARD_CONFIRM_BUTTON)));
     await tester.pumpAndSettle(Duration(seconds: 5));
-    
 
-    //Select Payment
+    //Select Payment and verify new created card
     expect(find.byType(PaymentPage), findsOneWidget);
     //TODO increase offset whenever create new card one card == 20
     await tester.dragUntilVisible(find.text(TEST_CARD_HOLDER),
-        find.byType(CarouselSlider), Offset(-190,0));
+        find.byType(CarouselSlider), Offset(-250, 0));
     /*final gesture = await tester.startGesture(Offset(0, 0)); //Position of the scrollview
     await gesture.moveBy(Offset(-90, 0)); //How much to scroll by
     await tester.pump();*/
-    expect(find.text(TEST_CARD_HOLDER),findsOneWidget);
-   
+    expect(find.text(TEST_CARD_HOLDER), findsOneWidget);
+
     await tester.tap(find.text("Confirm"));
     await tester.pumpAndSettle(Duration(seconds: 5));
 
@@ -231,6 +271,5 @@ void main() async{
     expect(find.byType(MovieTicketPage), findsOneWidget);
     expect(find.text("$TEST_FIRST_SEAT,$TEST_SECOND_SEAT"), findsOneWidget);
     expect(find.text("\$11"), findsOneWidget);
-    
   });
 }

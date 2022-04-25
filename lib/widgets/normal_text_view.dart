@@ -4,8 +4,9 @@ import 'package:movies_booking/resources/dimen.dart';
 class NormalTextView extends StatelessWidget {
   final String text;
   final Color textColor;
+  final String keyName;
 
-  const NormalTextView(this.text, {this.textColor = Colors.white70});
+  const NormalTextView(this.text, {this.textColor = Colors.white70,this.keyName = ""});
 
   @override
   Widget build(BuildContext context) {

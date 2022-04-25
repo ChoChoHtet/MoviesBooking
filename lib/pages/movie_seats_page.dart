@@ -1,4 +1,5 @@
 import 'package:dotted_line/dotted_line.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:movies_booking/bloc/movie_seat_bloc.dart';
@@ -117,8 +118,14 @@ class MovieSeatPage extends StatelessWidget {
                       MovieSeatBloc bloc = Provider.of(context, listen: false);
                       return ElevatedButtonView(
                         "Buy Ticket for \$$totalPrice",
-                        () => _navigateToItemOrderScreen(
-                            context, totalPrice, bloc.seatRows),
+                        () {
+                          if(bloc.validateSeats()){
+                            _navigateToItemOrderScreen(
+                                context, totalPrice, bloc.seatRows);
+                          }else {
+                            _showAlertDialog(context);
+                          }
+                        },
                         keyName: KEY_SEAT_BUY_TICKET,
                       );
                     },
@@ -132,7 +139,26 @@ class MovieSeatPage extends StatelessWidget {
           )),
     );
   }
-
+  void _showAlertDialog(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (ctx) => CupertinoAlertDialog(
+        title: Text("Cinema Seats "),
+        content: Text("Please choose seats. Thanks"),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              "OK",
+              key: Key(KEY_CINEMA_SEAT_DIALOG_OKAY),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
   void _navigateToItemOrderScreen(
       BuildContext context, int totalPrice, String seatRows) {
     Navigator.push(

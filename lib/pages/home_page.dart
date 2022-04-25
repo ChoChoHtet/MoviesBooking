@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:movies_booking/bloc/home_bloc.dart';
-import 'package:movies_booking/data/models/movie_booking_model_impl.dart';
 import 'package:movies_booking/network/response/common_response.dart';
 import 'package:movies_booking/pages/registration_page.dart';
 import 'package:movies_booking/persistence/hive_constants.dart';

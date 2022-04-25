@@ -18,16 +18,19 @@ class MovieChooseTimePage extends StatelessWidget {
   final String movieName;
   final int movieID;
   final String moviePath;
+
   MovieChooseTimePage(
       {required this.movieID,
       required this.movieName,
       required this.moviePath});
 
-  final CinemaVO available = CinemaVO(cinemaId:1, cinema:"Available In", timeSlots:[
-    TimeSlotVO(timeSlotId:1, startTime: "2D", isSelected: false),
-    TimeSlotVO(timeSlotId:2, startTime: "3D", isSelected: false),
-    TimeSlotVO(timeSlotId:3, startTime: "IMAX", isSelected:false),
+  final CinemaVO available =
+      CinemaVO(cinemaId: 1, cinema: "Available In", timeSlots: [
+    TimeSlotVO(timeSlotId: 1, startTime: "2D", isSelected: false),
+    TimeSlotVO(timeSlotId: 2, startTime: "3D", isSelected: false),
+    TimeSlotVO(timeSlotId: 3, startTime: "IMAX", isSelected: false),
   ]);
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -83,21 +86,25 @@ class MovieChooseTimePage extends StatelessWidget {
                   builder: (context) => Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM),
-                    child: ElevatedButtonView("Next", () {
-                      ChooseTimeBloc bloc =
-                          Provider.of<ChooseTimeBloc>(context, listen: false);
-                      if (bloc.validateTimeSlot()) {
-                        _navigateMovieSeatPage(
-                            context,
-                            bloc.timeSlotId,
-                            bloc.bookingDate,
-                            bloc.startTime,
-                            bloc.cinemaName,
-                            bloc.cinemaId);
-                      } else {
-                        _showAlertDialog(context);
-                      }
-                    }, keyName: KEY_CINEMA_TIME_NEXT_BUTTON,),
+                    child: ElevatedButtonView(
+                      "Next",
+                      () {
+                        ChooseTimeBloc bloc =
+                            Provider.of<ChooseTimeBloc>(context, listen: false);
+                        if (bloc.validateTimeSlot()) {
+                          _navigateMovieSeatPage(
+                              context,
+                              bloc.timeSlotId,
+                              bloc.bookingDate,
+                              bloc.startTime,
+                              bloc.cinemaName,
+                              bloc.cinemaId);
+                        } else {
+                          _showAlertDialog(context);
+                        }
+                      },
+                      keyName: KEY_CINEMA_TIME_NEXT_BUTTON,
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -122,7 +129,10 @@ class MovieChooseTimePage extends StatelessWidget {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: Text("OK",key: Key(KEY_CINEMA_TIME_DIALOG_OKAY),),
+            child: Text(
+              "OK",
+              key: Key(KEY_CINEMA_TIME_DIALOG_OKAY),
+            ),
           ),
         ],
       ),
@@ -153,10 +163,12 @@ class ChooseItemGridSectionView extends StatelessWidget {
   final List<CinemaVO>? cinemaList;
   final Function(CinemaVO? cinemaVO, int index) onTapTime;
   final CinemaVO? available;
+
   ChooseItemGridSectionView(
       {required this.cinemaList,
       required this.available,
       required this.onTapTime});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -181,7 +193,9 @@ class ChooseItemGridSectionView extends StatelessWidget {
 class ChooseItemGridView extends StatelessWidget {
   final CinemaVO? cinemaVO;
   final Function(CinemaVO? cinemaVO, int index) onTapTime;
+
   ChooseItemGridView({required this.cinemaVO, required this.onTapTime});
+
   bool _getTimeSlotSelected(CinemaVO? cinema, int index) {
     if (cinema?.isSelected ?? false) {
       return cinema?.timeSlots?[index].isSelected ?? false;
@@ -230,8 +244,10 @@ class CustomRadioView extends StatelessWidget {
   final int id;
   final String startTime;
   final bool isSelected;
+
   CustomRadioView(
       {required this.id, required this.startTime, required this.isSelected});
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -257,6 +273,7 @@ class CustomRadioView extends StatelessWidget {
 class MovieChooseDateView extends StatelessWidget {
   final List<DateVO>? dateTime;
   final Function(String) onTapDate;
+
   const MovieChooseDateView({required this.dateTime, required this.onTapDate});
 
   @override
